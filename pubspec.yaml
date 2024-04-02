@@ -40,6 +40,7 @@ dependencies:
   http: ^1.2.1
   intl: ^0.19.0
   flutter_svg: ^2.0.10+1
+  rounded_loading_button_plus: ^3.0.1
 
 dev_dependencies:
   flutter_test:
