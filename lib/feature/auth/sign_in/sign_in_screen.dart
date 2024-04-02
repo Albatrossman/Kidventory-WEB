@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
@@ -45,82 +46,108 @@ class _SignInScreenContent extends StatelessWidget {
                   height: 100,
                 ),
               ),
-              const TextField(
-                maxLines: 1,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                  ),
-                  label: Text("Email"),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                    ),
-                    label: Text(
-                      "Password",
-                    ),
-                  ),
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
+              SizedBox(
+                width: kIsWeb ? 420 : null,
+                child: Column(
+                  children: [
+                    emailTextField, 
+                    passwordTextField
+                    ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
-                child: RoundedLoadingButton(
-                  controller: _btnController,
-                  onPressed: _doSomething,
-                  elevation: 0,
-                  width: double.infinity,
-                  height: 40,
-                  loaderSize: 24,
-                  color: Theme.of(context).colorScheme.primary,
-                  child: Text(
-                    "Sign In",
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary),
-                  ),
-                ),
+                child: signInButton(context),
               ),
-              CupertinoButton(
-                child: Text(
-                  "Forgot Password?",
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                ),
-                onPressed: () => {},
-              ),
+              forgotPasswordButton(context),
               Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    "Don't have an account?",
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                  ),
-                  CupertinoButton(
-                    child: const Text("Sign Up"),
-                    onPressed: () => {},
-                  )
-                ],
-              )
+              signUpRow(context)
             ],
           ),
         ),
       ),
+    );
+  }
+
+  final Widget emailTextField = const TextField(
+    maxLines: 1,
+    decoration: InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(8.0),
+        ),
+      ),
+      label: Text("Email"),
+    ),
+  );
+
+  final Widget passwordTextField = const Padding(
+    padding: EdgeInsets.only(top: 16.0),
+    child: TextField(
+      maxLines: 1,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+        ),
+        label: Text(
+          "Password",
+        ),
+      ),
+      obscureText: true,
+      enableSuggestions: false,
+      autocorrect: false,
+    ),
+  );
+
+  Widget signInButton(BuildContext context) {
+    return RoundedLoadingButton(
+      controller: _btnController,
+      onPressed: _doSomething,
+      elevation: 0,
+      width: kIsWeb ? 350 : double.infinity,
+      height: kIsWeb ? 56 : 40,
+      loaderSize: 24,
+      color: Theme.of(context).colorScheme.primary,
+      child: Text(
+        "Sign In",
+        style: Theme.of(context)
+            .textTheme
+            .labelLarge
+            ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+      ),
+    );
+  }
+
+  Widget forgotPasswordButton(BuildContext context) {
+    return CupertinoButton(
+      child: Text(
+        "Forgot Password?",
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+      onPressed: () => {},
+    );
+  }
+
+  Widget signUpRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Text(
+          "Don't have an account?",
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+        ),
+        CupertinoButton(
+          child: const Text("Sign Up"),
+          onPressed: () => {},
+        )
+      ],
     );
   }
 }
