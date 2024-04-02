@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:glass/glass.dart';
+import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 
 import 'feature/main/calendar/calendar_screen.dart';
 import 'feature/main/home/home_screen.dart';
@@ -75,26 +75,27 @@ class _MyHomePageState extends State<MyHomePage> {
         );
     }
 
-    return Scaffold(
-      body: contentWidget,
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.date_range_rounded),
-            label: 'Calendar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-      ).asGlass(),
-    );
+    return const SignInScreen();
+    // Scaffold(
+    //   body: contentWidget,
+    //   bottomNavigationBar: BottomNavigationBar(
+    //     items: const <BottomNavigationBarItem>[
+    //       BottomNavigationBarItem(
+    //         icon: Icon(Icons.home),
+    //         label: 'Home',
+    //       ),
+    //       BottomNavigationBarItem(
+    //         icon: Icon(Icons.date_range_rounded),
+    //         label: 'Calendar',
+    //       ),
+    //       BottomNavigationBarItem(
+    //         icon: Icon(Icons.person),
+    //         label: 'Profile',
+    //       ),
+    //     ],
+    //     currentIndex: _currentIndex,
+    //     onTap: _onItemTapped,
+    //   ).asGlass(),
+    // );
   }
 }
