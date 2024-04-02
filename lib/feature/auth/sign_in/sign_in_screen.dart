@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,12 +36,21 @@ class _SignInScreenContent extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset("assets/images/logo.png"),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 48.0),
+                child: Image.asset(
+                  "assets/images/logo.png",
+                  width: 100,
+                  height: 100,
+                ),
+              ),
               const TextField(
+                maxLines: 1,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(12.0),
+                      Radius.circular(8.0),
                     ),
                   ),
                   label: Text("Email"),
@@ -52,7 +62,7 @@ class _SignInScreenContent extends StatelessWidget {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
-                        Radius.circular(12.0),
+                        Radius.circular(8.0),
                       ),
                     ),
                     label: Text(
@@ -65,14 +75,18 @@ class _SignInScreenContent extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 32.0),
+                padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
                 child: RoundedLoadingButton(
                   controller: _btnController,
                   onPressed: _doSomething,
                   elevation: 0,
+                  width: double.infinity,
+                  height: 40,
+                  loaderSize: 24,
+                  color: Theme.of(context).colorScheme.primary,
                   child: Text(
                     "Sign In",
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
@@ -81,11 +95,12 @@ class _SignInScreenContent extends StatelessWidget {
                 child: Text(
                   "Forgot Password?",
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                 ),
                 onPressed: () => {},
               ),
+              Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
@@ -93,11 +108,13 @@ class _SignInScreenContent extends StatelessWidget {
                   Text(
                     "Don't have an account?",
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                   ),
                   CupertinoButton(
-                      child: const Text("Sign Up!"), onPressed: () => {},)
+                    child: const Text("Sign Up"),
+                    onPressed: () => {},
+                  )
                 ],
               )
             ],
