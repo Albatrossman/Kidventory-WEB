@@ -27,34 +27,55 @@ class _SignInScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            const TextField(
-              decoration: InputDecoration(
-                label: Text("Email"),
-              ),
-            ),
-            const TextField(
-              decoration: InputDecoration(
-                label: Text(
-                  "Password",
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              const TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                  ),
+                  label: Text("Email"),
                 ),
               ),
-            ),
-            RoundedLoadingButton(
-              controller: _btnController,
-              onPressed: _doSomething,
-              elevation: 0,
-              child: Text(
-                "Sign In",
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary
+              const Padding(
+                padding: EdgeInsets.only(top: 16.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12.0),
+                      ),
+                    ),
+                    label: Text(
+                      "Password",
+                    ),
+                  ),
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: RoundedLoadingButton(
+                  controller: _btnController,
+
+                  onPressed: _doSomething,
+                  elevation: 0,
+                  child: Text(
+                    "Sign In",
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
