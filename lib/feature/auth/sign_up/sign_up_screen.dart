@@ -165,7 +165,7 @@ class _SignUpScreenContent extends StatelessWidget {
       controller: _btnController,
       onPressed: _doSomething,
       elevation: 0,
-      width: kIsWeb ? 350 : double.infinity,
+      width: kIsWeb ? 350 : 600,
       height: kIsWeb ? 56 : 40,
       loaderSize: 24,
       color: Theme.of(context).colorScheme.primary,
