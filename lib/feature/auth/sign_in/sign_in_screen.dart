@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
@@ -129,7 +130,14 @@ class _SignInScreenContent extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
       ),
-      onPressed: () => {},
+      onPressed: () => {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const ForgotPasswordScreen(),
+          ),
+        ),
+      },
     );
   }
 
