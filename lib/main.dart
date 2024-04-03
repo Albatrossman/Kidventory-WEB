@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
+import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
 
 import 'feature/main/calendar/calendar_screen.dart';
 import 'feature/main/home/home_screen.dart';

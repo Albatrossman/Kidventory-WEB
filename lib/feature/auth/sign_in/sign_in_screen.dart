@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -145,7 +146,13 @@ class _SignInScreenContent extends StatelessWidget {
         ),
         CupertinoButton(
           child: const Text("Sign Up"),
-          onPressed: () => {},
+          onPressed: () => {
+            Navigator.push(
+              context,
+               CupertinoPageRoute(builder: 
+                (context) => const SignUpScreen())
+               )
+          },
         )
       ],
     );
