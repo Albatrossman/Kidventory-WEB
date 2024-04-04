@@ -9,7 +9,7 @@ class AuthApiServiceImpl implements AuthApiService {
   @override
   Future<TokenDto> signIn(String username, String password) async {
     final response = await http.get(
-      Uri.parse("https://kidventory.aftersearch.com/api/auth/sign_in?username=$username&password=$password"),
+      Uri.parse("https://kidventory.aftersearch.com/api/auth/login?email=$username&password=$password"),
       headers: {'Content-Type': 'application/json'}
     );
 
@@ -25,5 +25,4 @@ class AuthApiServiceImpl implements AuthApiService {
     // TODO: implement signUp
     throw UnimplementedError();
   }
-
 }

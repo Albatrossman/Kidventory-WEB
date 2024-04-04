@@ -7,8 +7,6 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../../core/ui/component/session_card.dart';
 
-
-
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({
     super.key,

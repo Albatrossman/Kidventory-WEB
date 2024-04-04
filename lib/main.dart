@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/http/auth_api_service_impl.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
+import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 import 'feature/main/calendar/calendar_screen.dart';
 import 'feature/main/home/home_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      Provider<AuthApiService>(create: (_) => AuthApiServiceImpl()),
+      ChangeNotifierProvider<SignInScreenViewModel>(
+        create: (context) => SignInScreenViewModel(
+          Provider.of<AuthApiService>(context, listen: false),
+        ),
+      )
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,21 +34,21 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MainScreen(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MainScreenState extends State<MainScreen> {
   bool isLoading = false;
 
   int _currentIndex = 0;
