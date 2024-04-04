@@ -4,36 +4,34 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_otp_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:otp_text_field/otp_text_field.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({
+class ForgotPasswordOTPScreen extends StatelessWidget {
+  const ForgotPasswordOTPScreen({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return _ForgotPasswordScreenContent();
+    return _ForgotPasswordOTPScreenContent();
   }
 }
 
-class _ForgotPasswordScreenContent extends StatelessWidget {
+class _ForgotPasswordOTPScreenContent extends StatelessWidget {
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+  final OtpFieldController _otpController = OtpFieldController();
 
- void _sendEmail(BuildContext context) async {
-    // Timer(const Duration(seconds: 3), () {
+  void _verifyCode() async {
+    Timer(const Duration(seconds: 3), () {
+      print(_otpController.toString());
       _btnController.success();
-      Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) => const ForgotPasswordOTPScreen(),
-        ),
-      );
-      _btnController.reset();
-    // });
+    });
   }
 
   @override
@@ -49,14 +47,14 @@ class _ForgotPasswordScreenContent extends StatelessWidget {
               const Spacer(),
               const Padding(
                 padding: EdgeInsets.only(bottom: 16.0),
-                child: Icon(size: 64, CupertinoIcons.lock),
+                child: Icon(size: 64, CupertinoIcons.mail),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: SizedBox(
                   width: 350,
                   child: Text(
-                    "Forgot Password?",
+                    "Enter Verification Code",
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
@@ -73,7 +71,7 @@ class _ForgotPasswordScreenContent extends StatelessWidget {
                 child: SizedBox(
                   width: 350,
                   child: Text(
-                    "Enter your email address and we will send you a code to reset your password.",
+                    "We sent a code to your email address \nThis code will expire in 3 minutes.",
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -82,20 +80,20 @@ class _ForgotPasswordScreenContent extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: kIsWeb ? 420 : null,
+                width: kIsWeb ? 350 : null,
                 height: null,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    emailTextField,
+                    verifyCodeField(context),
                   ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
-                child: sendEmailButton(context),
+                child: verifyCodeButton(context),
               ),
-              signInRow(context),
+              resendCodeButton(context),
               const Spacer(),
               const Spacer(),
             ],
@@ -105,29 +103,37 @@ class _ForgotPasswordScreenContent extends StatelessWidget {
     );
   }
 
-  final Widget emailTextField = const TextField(
-    maxLines: 1,
-    decoration: InputDecoration(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
-      ),
-      label: Text("Email"),
-    ),
-  );
+  Widget verifyCodeField(BuildContext context) {
+    return OTPTextField(
+      controller: _otpController,
+      length: 4,
+      fieldWidth: 48,
+      style: const TextStyle(fontSize: 14),
+      textFieldAlignment: MainAxisAlignment.spaceAround,
+      fieldStyle: FieldStyle.box,
+      outlineBorderRadius: 8,
+      width: MediaQuery.of(context).size.width,
+      onChanged: (value) {
+        //
+      },
+      onCompleted: (pin) {
+        _btnController.start();
+        _verifyCode();
+      },
+    );
+  }
 
-  Widget sendEmailButton(BuildContext context) {
+  Widget verifyCodeButton(BuildContext context) {
     return RoundedLoadingButton(
       controller: _btnController,
-      onPressed: () => { _sendEmail(context) },
+      onPressed: _verifyCode,
       elevation: 0,
       width: kIsWeb ? 350 : 600,
       height: kIsWeb ? 56 : 40,
       loaderSize: 24,
       color: Theme.of(context).colorScheme.primary,
       child: Text(
-        "Send Code",
+        "Verify Code",
         style: Theme.of(context)
             .textTheme
             .labelLarge
@@ -136,28 +142,16 @@ class _ForgotPasswordScreenContent extends StatelessWidget {
     );
   }
 
-  Widget signInRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Text(
-          "Remember password?",
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: Theme.of(context).colorScheme.outline,
-              ),
-        ),
-        CupertinoButton(
-          child: Text("Sign In",
+  Widget resendCodeButton(BuildContext context) {
+    return CupertinoButton(
+        child: Text(
+          "Resend Code",
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
               ),
-          ),
-          onPressed: () => {
-            Navigator.pop(context),
-          }
-        )
-      ],
-    );
+        ),
+        onPressed: () => {
+              Navigator.pop(context),
+            });
   }
 }

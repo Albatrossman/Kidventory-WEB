@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen.dart';
+import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
 import 'package:kidventory_flutter/core/ui/util/MessageMixin.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -132,7 +135,14 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
           color: Theme.of(context).colorScheme.primary,
         ),
       ),
-      onPressed: () => _onSignIn(context),
+      onPressed: () => {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const ForgotPasswordScreen(),
+          ),
+        ),
+      },
     );
   }
 
@@ -149,7 +159,13 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
         ),
         CupertinoButton(
           child: const Text("Sign Up"),
-          onPressed: () => {},
+          onPressed: () => {
+            Navigator.push(
+              context,
+               CupertinoPageRoute(builder: 
+                (context) => const SignUpScreen())
+               )
+          },
         )
       ],
     );

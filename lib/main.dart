@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service_impl.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
+import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 28, 176, 245)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
