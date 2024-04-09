@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
-import 'package:kidventory_flutter/core/ui/util/MessageMixin.dart';
+import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
@@ -23,7 +23,8 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -43,66 +44,72 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 48.0),
-                child: Image.asset(
-                  "assets/images/logo.png",
-                  width: 100,
-                  height: 100,
-                ),
-              ),
-              SizedBox(
-                width: kIsWeb ? 420 : null,
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _emailController,
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8.0),
-                          ),
-                        ),
-                        label: Text("Email"),
-                      ),
+        child: SingleChildScrollView(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 48.0),
+                    child: Image.asset(
+                      "assets/images/logo.png",
+                      width: 100,
+                      height: 100,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextField(
-                        controller: _passwordController,
-                        maxLines: 1,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.0),
+                  ),
+                  SizedBox(
+                    width: kIsWeb ? 420 : null,
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _emailController,
+                          maxLines: 1,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8.0),
+                              ),
                             ),
+                            label: Text("Email"),
                           ),
-                          label: Text("Password"),
                         ),
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: TextField(
+                            controller: _passwordController,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                              ),
+                              label: Text("Password"),
+                            ),
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
+                    child: signInButton(context),
+                  ),
+                  forgotPasswordButton(context),
+                  const Spacer(),
+                  signUpRow(context)
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
-                child: signInButton(context),
-              ),
-              forgotPasswordButton(context),
-              const Spacer(),
-              signUpRow(context)
-            ],
+            ),
           ),
         ),
       ),
@@ -121,8 +128,8 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
       child: Text(
         "Sign In",
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
       ),
     );
   }
@@ -132,8 +139,8 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
       child: Text(
         "Forgot Password?",
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+              color: Theme.of(context).colorScheme.primary,
+            ),
       ),
       onPressed: () => {
         Navigator.push(
@@ -162,23 +169,26 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
           onPressed: () => {
             Navigator.push(
               context,
-               CupertinoPageRoute(builder: 
-                (context) => const SignUpScreen())
-               )
+              CupertinoPageRoute(
+                builder: (context) => const SignUpScreen(),
+              ),
+            )
           },
-        )
+        ),
       ],
     );
   }
 
   void _listener() {
     if (_viewModel.state.message != null) {
-      snackbar(_viewModel.state.message!);
+      // snackbar(_viewModel.state.message!);
     }
   }
 
   void _onSignIn(BuildContext context) async {
-    _viewModel.signIn(_emailController.text, _passwordController.text)
-        .whenComplete(() => _btnController.reset());
+    _viewModel
+        .signIn(_emailController.text, _passwordController.text)
+        .whenComplete(() => _btnController.reset())
+        .then((value) => Navigator.push(context, CupertinoPageRoute(builder: (context) => const MainScreen())));
   }
 }

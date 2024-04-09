@@ -36,5 +36,4 @@ class SignInScreenViewModel extends ChangeNotifier {
     _state = _state.copy(loading: loading, message: message);
     notifyListeners();
   }
-
 }

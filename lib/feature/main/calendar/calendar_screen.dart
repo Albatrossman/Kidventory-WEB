@@ -52,7 +52,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
       });
     }).catchError((error) {
       // Handle any errors here
-      print('Error fetching sessions: $error');
     });
   }
 
@@ -94,10 +93,10 @@ Future<List<Session>> fetchSessions(DateTime start, DateTime end) async {
   String endDate = end.toUtc().toIso8601String();
 
   final response = await http.get(
-      Uri.parse('https://dev-kidsapi.softballforce.com/api/parent/getUserEventsSessionBetweenDays')
+      Uri.parse('https://kidventory.aftersearch.com/api/parent/getUserEventsSessionBetweenDays')
           .replace(queryParameters: {'startDate': startDate, 'endDate': endDate}),
       headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzA4NDcxMzkzLCJleHAiOjE3MDkzMzUzOTIsImlhdCI6MTcwODQ3MTM5MywiaXNzIjoiaHR0cHM6Ly9kZXYta2lkc2lkZW50aXR5LnNvZnRiYWxsZm9yY2UuY29tIiwiYXVkIjoiQjBiNWU4ZHl5cEpBZDVZOEJhSDhFWmxJVmpaMS9Hc2VXN3NHQ2RDSGhKTT0ifQ.SkLmZSfj315l8elCe0y4r0tLFww_kMqt07V9kz510kQ',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
         'Content-Type': 'application/json',
       },
   );

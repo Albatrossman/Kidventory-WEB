@@ -1,12 +1,7 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_otp_screen.dart';
-import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
@@ -21,11 +16,9 @@ class ForgotPasswordScreen extends StatelessWidget {
 }
 
 class _ForgotPasswordScreenContent extends StatelessWidget {
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
  void _sendEmail(BuildContext context) async {
-    // Timer(const Duration(seconds: 3), () {
       _btnController.success();
       Navigator.of(context).push(
         CupertinoPageRoute(
@@ -33,7 +26,6 @@ class _ForgotPasswordScreenContent extends StatelessWidget {
         ),
       );
       _btnController.reset();
-    // });
   }
 
   @override
@@ -144,19 +136,20 @@ class _ForgotPasswordScreenContent extends StatelessWidget {
         Text(
           "Remember password?",
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+            color: Theme.of(context).colorScheme.outline,
+          ),
         ),
         CupertinoButton(
-          child: Text("Sign In",
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+          child: Text(
+            "Sign In",
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           onPressed: () => {
             Navigator.pop(context),
-          }
-        )
+          },
+        ),
       ],
     );
   }

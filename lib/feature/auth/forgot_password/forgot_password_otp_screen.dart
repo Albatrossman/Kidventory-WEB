@@ -1,12 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:otp_text_field/otp_text_field.dart';
@@ -23,13 +19,11 @@ class ForgotPasswordOTPScreen extends StatelessWidget {
 }
 
 class _ForgotPasswordOTPScreenContent extends StatelessWidget {
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   final OtpFieldController _otpController = OtpFieldController();
 
   void _verifyCode() async {
     Timer(const Duration(seconds: 3), () {
-      print(_otpController.toString());
       _btnController.success();
     });
   }
