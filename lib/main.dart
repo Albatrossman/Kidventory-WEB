@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service_impl.dart';
-import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -19,6 +20,9 @@ void main() {
         create: (context) => SignUpScreenViewModel(
           Provider.of<AuthApiService>(context, listen: false),
         ),
+      ),
+      ChangeNotifierProvider<EditEventScreenViewModel>(
+        create: (context) => EditEventScreenViewModel(),
       )
     ],
     child: const MyApp(),
@@ -57,8 +61,10 @@ class _AppScreenState extends State<AppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const SignInScreen();
+    return const MainScreen();
     // MainScreen();
+    // ChangePasswordScreen();
+    // SignInScreen();
     // ProfileScreen();
   }
 }

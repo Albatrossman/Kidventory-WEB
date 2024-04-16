@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
+import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
+import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onManageEventsClick;
@@ -20,7 +22,7 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
   bool isLoading = false;
   List<Session> upcomingSessions = [];
 
@@ -130,9 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          // Handle manage events click
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -162,8 +162,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () {},
+                      child: InkWell(
+                        onTap: () { push(const EditEventScreen()); },
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(

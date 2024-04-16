@@ -27,7 +27,7 @@ extension DateTimeFormatting on DateTime {
     return DateTime(newYear, newMonth, newDay);
   }
 
-  DateTime get firstDayOfMonth {
-    return DateTime(year, month, 1);
-  }
+  DateTime get firstDayOfMonth => DateTime(year, month, 1);
+
+  DateTime get atStartOfDay => DateTime(year, month, day);
 }

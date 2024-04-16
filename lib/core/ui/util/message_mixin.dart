@@ -10,7 +10,7 @@ mixin MessageMixin<T extends StatefulWidget> on State<T> {
 
   Future<void> dialog(Widget title, Widget child, List<Widget> actions) async {
     return showDialog<void>(
-      context: context, // This context is from the State<T> class.
+      context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: title,

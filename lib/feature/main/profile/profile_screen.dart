@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/component/option.dart';
 import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
+import 'package:kidventory_flutter/feature/main/change_password/change_password_screen.dart';
+import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,7 +15,8 @@ class ProfileScreen extends StatefulWidget {
   }
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with MessageMixin {
+class _ProfileScreenState extends State<ProfileScreen>
+    with MessageMixin, NavigationMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,8 +160,8 @@ class _ProfileScreenState extends State<ProfileScreen> with MessageMixin {
                             radius: 96.0,
                             backgroundColor: Colors.lightGreen,
                             child: Image(
-                                image: NetworkImage(
-                                    "https://i.pravatar.cc/150?img=21")),
+                                image: NetworkImage("https://i.pravatar.cc/150?img=21"),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8.0),
@@ -246,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> with MessageMixin {
                     child: SizedBox(
                       width: double.infinity,
                       child: FilledButton(
-                        onPressed: () => {},
+                        onPressed: () => push(const EditChildScreen()),
                         child: const Text("Add New Child"),
                       ),
                     ),
@@ -268,84 +273,38 @@ class _ProfileScreenState extends State<ProfileScreen> with MessageMixin {
               padding: const EdgeInsets.only(top: 8.0),
               child: Column(
                 children: [
-                  InkWell(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(4.0),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8.0),
-                              ),
-                            ),
-                            child: Icon(
-                              CupertinoIcons.lock_fill,
-                              size: 20,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            "Change Password",
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          const Spacer(),
-                          Icon(
-                            CupertinoIcons.forward,
-                            color: Theme.of(context).colorScheme.outline,
-                          )
-                        ],
-                      ),
-                    ),
-                    onTap: () => {},
+                  Option(
+                    icon: CupertinoIcons.lock_fill,
+                    iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                    label: 'Change Password',
+                    onTap: () => push(const ChangePasswordScreen()),
+                    trailing: const Icon(CupertinoIcons.forward),
                   ),
-                  InkWell(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(4.0),
-                            decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).colorScheme.errorContainer,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8.0),
-                              ),
-                            ),
-                            child: Icon(
-                              CupertinoIcons.arrow_left_circle_fill,
-                              size: 20,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onErrorContainer,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            "Sign Out",
-                            style: Theme.of(context).textTheme.labelMedium,
-                          )
-                        ],
-                      ),
-                    ),
+                  Option(
+                    icon: CupertinoIcons.arrow_left_circle_fill,
+                    iconBackgroundColor:
+                        Theme.of(context).colorScheme.errorContainer,
+                    iconColor: Theme.of(context).colorScheme.onErrorContainer,
+                    label: 'Sign Out',
                     onTap: () => {
                       dialog(
                         const Text("Sign Out"),
                         const Text("Are you sure you want to sign out? You will need to sign in again to access your account."),
                         [
-                          CupertinoDialogAction(isDefaultAction: true,onPressed: () => { Navigator.pop(context) }, child: const Text("No")),
-                          CupertinoDialogAction(isDestructiveAction: true, onPressed: () => { Navigator.pop(context) }, child: const Text("Yes")),
+                          CupertinoDialogAction(
+                            isDefaultAction: true,
+                            onPressed: () => {Navigator.pop(context)},
+                            child: const Text("No"),
+                          ),
+                          CupertinoDialogAction(
+                            isDestructiveAction: true,
+                            onPressed: () => {Navigator.pop(context)},
+                            child: const Text("Yes"),
+                          ),
                         ],
-                      )
-                    },
+                      ),
+                    }
                   ),
                 ],
               ),

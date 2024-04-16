@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
 import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
@@ -18,13 +19,12 @@ class SignInScreen extends StatefulWidget {
   }
 }
 
-class _SignInScreenState extends State<SignInScreen> with MessageMixin {
+class _SignInScreenState extends State<SignInScreen> with MessageMixin, NavigationMixin {
   late final SignInScreenViewModel _viewModel;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -78,6 +78,9 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
                             ),
                             label: Text("Email"),
                           ),
+                          keyboardType: TextInputType.emailAddress,
+                          textCapitalization: TextCapitalization.none,
+                          autocorrect: false,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0),
@@ -92,6 +95,8 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
                               ),
                               label: Text("Password"),
                             ),
+                            keyboardType: TextInputType.visiblePassword,
+                            textCapitalization: TextCapitalization.none,
                             obscureText: true,
                             enableSuggestions: false,
                             autocorrect: false,
@@ -189,6 +194,6 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin {
     _viewModel
         .signIn(_emailController.text, _passwordController.text)
         .whenComplete(() => _btnController.reset())
-        .then((value) => Navigator.push(context, CupertinoPageRoute(builder: (context) => const MainScreen())));
+        .then((value) => pushAndClear(const MainScreen()));
   }
 }
