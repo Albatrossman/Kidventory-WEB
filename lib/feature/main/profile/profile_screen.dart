@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/ui/component/option.dart';
 import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
@@ -160,7 +161,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                             radius: 96.0,
                             backgroundColor: Colors.lightGreen,
                             child: Image(
-                                image: NetworkImage("https://i.pravatar.cc/150?img=21"),
+                              image: NetworkImage(
+                                  "https://i.pravatar.cc/150?img=21"),
                             ),
                           ),
                         ),
@@ -246,16 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: () => push(const EditChildScreen()),
-                        child: const Text("Add New Child"),
-                      ),
-                    ),
-                  ),
+                  addChildButton(context),
                 ],
               ),
             ),
@@ -273,39 +266,8 @@ class _ProfileScreenState extends State<ProfileScreen>
               padding: const EdgeInsets.only(top: 8.0),
               child: Column(
                 children: [
-                  Option(
-                    icon: CupertinoIcons.lock_fill,
-                    iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
-                    label: 'Change Password',
-                    onTap: () => push(const ChangePasswordScreen()),
-                    trailing: const Icon(CupertinoIcons.forward),
-                  ),
-                  Option(
-                    icon: CupertinoIcons.arrow_left_circle_fill,
-                    iconBackgroundColor:
-                        Theme.of(context).colorScheme.errorContainer,
-                    iconColor: Theme.of(context).colorScheme.onErrorContainer,
-                    label: 'Sign Out',
-                    onTap: () => {
-                      dialog(
-                        const Text("Sign Out"),
-                        const Text("Are you sure you want to sign out? You will need to sign in again to access your account."),
-                        [
-                          CupertinoDialogAction(
-                            isDefaultAction: true,
-                            onPressed: () => {Navigator.pop(context)},
-                            child: const Text("No"),
-                          ),
-                          CupertinoDialogAction(
-                            isDestructiveAction: true,
-                            onPressed: () => {Navigator.pop(context)},
-                            child: const Text("Yes"),
-                          ),
-                        ],
-                      ),
-                    }
-                  ),
+                  changePasswordButton(context),
+                  signOutButton(context),
                 ],
               ),
             ),
@@ -313,5 +275,57 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
       ),
     );
+  }
+
+  Widget addChildButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 40,
+        child: FilledButton(
+          onPressed: () => push(const EditChildScreen()),
+          child: const Text("Add New Child"),
+        ),
+      ),
+    );
+  }
+
+  Widget changePasswordButton(BuildContext context) {
+    return Option(
+      icon: CupertinoIcons.lock_fill,
+      iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      label: 'Change Password',
+      onTap: () => push(const ChangePasswordScreen()),
+      trailing: const Icon(CupertinoIcons.forward),
+    );
+  }
+
+  Widget signOutButton(BuildContext context) {
+    return Option(
+        icon: CupertinoIcons.arrow_left_circle_fill,
+        iconBackgroundColor: Theme.of(context).colorScheme.errorContainer,
+        iconColor: Theme.of(context).colorScheme.onErrorContainer,
+        label: 'Sign Out',
+        onTap: () => {
+              dialog(
+                const Text("Sign Out"),
+                const Text(
+                    "Are you sure you want to sign out? You will need to sign in again to access your account."),
+                [
+                  CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () => {Navigator.pop(context)},
+                    child: const Text("No"),
+                  ),
+                  CupertinoDialogAction(
+                    isDestructiveAction: true,
+                    onPressed: () => {Navigator.pop(context)},
+                    child: const Text("Yes"),
+                  ),
+                ],
+              ),
+            });
   }
 }
