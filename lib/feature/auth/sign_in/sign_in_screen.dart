@@ -194,6 +194,10 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin, Navigati
     _viewModel
         .signIn(_emailController.text, _passwordController.text)
         .whenComplete(() => _btnController.reset())
+<<<<<<< Updated upstream
         .then((value) => pushAndClear(const MainScreen()));
+=======
+        .then((value) => Navigator.push(context, CupertinoPageRoute(barrierDismissible: true, fullscreenDialog: true, builder: (context) => const MainScreen())));
+>>>>>>> Stashed changes
   }
 }
