@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
@@ -14,11 +15,14 @@ class ChangePasswordScreen extends StatefulWidget {
   }
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> with MessageMixin, NavigationMixin {
+class _ChangePasswordScreenState extends State<ChangePasswordScreen>
+    with MessageMixin, NavigationMixin {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _newPasswordConfirmationController = TextEditingController();
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final TextEditingController _newPasswordConfirmationController =
+      TextEditingController();
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,83 +39,107 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> with Messag
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
+            mainAxisAlignment: kIsWeb ? MainAxisAlignment.center : MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: TextField(
-                  controller: _passwordController,
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
+              SizedBox(
+                width: kIsWeb ? 420 : null,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: currentPasswordField(context),
                     ),
-                    label: Text("Current Password"),
-                  ),
-                  keyboardType: TextInputType.visiblePassword,
-                  textCapitalization: TextCapitalization.none,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: newPasswordField(context),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: confirmNewPasswordField(context),
+                    ),
+                  ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 32.0),
-                child: TextField(
-                  controller: _newPasswordController,
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                    ),
-                    label: Text("New Password"),
-                  ),
-                  keyboardType: TextInputType.visiblePassword,
-                  textCapitalization: TextCapitalization.none,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: TextField(
-                  controller: _newPasswordConfirmationController,
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                    ),
-                    label: Text("Confirm New Password"),
-                  ),
-                  keyboardType: TextInputType.visiblePassword,
-                  textCapitalization: TextCapitalization.none,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0),
-                child: AppButton(
-                  controller: _btnController,
-                  onPressed: () => {},
-                  child: Text(
-                    'Save',
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
+                child: savePasswordButton(context),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget currentPasswordField(BuildContext context) {
+    return TextField(
+      controller: _passwordController,
+      maxLines: 1,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+        ),
+        label: Text("Current Password"),
+      ),
+      keyboardType: TextInputType.visiblePassword,
+      textCapitalization: TextCapitalization.none,
+      obscureText: true,
+      enableSuggestions: false,
+      autocorrect: false,
+    );
+  }
+
+  Widget newPasswordField(BuildContext context) {
+    return TextField(
+      controller: _newPasswordController,
+      maxLines: 1,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+        ),
+        label: Text("New Password"),
+      ),
+      keyboardType: TextInputType.visiblePassword,
+      textCapitalization: TextCapitalization.none,
+      obscureText: true,
+      enableSuggestions: false,
+      autocorrect: false,
+    );
+  }
+
+  Widget confirmNewPasswordField(BuildContext context) {
+    return TextField(
+      controller: _newPasswordConfirmationController,
+      maxLines: 1,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+        ),
+        label: Text("Confirm New Password"),
+      ),
+      keyboardType: TextInputType.visiblePassword,
+      textCapitalization: TextCapitalization.none,
+      obscureText: true,
+      enableSuggestions: false,
+      autocorrect: false,
+    );
+  }
+
+  Widget savePasswordButton(BuildContext context) {
+    return AppButton(
+      controller: _btnController,
+      onPressed: () => {},
+      child: Text(
+        'Save',
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
       ),
     );
   }
