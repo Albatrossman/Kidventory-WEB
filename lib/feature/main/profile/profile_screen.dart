@@ -22,202 +22,174 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Container(
-                    width: 56.0,
-                    height: 56.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                        width: 1.0,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: AccountButton(context),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                child: Text(
+                  "Children",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
                       ),
-                      image: const DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage("https://i.pravatar.cc/150?img=3"),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    childRow(context),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                            width: 1.0,
+                          ),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8.0))),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 56.0,
+                            height: 56.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
+                                width: 1.0,
+                              ),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: const CircleAvatar(
+                              radius: 96.0,
+                              backgroundColor: Colors.lightGreen,
+                              child: Image(
+                                image: NetworkImage(
+                                    "https://i.pravatar.cc/150?img=21"),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Alex Johnson",
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              Text(
+                                "12 Years old",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Icon(
+                            CupertinoIcons.forward,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Pouya Rezaei",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        "Abbasbavarsad@gmail.com",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-              child: Text(
-                "Children",
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
+                    const SizedBox(
+                      height: 8.0,
                     ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  childRow(context),
-                  const SizedBox(
-                    height: 8.0,
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
-                    decoration: BoxDecoration(
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
+                      decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                         border: Border.all(
                           color: Theme.of(context).colorScheme.outlineVariant,
                           width: 1.0,
                         ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8.0))),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 56.0,
-                          height: 56.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color:
-                                  Theme.of(context).colorScheme.outlineVariant,
-                              width: 1.0,
-                            ),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: const CircleAvatar(
-                            radius: 96.0,
-                            backgroundColor: Colors.lightGreen,
-                            child: Image(
-                              image: NetworkImage(
-                                  "https://i.pravatar.cc/150?img=21"),
-                            ),
-                          ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8.0),
                         ),
-                        const SizedBox(width: 8.0),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Alex Johnson",
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            Text(
-                              "12 Years old",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Icon(
-                          CupertinoIcons.forward,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 8.0,
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                        width: 1.0,
                       ),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(8.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 56.0,
+                            height: 56.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
+                                width: 1.0,
+                              ),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: const CircleAvatar(
+                              radius: 96.0,
+                              backgroundColor: Colors.lightGreen,
+                              child: Image(
+                                  image: NetworkImage(
+                                      "https://i.pravatar.cc/150?img=16")),
+                            ),
+                          ),
+                          const SizedBox(width: 8.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Olivia Johnson",
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              Text(
+                                "8 Years old",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Icon(
+                            CupertinoIcons.forward,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 56.0,
-                          height: 56.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color:
-                                  Theme.of(context).colorScheme.outlineVariant,
-                              width: 1.0,
-                            ),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: const CircleAvatar(
-                            radius: 96.0,
-                            backgroundColor: Colors.lightGreen,
-                            child: Image(
-                                image: NetworkImage(
-                                    "https://i.pravatar.cc/150?img=16")),
-                          ),
-                        ),
-                        const SizedBox(width: 8.0),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Olivia Johnson",
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            Text(
-                              "8 Years old",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Icon(
-                          CupertinoIcons.forward,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ],
-                    ),
-                  ),
-                  addChildButton(context),
-                ],
+                    addChildButton(context),
+                  ],
+                ),
               ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Text(
-                "Account".toUpperCase(),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: Text(
+                  "Account".toUpperCase(),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Column(
-                children: [
-                  changePasswordButton(context),
-                  signOutButton(context),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Column(
+                  children: [
+                    changePasswordButton(context),
+                    signOutButton(context),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -275,6 +247,42 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget AccountButton(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 56.0,
+          height: 56.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+              width: 1.0,
+            ),
+            image: const DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage("https://i.pravatar.cc/150?img=3"),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8.0),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Pouya Rezaei",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              "Abbasbavarsad@gmail.com",
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ],
     );
   }
 

@@ -38,8 +38,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
     });
     try {
       upcomingSessions = await fetchSessions();
-    } catch (e) {
-    }
+    } catch (e) {}
     setState(() {
       isLoading = false;
     });
@@ -47,153 +46,173 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               children: [
-                Container(
-                  width: 56.0,
-                  height: 56.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                      width: 1.0,
-                    ),
-                    image: const DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage("https://i.pravatar.cc/150?img=3"),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "greeting",
-                            style: Theme.of(context).textTheme.labelSmall,
-                          ),
-                          const SizedBox(width: 4.0),
-                          Text(
-                            "Pouya Rezaei",
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
-                      ),
-                      Text(
-                        "21 Feb, 2024",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32.0),
-            Column(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Upcoming Events",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Column(
-                      children: List.generate(3, (index) {
-                        if (isLoading) {
-                          return Container(
-                            width: double.infinity,
-                            height: 88,
-                            color: Colors.grey.shade300,
-                          );
-                        } else {
-                          return SessionCard(
-                            session: upcomingSessions[index],
-                            onClick: () {},
-                          );
-                        }
-                      }),
-                    ),
-                  ],
-                ),
+                greetingsWidget(context),
                 const SizedBox(height: 32.0),
-                Row(
+                Column(
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            children: [
-                              const Icon(CupertinoIcons.square_list),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  'Manage Events',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium,
-                                ),
-                              ),
-                              Text(
-                                '3 events',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () { push(const EditEventScreen()); },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            children: [
-                              const Icon(CupertinoIcons.add),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  'Create Event',
-                                  style: Theme.of(context).textTheme.labelMedium,
-                                ),
-                              ),
-                              Text(
-                                'Create a new event',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    upcomingEvents(context),
+                    const SizedBox(height: 32.0),
+                    Row(
+                      children: [
+                        manageEventsButton(context),
+                        const SizedBox(width: 16),
+                        createEventButton(context),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget greetingsWidget(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 56.0,
+          height: 56.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+              width: 1.0,
+            ),
+            image: const DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage("https://i.pravatar.cc/150?img=3"),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8.0),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "greeting",
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                  const SizedBox(width: 4.0),
+                  Text(
+                    "Pouya Rezaei",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+              Text(
+                "21 Feb, 2024",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget upcomingEvents(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Upcoming Events",
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+        const SizedBox(height: 16.0),
+        Column(
+          children: List.generate(3, (index) {
+            if (isLoading) {
+              return Container(
+                width: double.infinity,
+                height: 88,
+                color: Colors.grey.shade300,
+              );
+            } else {
+              return SessionCard(
+                session: upcomingSessions[index],
+                onClick: () {},
+              );
+            }
+          }),
+        ),
+      ],
+    );
+  }
+
+  Widget manageEventsButton(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {},
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            children: [
+              const Icon(CupertinoIcons.square_list),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Manage Events',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ),
+              Text(
+                '3 events',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget createEventButton(BuildContext context) {
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          push(const EditEventScreen());
+        },
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            children: [
+              const Icon(CupertinoIcons.add),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Create Event',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ),
+              Text(
+                'Create a new event',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -204,9 +223,12 @@ Future<List<Session>> fetchSessions() async {
   String now = DateTime.now().toUtc().toIso8601String();
 
   final response = await http.get(
-    Uri.parse('https://kidventory.aftersearch.com/api/parent/getUpcomingSessions').replace(queryParameters: {'datetime': now}),
+    Uri.parse(
+            'https://kidventory.aftersearch.com/api/parent/getUpcomingSessions')
+        .replace(queryParameters: {'datetime': now}),
     headers: {
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
       'Content-Type': 'application/json',
     },
   );

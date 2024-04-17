@@ -36,35 +36,41 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: kIsWeb ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: kIsWeb ? 420 : null,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: currentPasswordField(context),
+        child: Center(
+          heightFactor: kIsWeb ? null : 1.0,
+          child: SingleChildScrollView(
+            clipBehavior: Clip.none,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: kIsWeb ? 420 : null,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: currentPasswordField(context),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: newPasswordField(context),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: confirmNewPasswordField(context),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: newPasswordField(context),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: confirmNewPasswordField(context),
-                    ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
+                    child: savePasswordButton(context),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0),
-                child: savePasswordButton(context),
-              ),
-            ],
+            ),
           ),
         ),
       ),
