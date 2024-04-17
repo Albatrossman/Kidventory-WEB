@@ -6,6 +6,7 @@ import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/change_password/change_password_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen.dart';
+import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: AccountButton(context),
+                child: accountButton(context),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
@@ -250,39 +251,48 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget AccountButton(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 56.0,
-          height: 56.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Theme.of(context).colorScheme.outlineVariant,
-              width: 1.0,
-            ),
-            image: const DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage("https://i.pravatar.cc/150?img=3"),
+  Widget accountButton(BuildContext context) {
+    return CupertinoButton(
+      padding: const EdgeInsets.only(right: 8.0),
+      onPressed: () => push(const EditProfileScreen()),
+      child: Row(
+        children: [
+          Container(
+            width: 56.0,
+            height: 56.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                width: 1.0,
+              ),
+              image: const DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage("https://i.pravatar.cc/150?img=3"),
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 8.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Pouya Rezaei",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
-              "Abbasbavarsad@gmail.com",
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-      ],
+          const SizedBox(width: 8.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Pouya Rezaei",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                "Abbasbavarsad@gmail.com",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+          Spacer(),
+          Icon(
+            CupertinoIcons.slider_horizontal_3,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+        ],
+      ),
     );
   }
 
