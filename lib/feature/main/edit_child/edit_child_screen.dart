@@ -229,11 +229,11 @@ class _EditChildScreenState extends State<EditChildScreen>
             ),
           ],
           cancelButton: CupertinoActionSheetAction(
-            child: Text("Cancel"),
             onPressed: () {
               Navigator.pop(context);
             },
             isDestructiveAction: true,
+            child: const Text("Cancel"),
           ),
         );
       },
@@ -251,14 +251,14 @@ class _EditChildScreenState extends State<EditChildScreen>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CupertinoButton(
-            child: Text('Cancel'),
             onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
           CupertinoButton(
-            child: Text('Done'),
             onPressed: () {
               Navigator.pop(context);
             },
+            child: const Text('Done'),
           ),
         ],
       ),
