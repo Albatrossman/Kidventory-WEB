@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/component/button.dart';
 
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
 import 'package:kidventory_flutter/core/ui/component/option.dart';
 import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class EditChildScreen extends StatefulWidget {
   const EditChildScreen({super.key});
@@ -17,9 +20,12 @@ class EditChildScreen extends StatefulWidget {
   }
 }
 
-class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, NavigationMixin {
+class _EditChildScreenState extends State<EditChildScreen>
+    with MessageMixin, NavigationMixin {
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,87 +38,138 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
         title: const Text('Edit Child'),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 16.0),
-              AppImagePicker(
-                onImageSelected: (File image) => {},
-                width: 100,
-                height: 100,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: TextField(
-                  controller: _firstnameController,
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
+      body: Center(
+        heightFactor: kIsWeb ? null : 1.0,
+        child: SingleChildScrollView(
+          clipBehavior: Clip.none,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16.0),
+                  AppImagePicker(
+                    onImageSelected: (File image) => {},
+                    width: 100,
+                    height: 100,
+                  ),
+                  SizedBox(
+                    width: kIsWeb ? 420 : null,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 32.0),
+                          child: firstNameField(context),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: lastNameField(context),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
+                              ),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12.0)),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Column(
+                              children: [
+                                birthdayOption(context),
+                                const Divider(height: 1.0, indent: 16.0),
+                                relationOption(context),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    label: Text("First Name"),
                   ),
-                  keyboardType: TextInputType.name,
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
+                    child: saveButton(context),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: TextField(
-                  controller: _lastnameController,
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                    ),
-                    label: Text("Last Name"),
-                  ),
-                  keyboardType: TextInputType.name,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    children: [
-                      Option(
-                        icon: CupertinoIcons.calendar_circle_fill,
-                        iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                        iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
-                        label: "Birthday",
-                        onTap: () => { _showDatePicker() },
-                        trailing: const Text("20/08/1997"),
-                      ),
-                      const Divider(height: 1.0, indent: 16.0),
-                      Option(
-                        icon: CupertinoIcons.person_alt_circle_fill,
-                        iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                        iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
-                        label: "Relation",
-                        onTap: () => { _showRelationPicker() },
-                        trailing: const Text("None"),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget firstNameField(BuildContext context) {
+    return TextField(
+      controller: _firstnameController,
+      maxLines: 1,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+        ),
+        label: Text("First Name"),
+      ),
+      keyboardType: TextInputType.name,
+    );
+  }
+
+  Widget lastNameField(BuildContext context) {
+    return TextField(
+      controller: _lastnameController,
+      maxLines: 1,
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+        ),
+        label: Text("Last Name"),
+      ),
+      keyboardType: TextInputType.name,
+    );
+  }
+
+  Widget birthdayOption(BuildContext context) {
+    return Option(
+      icon: CupertinoIcons.calendar_circle_fill,
+      iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      label: "Birthday",
+      onTap: () => {_showDatePicker()},
+      trailing: const Text("20/08/1997"),
+    );
+  }
+
+  Widget relationOption(BuildContext context) {
+    return Option(
+      icon: CupertinoIcons.person_alt_circle_fill,
+      iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      label: "Relation",
+      onTap: () => {_showRelationPicker()},
+      trailing: const Text("None"),
+    );
+  }
+
+  Widget saveButton(BuildContext context) {
+    return AppButton(
+      controller: _btnController,
+      child: Text(
+        "Save",
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+      ),
+      onPressed: () => {},
     );
   }
 
@@ -142,9 +199,7 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
           ),
         );
       },
-    ).then((_) {
-
-    });
+    ).then((_) {});
   }
 
   void _showRelationPicker() {
@@ -189,9 +244,9 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
     return Container(
       decoration: BoxDecoration(
           border: Border(
-              bottom: BorderSide(color: CupertinoColors.separator.resolveFrom(context), width: 0.0)
-          )
-      ),
+              bottom: BorderSide(
+                  color: CupertinoColors.separator.resolveFrom(context),
+                  width: 0.0))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -209,5 +264,4 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
       ),
     );
   }
-
 }
