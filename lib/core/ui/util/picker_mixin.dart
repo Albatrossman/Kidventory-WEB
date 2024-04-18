@@ -31,10 +31,10 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
                 },
               ),
             ),
-            CupertinoButton(
-              child: const Text('OK'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+            // CupertinoButton(
+            //   child: const Text('OK'),
+            //   onPressed: () => Navigator.of(context).pop(),
+            // ),
           ],
         ),
       ),

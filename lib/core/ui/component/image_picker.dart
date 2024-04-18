@@ -23,6 +23,7 @@ class AppImagePicker extends StatefulWidget {
 
 class _AppImagePickerState extends State<AppImagePicker> {
   late ImagePicker _picker;
+  File? _image;
 
   @override
   void initState() {
@@ -39,6 +40,9 @@ class _AppImagePickerState extends State<AppImagePicker> {
       );
 
       if (cropped != null) {
+        setState(() {
+          _image = File(cropped.path);
+        });
         widget.onImageSelected(File(cropped.path));
       }
     }
@@ -56,11 +60,16 @@ class _AppImagePickerState extends State<AppImagePicker> {
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(96),
           ),
-          child: Icon(
-            Icons.photo_size_select_actual,
-            size: widget.width / 3,
-            color: Colors.grey[400],
-          ),
+          child: _image == null
+              ? Icon(
+                  Icons.photo_size_select_actual,
+                  size: widget.width / 3,
+                  color: Colors.grey[400],
+                )
+              : FittedBox(
+                  fit: BoxFit.cover,
+                  child: Image.file(_image!),
+                ),
         ),
       ),
     );

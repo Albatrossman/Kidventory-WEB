@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
+import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/event_option.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
 import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
@@ -12,6 +13,7 @@ import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_vie
 import 'package:kidventory_flutter/feature/main/repeat/repeat_screen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class EditEventScreen extends StatefulWidget {
   const EditEventScreen({super.key});
@@ -24,6 +26,8 @@ class EditEventScreen extends StatefulWidget {
 
 class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, NavigationMixin, PickerMixin {
   late final EditEventScreenViewModel _viewModel;
+    final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   final TextEditingController _nameController = TextEditingController();
   String selectedOption = 'Does not repeat';
@@ -96,7 +100,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                     ),
                     EventOption(
                       leading: Icon(
-                        CupertinoIcons.calendar_circle,
+                        CupertinoIcons.calendar,
                         color: Theme.of(context).colorScheme.primary,
                         size: 20.0,
                       ),
@@ -112,6 +116,11 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                     EventOption(
                       label: 'Repeat',
                       onTap: () => {showOptions()},
+                      leading: Icon(
+                        CupertinoIcons.repeat,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 20.0,
+                      ),
                       trailing: Container(
                         width: 120,
                         height: 32.0,
@@ -130,6 +139,11 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                     const SizedBox(height: 4.0),
                     EventOption(
                       label: 'All day',
+                      leading: Icon(
+                        CupertinoIcons.sun_max,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 20.0,
+                      ),
                       onTap: () => {_viewModel.toggleAllDay()},
                       trailing: Consumer<EditEventScreenViewModel>(
                         builder: (_, viewModel, __) {
@@ -172,6 +186,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
               EventOption(
                 leading: Icon(
                   CupertinoIcons.person_crop_circle_badge_plus,
@@ -231,9 +246,24 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                   color: Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
+              const SizedBox(height: 32,),
+              saveButton(context),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget saveButton(BuildContext context) {
+    return AppButton(
+      controller: _btnController,
+      onPressed: () => {},
+      child: Text(
+        'Save',
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
       ),
     );
   }
