@@ -17,8 +17,7 @@ class ProfileScreen extends StatefulWidget {
   }
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with MessageMixin, NavigationMixin {
+class _ProfileScreenState extends State<ProfileScreen> with MessageMixin, NavigationMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

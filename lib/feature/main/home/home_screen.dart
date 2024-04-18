@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
 import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
+import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
+import 'package:kidventory_flutter/feature/main/events/events_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onManageEventsClick;
@@ -145,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
             } else {
               return SessionCard(
                 session: upcomingSessions[index],
-                onClick: () {},
+                onClick: () => push(const EventScreen()),
               );
             }
           }),
@@ -157,7 +159,9 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
   Widget manageEventsButton(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          push(const EventsScreen());
+        },
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(

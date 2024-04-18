@@ -1,0 +1,4 @@
+enum RepeatEnd {
+  onDate,
+  afterOccurrence;
+}

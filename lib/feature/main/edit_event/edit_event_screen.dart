@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/event_option.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
@@ -10,6 +9,8 @@ import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/picker_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/repeat/repeat_screen.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 class EditEventScreen extends StatefulWidget {
@@ -21,8 +22,7 @@ class EditEventScreen extends StatefulWidget {
   }
 }
 
-class _EditEventScreenState extends State<EditEventScreen>
-    with MessageMixin, NavigationMixin, PickerMixin {
+class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, NavigationMixin, PickerMixin {
   late final EditEventScreenViewModel _viewModel;
 
   final TextEditingController _nameController = TextEditingController();
@@ -40,7 +40,7 @@ class _EditEventScreenState extends State<EditEventScreen>
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => pop(),
-          icon: const Icon(CupertinoIcons.arrow_left),
+          icon: const Icon(CupertinoIcons.back),
         ),
         title: const Text('Create Event'),
         centerTitle: true,
@@ -145,7 +145,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                       child: Consumer<EditEventScreenViewModel>(
                         builder: (_, viewModel, __) {
                           return viewModel.state.allDay
-                              ? const SizedBox.shrink()
+                              ? const SizedBox(width: double.infinity, height: 0)
                               : Column(
                                   children: [
                                     const SizedBox(height: 4.0),
@@ -285,15 +285,12 @@ class _EditEventScreenState extends State<EditEventScreen>
   }
 
   void showCustomBottomSheet() {
-    showCupertinoModalPopup(
+    showCupertinoModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 250,
           color: Colors.white,
-          child: const Center(
-            child: Text("Custom repeat option"),
-          ),
+          child: const RepeatScreen(),
         );
       },
     );
