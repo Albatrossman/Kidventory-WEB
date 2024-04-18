@@ -19,7 +19,9 @@ mixin NavigationMixin<T extends StatefulWidget> on State<T> {
 
   void pushAndClear(Widget page, { bool fullscreenDialog = false }) {
     Navigator.of(context).pushAndRemoveUntil(
-      CupertinoPageRoute(fullscreenDialog: fullscreenDialog, builder: (context) => page),
+      CupertinoPageRoute(
+          fullscreenDialog: fullscreenDialog,
+          builder: (context) => page),
           (_) => false,
     );
   }

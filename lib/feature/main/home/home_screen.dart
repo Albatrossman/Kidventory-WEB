@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
 import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
+import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
+import 'package:kidventory_flutter/feature/main/events/events_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onManageEventsClick;
@@ -38,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
     });
     try {
       upcomingSessions = await fetchSessions();
-    } catch (e) {
-    }
+    } catch (e) {}
     setState(() {
       isLoading = false;
     });
@@ -105,8 +106,8 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                     Text(
                       "Upcoming Events",
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                     const SizedBox(height: 16.0),
                     Column(
@@ -120,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                         } else {
                           return SessionCard(
                             session: upcomingSessions[index],
-                            onClick: () {},
+                            onClick: () => push(const EventScreen()),
                           );
                         }
                       }),
@@ -132,7 +133,9 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          push(const EventsScreen());
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -146,9 +149,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
                                   'Manage Events',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium,
+                                  style: Theme.of(context).textTheme.labelMedium,
                                 ),
                               ),
                               Text(
@@ -163,7 +164,9 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                     const SizedBox(width: 16),
                     Expanded(
                       child: InkWell(
-                        onTap: () { push(const EditEventScreen()); },
+                        onTap: () {
+                          push(const EditEventScreen());
+                        },
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -204,9 +207,11 @@ Future<List<Session>> fetchSessions() async {
   String now = DateTime.now().toUtc().toIso8601String();
 
   final response = await http.get(
-    Uri.parse('https://kidventory.aftersearch.com/api/parent/getUpcomingSessions').replace(queryParameters: {'datetime': now}),
+    Uri.parse('https://kidventory.aftersearch.com/api/parent/getUpcomingSessions')
+        .replace(queryParameters: {'datetime': now}),
     headers: {
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
       'Content-Type': 'application/json',
     },
   );

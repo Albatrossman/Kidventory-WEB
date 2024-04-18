@@ -21,6 +21,13 @@ class _MainScreenState extends State<MainScreen> {
   late bool showNavigationDrawer = false;
   late bool showFullDrawer = false;
 
+  @override
+  Widget build(BuildContext context) {
+    return showNavigationDrawer
+        ? buildDrawerScaffold(context)
+        : buildBottomBarScaffold();
+  }
+
   void _openDrawer() {
     setState(() {
       showFullDrawer = !showFullDrawer;
@@ -145,13 +152,6 @@ class _MainScreenState extends State<MainScreen> {
     super.didChangeDependencies();
     showNavigationDrawer = MediaQuery.of(context).size.width >= 450;
     showFullDrawer = MediaQuery.of(context).size.width >= 650;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return showNavigationDrawer
-        ? buildDrawerScaffold(context)
-        : buildBottomBarScaffold();
   }
 }
 
