@@ -1,29 +1,21 @@
 
-class EditChildScreenState {
+class EditProfileScreenState {
   final String name;
   final String lastName;
-  final DateTime? birthday;
-  final String relation;
   final String? imageAddress;
 
-  EditChildScreenState(
+  EditProfileScreenState(
       {this.name = "",
       this.lastName = "",
-      this.birthday,
-      this.relation = "None",
       this.imageAddress});
 
-  EditChildScreenState copy(
+  EditProfileScreenState copy(
       {String? name,
       String? lastName,
-      DateTime? birthday,
-      String? relation,
       String? imageAddress}) {
-    return EditChildScreenState(
+    return EditProfileScreenState(
       name: name ?? this.name,
       lastName: lastName ?? this.lastName,
-      birthday: birthday ?? this.birthday,
-      relation: relation ?? this.relation,
       imageAddress: imageAddress ?? this.imageAddress,
     );
   }
