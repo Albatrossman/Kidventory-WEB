@@ -137,18 +137,41 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
         ),
         const SizedBox(height: 16.0),
         Column(
-          children: List.generate(3, (index) {
+          children: List.generate(
+              upcomingSessions.isEmpty ? 1 : upcomingSessions.length, (index) {
             if (isLoading) {
               return Container(
                 width: double.infinity,
-                height: 88,
-                color: Colors.grey.shade300,
+                height: 166,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                // child: const SizedBox(
+                //   width: 40,
+                //   height: 40,
+                //   child: CircularProgressIndicator(),
+                // ),
               );
             } else {
-              return SessionCard(
-                session: upcomingSessions[index],
-                onClick: () => push(const EventScreen()),
-              );
+              if (upcomingSessions.isEmpty) {
+                return Container(
+                  width: double.infinity,
+                  height: 160,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text("You have no upcoming events"),
+                );
+              } else {
+                return SessionCard(
+                  session: upcomingSessions[index],
+                  onClick: () => push(const EventScreen()),
+                );
+              }
             }
           }),
         ),
