@@ -6,12 +6,15 @@ import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/event_option.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/picker_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
+import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.dart';
+import 'package:kidventory_flutter/feature/main/color/color_screen.dart';
+import 'package:kidventory_flutter/feature/main/description/description_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/online_location/online_location_screen.dart';
 import 'package:kidventory_flutter/feature/main/repeat/repeat_screen.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
@@ -24,10 +27,10 @@ class EditEventScreen extends StatefulWidget {
   }
 }
 
-class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, NavigationMixin, PickerMixin {
+class _EditEventScreenState extends State<EditEventScreen>
+    with MessageMixin, NavigationMixin, PickerMixin {
   late final EditEventScreenViewModel _viewModel;
-    final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
   final TextEditingController _nameController = TextEditingController();
   String selectedOption = 'Does not repeat';
@@ -105,7 +108,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                         size: 20.0,
                       ),
                       label: selectedDate.formatDate(),
-                      onTap: () => datePicker(context, minDate: DateTime.now().atStartOfDay),
+                      onTap: () => datePicker(context, firstDate: DateTime.now().atStartOfDay),
                     ),
                     const SizedBox(height: 4.0),
                     const Divider(
@@ -175,7 +178,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                                         size: 20.0,
                                       ),
                                       label: '9:00 AM - 10:00 AM',
-                                      onTap: () => {},
+                                      onTap: () => { timePicker(context) },
                                     ),
                                   ],
                                 );
@@ -193,8 +196,8 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                   color: Theme.of(context).colorScheme.primary,
                   size: 20.0,
                 ),
-                label: 'Invite members',
-                onTap: () => {},
+                label: 'Add members',
+                onTap: () => pushSheet(const AddMembersScreen()),
                 trailing: Icon(
                   size: 20,
                   CupertinoIcons.chevron_up,
@@ -208,7 +211,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                   size: 20.0,
                 ),
                 label: 'Online location',
-                onTap: () => {},
+                onTap: () => pushSheet(const OnlineLocationScreen()),
                 trailing: Icon(
                   size: 20,
                   CupertinoIcons.chevron_up,
@@ -225,7 +228,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                       shape: BoxShape.circle),
                 ),
                 label: 'Color',
-                onTap: () => {},
+                onTap: () => pushSheet(const ColorScreen()),
                 trailing: Icon(
                   size: 20,
                   CupertinoIcons.chevron_up,
@@ -239,14 +242,16 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                   size: 20.0,
                 ),
                 label: 'Description',
-                onTap: () => {},
+                onTap: () => pushSheet(const DescriptionScreen()),
                 trailing: Icon(
                   size: 20,
                   CupertinoIcons.chevron_up,
                   color: Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
-              const SizedBox(height: 32,),
+              const SizedBox(
+                height: 32,
+              ),
               saveButton(context),
             ],
           ),
@@ -308,20 +313,8 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
         });
         Navigator.pop(context);
         if (isCustom) {
-          showCustomBottomSheet();
+          pushSheet(const RepeatScreen());
         }
-      },
-    );
-  }
-
-  void showCustomBottomSheet() {
-    showCupertinoModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          child: const RepeatScreen(),
-        );
       },
     );
   }

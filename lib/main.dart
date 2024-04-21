@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
+import 'package:kidventory_flutter/core/data/service/csv/participant_csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service_impl.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
@@ -11,6 +13,7 @@ void main() {
   runApp(MultiProvider(
     providers: [
       Provider<AuthApiService>(create: (_) => AuthApiServiceImpl()),
+      Provider<CSVParser>(create: (_) => ParticipantCSVParser()),
       ChangeNotifierProvider<SignInScreenViewModel>(
         create: (context) => SignInScreenViewModel(
           Provider.of<AuthApiService>(context, listen: false),
@@ -22,7 +25,9 @@ void main() {
         ),
       ),
       ChangeNotifierProvider<EditEventScreenViewModel>(
-        create: (context) => EditEventScreenViewModel(),
+        create: (context) => EditEventScreenViewModel(
+          Provider.of<CSVParser>(context, listen: false),
+        ),
       )
     ],
     child: const MyApp(),
@@ -57,7 +62,6 @@ class AppScreen extends StatefulWidget {
 
 class _AppScreenState extends State<AppScreen> {
   bool isLoading = false;
-
 
   @override
   Widget build(BuildContext context) {

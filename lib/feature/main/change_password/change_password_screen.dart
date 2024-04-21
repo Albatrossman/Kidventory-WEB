@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -15,8 +15,7 @@ class ChangePasswordScreen extends StatefulWidget {
   }
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen>
-    with MessageMixin, NavigationMixin {
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> with MessageMixin, NavigationMixin {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _newPasswordConfirmationController =
