@@ -24,17 +24,17 @@ class EditChildScreen extends StatefulWidget {
 
 class _EditChildScreenState extends State<EditChildScreen>
     with MessageMixin, NavigationMixin {
-        late final EditChildScreenViewModel _viewModel;
+  // late final EditChildScreenViewModel _viewModel;
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
 
-      @override
-  void initState() {
-    super.initState();
-    _viewModel = Provider.of<EditChildScreenViewModel>(context, listen: false);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _viewModel = Provider.of<EditChildScreenViewModel>(context, listen: false);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -183,32 +183,37 @@ class _EditChildScreenState extends State<EditChildScreen>
   }
 
   void _showDatePicker() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 260,
-          padding: const EdgeInsets.only(top: 6),
-          color: CupertinoColors.systemBackground.resolveFrom(context),
-          child: Column(
-            children: [
-              // Header with done button
-              _buildHeader(context),
-              // Date picker
-              Expanded(
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: DateTime.now(),
-                  onDateTimeChanged: (DateTime date) {},
-                  maximumDate: DateTime.now(),
-                  minimumDate: DateTime(1900),
+    if (kIsWeb) {
+      showDatePicker(context: context, firstDate: DateTime(1900), lastDate: DateTime.now())
+          .then((_) => {});
+    } else {
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 260,
+            padding: const EdgeInsets.only(top: 6),
+            color: CupertinoColors.systemBackground.resolveFrom(context),
+            child: Column(
+              children: [
+                // Header with done button
+                _buildHeader(context),
+                // Date picker
+                Expanded(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: DateTime.now(),
+                    onDateTimeChanged: (DateTime date) {},
+                    maximumDate: DateTime.now(),
+                    minimumDate: DateTime(1900),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    ).then((_) {});
+              ],
+            ),
+          );
+        },
+      ).then((_) {});
+    }
   }
 
   void _showRelationPicker() {
