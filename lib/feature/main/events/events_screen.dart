@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/event_card.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});

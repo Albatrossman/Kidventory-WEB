@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 mixin NavigationMixin<T extends StatefulWidget> on State<T> {
   void push(Widget page) {
@@ -23,6 +25,18 @@ mixin NavigationMixin<T extends StatefulWidget> on State<T> {
           fullscreenDialog: fullscreenDialog,
           builder: (context) => page),
           (_) => false,
+    );
+  }
+
+  void pushSheet(Widget page) {
+    showCupertinoModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: page,
+        );
+      },
     );
   }
 }

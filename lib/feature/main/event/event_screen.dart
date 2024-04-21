@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -80,7 +80,7 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
               child: SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: () => {},
+                  onPressed: () => pushSheet(const AttendanceScreen()),
                   child: const Text('Take Attendance'),
                 ),
               ),

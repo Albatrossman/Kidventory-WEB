@@ -4,13 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
-
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
 import 'package:kidventory_flutter/core/ui/component/option.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
-import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen_viewmodel.dart';
-import 'package:provider/provider.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class EditChildScreen extends StatefulWidget {
@@ -22,9 +19,7 @@ class EditChildScreen extends StatefulWidget {
   }
 }
 
-class _EditChildScreenState extends State<EditChildScreen>
-    with MessageMixin, NavigationMixin {
-  // late final EditChildScreenViewModel _viewModel;
+class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, NavigationMixin {
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final RoundedLoadingButtonController _btnController =

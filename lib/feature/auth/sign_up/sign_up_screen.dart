@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';

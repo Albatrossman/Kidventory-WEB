@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
 import 'package:kidventory_flutter/core/ui/component/weekday_picker.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/model/repeat_end.dart';
-import 'package:kidventory_flutter/core/ui/util/model/repeat_unit.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
-import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +23,6 @@ class RepeatScreen extends StatefulWidget {
 class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, NavigationMixin {
   final TextEditingController _occurrenceController = TextEditingController();
   late final EditEventScreenViewModel _viewModel;
-  RepeatUnit _selectedRepeatUnit = RepeatUnit.day;
   RepeatEnd _selectedRepeatEnd = RepeatEnd.onDate;
 
   @override

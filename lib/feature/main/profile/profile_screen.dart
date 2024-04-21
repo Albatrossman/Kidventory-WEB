@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/ui/component/option.dart';
-import 'package:kidventory_flutter/core/ui/util/message_mixin.dart';
-import 'package:kidventory_flutter/core/ui/util/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/change_password/change_password_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen.dart';
