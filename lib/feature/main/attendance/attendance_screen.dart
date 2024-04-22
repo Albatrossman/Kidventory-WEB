@@ -93,6 +93,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                   color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(48),
                   child: Column(
                     children: [
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           const SizedBox(width: 12.0),
@@ -106,7 +107,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                           const Expanded(child: SizedBox()),
                           CupertinoButton(
                             onPressed: () {},
-                            padding: EdgeInsets.zero,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               'Late',
                               style: Theme.of(context)
@@ -117,7 +118,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                           ),
                           CupertinoButton(
                             onPressed: () {},
-                            padding: EdgeInsets.zero,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               'Absent',
                               style: Theme.of(context)
@@ -128,7 +129,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                           ),
                           CupertinoButton(
                             onPressed: () {},
-                            padding: EdgeInsets.zero,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               'Present',
                               style: Theme.of(context)
@@ -139,7 +140,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                           ),
                         ],
                       ),
-                      const Divider(),
+                      const Divider(height: 4),
                     ],
                   ),
                 ),

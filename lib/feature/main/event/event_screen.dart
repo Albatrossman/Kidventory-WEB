@@ -1,8 +1,7 @@
-import 'dart:js';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
@@ -101,22 +100,38 @@ class _EventScreenState extends State<EventScreen>
 
   Widget eventHeader(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Image(
-          height: 100,
-          width: 100,
-          fit: BoxFit.fill,
-          image: NetworkImage(
-              'https://www.responsiveclassroom.org/wp-content/uploads/2016/04/DSC_2388-1024x682.jpg'),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: const Image(
+            height: 100,
+            width: 100,
+            fit: BoxFit.fill,
+            image: NetworkImage(
+                'https://www.responsiveclassroom.org/wp-content/uploads/2016/04/DSC_2388-1024x682.jpg'),
+          ),
         ),
         const SizedBox(
           width: 16,
         ),
-        Text(
-          'Event Name',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Event Name',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+            ),
+            Text(
+              'Event By Baroody Camps',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+            ),
+          ],
         ),
       ],
     );
@@ -125,7 +140,7 @@ class _EventScreenState extends State<EventScreen>
   Widget sessionOption(BuildContext context) {
     return Container(
       // width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         borderRadius: BorderRadius.circular(8),
@@ -134,7 +149,7 @@ class _EventScreenState extends State<EventScreen>
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Text(
@@ -151,10 +166,10 @@ class _EventScreenState extends State<EventScreen>
               ],
             ),
           ),
-          const Divider(),
+          const Divider(height: 4),
           CupertinoButton(
             onPressed: () => {},
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.all(16),
             child: Text(
               'Change Session',
               style: Theme.of(context)
@@ -170,7 +185,7 @@ class _EventScreenState extends State<EventScreen>
 
   Widget attendanceButton(BuildContext context) {
     return SizedBox(
-      height: kIsWeb ? 40 : 32,
+      height: kIsWeb ? 40 : 40,
       width: double.infinity,
       child: FilledButton(
         onPressed: () => pushSheet(const AttendanceScreen()),
