@@ -27,7 +27,13 @@ class _EventScreenState extends State<EventScreen>
     "test",
     "test",
     "test",
-    "test"
+    "test",
+    "test",
+    "test",
+    "test",
+    "test",
+    "test",
+    "test",
   ];
 
   @override
