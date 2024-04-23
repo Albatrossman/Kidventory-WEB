@@ -193,6 +193,7 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin, Navigati
   void _onSignIn(BuildContext context) async {
     _viewModel
         .signIn(_emailController.text, _passwordController.text)
+        .catchError((error) => { snackbar(error.toString()) })
         .whenComplete(() => _btnController.reset())
         .then((value) => pushAndClear(const MainScreen(), fullscreenDialog: true));
   }

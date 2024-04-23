@@ -21,6 +21,7 @@ class SignInScreenViewModel extends ChangeNotifier {
       _update(message: tokenDto.accessToken);
     } catch (exception) {
       _update(message: "Incorrect email or password.");
+      rethrow;
     } finally {
       _update(loading: false);
     }

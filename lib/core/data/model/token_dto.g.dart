@@ -7,13 +7,13 @@ part of 'token_dto.dart';
 // **************************************************************************
 
 TokenDto _$TokenDtoFromJson(Map<String, dynamic> json) => TokenDto(
-      accessToken: json['accessToken'] as String,
-      refreshToken: json['refreshToken'] as String,
+      accessToken: json['access_token'] as String,
+      refreshToken: json['refresh_token'] as String,
       userName: json['userName'] as String,
     );
 
 Map<String, dynamic> _$TokenDtoToJson(TokenDto instance) => <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
+      'access_token': instance.accessToken,
+      'refresh_token': instance.refreshToken,
       'userName': instance.userName,
     };

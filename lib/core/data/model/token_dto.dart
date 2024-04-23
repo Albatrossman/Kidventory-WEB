@@ -4,7 +4,9 @@ part 'token_dto.g.dart';
 
 @JsonSerializable()
 class TokenDto {
+  @JsonKey(name: "access_token")
   final String accessToken;
+  @JsonKey(name: "refresh_token")
   final String refreshToken;
   final String userName;
 

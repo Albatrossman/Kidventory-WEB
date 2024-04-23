@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const AppScreen(title: 'Flutter Demo Home Page'),
+      home: const AppScreen(title: 'Kidventory'),
     );
   }
 }
