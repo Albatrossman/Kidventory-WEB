@@ -14,6 +14,7 @@ import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/events/events_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:kidventory_flutter/main_viewmodel.dart';
@@ -51,6 +52,11 @@ void main() {
       ),
       ChangeNotifierProvider<HomeScreenViewModel>(
         create: (context) => HomeScreenViewModel(
+          Provider.of<UserApiService>(context, listen: false),
+        ),
+      ),
+      ChangeNotifierProvider<EventsScreenViewModel>(
+        create: (context) => EventsScreenViewModel(
           Provider.of<UserApiService>(context, listen: false),
         ),
       ),

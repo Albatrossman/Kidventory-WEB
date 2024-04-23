@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,7 +24,7 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Padding(padding: const EdgeInsets.only(bottom: 8), child: GestureDetector(
       onTap: onClick,
       onLongPress: onLongPress ?? onClick,
       onDoubleTap: onDoubleTap ?? onClick,
@@ -75,6 +76,7 @@ class EventCard extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const Icon(CupertinoIcons.chevron_right)
                   ],
                 ),
               ),
@@ -86,7 +88,7 @@ class EventCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),);
   }
 }
 
