@@ -32,7 +32,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void fetchAndUpdateSessions(DateTime start, DateTime end) {
-    if (_fetchedStartDate != null && _fetchedEndDate != null && start.compareTo(_fetchedStartDate!) >= 0 && end.compareTo(_fetchedEndDate!) <= 0) {
+    if (_fetchedStartDate != null &&
+        _fetchedEndDate != null &&
+        start.compareTo(_fetchedStartDate!) >= 0 &&
+        end.compareTo(_fetchedEndDate!) <= 0) {
       return;
     }
 
@@ -46,7 +49,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
             startTime: session.startDateTime,
             endTime: session.endDateTime,
             subject: session.title,
-            color: Colors.blue,  // Convert session.color to a Flutter Color if necessary
+            color: Colors
+                .blue, // Convert session.color to a Flutter Color if necessary
           );
         }).toList();
       });
@@ -57,33 +61,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Row(
-          children: [
-            Text("Calendar"),
-          ],
-        ),
-        Expanded(
-          child: SfCalendar(
-            allowedViews: const [
-              CalendarView.schedule,
-              CalendarView.day,
-              CalendarView.week,
-              CalendarView.month,
-            ],
-            viewNavigationMode: ViewNavigationMode.snap,
-            showTodayButton: true,
-            dataSource: AppointmentDataSource(_appointments),
-            onViewChanged: (ViewChangedDetails viewChangedDetails) {
-              // Fetch sessions based on the current view's date range
-              final DateTime visibleStart = viewChangedDetails.visibleDates.first;
-              final DateTime visibleEnd = viewChangedDetails.visibleDates.last;
-              fetchAndUpdateSessions(visibleStart, visibleEnd);
-            },
-          ),
-        )
-      ],
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: SfCalendar(
+              allowedViews: const [
+                CalendarView.schedule,
+                CalendarView.day,
+                CalendarView.week,
+                CalendarView.month,
+              ],
+              backgroundColor: Theme.of(context).colorScheme.background,
+              viewNavigationMode: ViewNavigationMode.snap,
+              showTodayButton: true,
+              dataSource: AppointmentDataSource(_appointments),
+              onViewChanged: (ViewChangedDetails viewChangedDetails) {
+                // Fetch sessions based on the current view's date range
+                final DateTime visibleStart =
+                    viewChangedDetails.visibleDates.first;
+                final DateTime visibleEnd =
+                    viewChangedDetails.visibleDates.last;
+                fetchAndUpdateSessions(visibleStart, visibleEnd);
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -93,17 +97,20 @@ Future<List<Session>> fetchSessions(DateTime start, DateTime end) async {
   String endDate = end.toUtc().toIso8601String();
 
   final response = await http.get(
-      Uri.parse('https://kidventory.aftersearch.com/api/parent/getUserEventsSessionBetweenDays')
-          .replace(queryParameters: {'startDate': startDate, 'endDate': endDate}),
-      headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
-        'Content-Type': 'application/json',
-      },
+    Uri.parse(
+            'https://kidventory.aftersearch.com/api/parent/getUserEventsSessionBetweenDays')
+        .replace(queryParameters: {'startDate': startDate, 'endDate': endDate}),
+    headers: {
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
+      'Content-Type': 'application/json',
+    },
   );
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> jsonResponse = json.decode(response.body);
-    final List<dynamic> results = jsonResponse['result']; // Accessing the 'result' field
+    final List<dynamic> results =
+        jsonResponse['result']; // Accessing the 'result' field
     return results.map((data) => Session.fromJson(data)).toList();
   } else {
     throw Exception('Failed to load sessions from API');

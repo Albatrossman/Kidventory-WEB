@@ -22,7 +22,7 @@ class ParticipantRow extends StatelessWidget {
         width: double.infinity,
         height: 48,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
