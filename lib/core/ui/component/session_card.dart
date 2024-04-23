@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 
 class SessionCard extends StatelessWidget {
-  final Session session;
+  final SessionDto session;
   final VoidCallback onClick;
   final VoidCallback? onLongPress;
   final VoidCallback? onDoubleTap;

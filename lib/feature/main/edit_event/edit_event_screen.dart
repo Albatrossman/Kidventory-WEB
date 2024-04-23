@@ -6,6 +6,7 @@ import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/event_option.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
+import 'package:kidventory_flutter/core/ui/util/extension/color_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
@@ -219,13 +220,17 @@ class _EditEventScreenState extends State<EditEventScreen>
                 ),
               ),
               EventOption(
-                leading: Container(
-                  height: 20.0,
-                  width: 20.0,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                      shape: BoxShape.circle),
+                leading: Consumer<EditEventScreenViewModel>(
+                  builder: (_, model, __) {
+                    return Container(
+                      height: 20.0,
+                      width: 20.0,
+                      decoration: BoxDecoration(
+                          color: model.state.color.value,
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                          shape: BoxShape.circle),
+                    );
+                  },
                 ),
                 label: 'Color',
                 onTap: () => pushSheet(const ColorScreen()),

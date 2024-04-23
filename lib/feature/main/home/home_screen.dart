@@ -7,6 +7,8 @@ import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen.dart';
+import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onManageEventsClick;
@@ -25,26 +27,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
-  bool isLoading = false;
-  List<Session> upcomingSessions = [];
+  // bool isLoading = false;
+  // List<Session> upcomingSessions = [];
+
 
   @override
   void initState() {
     super.initState();
-    loadSessions();
+    // loadSessions();
   }
 
-  void loadSessions() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      upcomingSessions = await fetchSessions();
-    } catch (e) {}
-    setState(() {
-      isLoading = false;
-    });
-  }
+  // void loadSessions() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   try {
+  //     upcomingSessions = await fetchSessions();
+  //   } catch (e) {}
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -136,44 +139,42 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
               ),
         ),
         const SizedBox(height: 16.0),
-        Column(
-          children: List.generate(
-              upcomingSessions.isEmpty ? 1 : upcomingSessions.length, (index) {
-            if (isLoading) {
-              return Container(
-                width: double.infinity,
-                height: 166,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                // child: const SizedBox(
-                //   width: 40,
-                //   height: 40,
-                //   child: CircularProgressIndicator(),
-                // ),
-              );
-            } else {
-              if (upcomingSessions.isEmpty) {
-                return Container(
-                  width: double.infinity,
-                  height: 160,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text("You have no upcoming events"),
-                );
-              } else {
-                return SessionCard(
-                  session: upcomingSessions[index],
-                  onClick: () => push(const EventScreen()),
-                );
-              }
-            }
-          }),
+        Consumer<HomeScreenViewModel>(
+          builder: (context, model, child) {
+            return Column(
+              children: List.generate(model.state.upcomingSessions.isEmpty ? 1 : model.state.upcomingSessions.length, (index) {
+                if (model.state.loading) {
+                  return Container(
+                    width: double.infinity,
+                    height: 166,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  );
+                } else {
+                  if (model.state.upcomingSessions.isEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      height: 160,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text("You have no upcoming events"),
+                    );
+                  } else {
+                    return SessionCard(
+                      session: model.state.upcomingSessions[index],
+                      onClick: () => push(const EventScreen()),
+                    );
+                  }
+                }
+              }),
+            );
+          },
         ),
       ],
     );
@@ -246,23 +247,23 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
   }
 }
 
-Future<List<Session>> fetchSessions() async {
-  String now = DateTime.now().toUtc().toIso8601String();
-
-  final response = await http.get(
-    Uri.parse('https://kidventory.aftersearch.com/api/parent/getUpcomingSessions')
-        .replace(queryParameters: {'datetime': now}),
-    headers: {
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEzNjE3NjA3LCJleHAiOjE3MTQ0ODE2MDcsImlhdCI6MTcxMzYxNzYwNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.Zcjp1lncQQ8kFTo2P0SpMf_VCar_RRSiTF9FQVniyJc',
-      'Content-Type': 'application/json',
-    },
-  );
-
-  if (response.statusCode == 200) {
-    List jsonResponse = json.decode(response.body);
-    return jsonResponse.map((session) => Session.fromJson(session)).toList();
-  } else {
-    throw Exception('Failed to load sessions from API');
-  }
-}
+// Future<List<Session>> fetchSessions() async {
+//   String now = DateTime.now().toUtc().toIso8601String();
+//
+//   final response = await http.get(
+//     Uri.parse('https://kidventory.aftersearch.com/api/parent/getUpcomingSessions')
+//         .replace(queryParameters: {'datetime': now}),
+//     headers: {
+//       'Authorization':
+//           'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEzNjE3NjA3LCJleHAiOjE3MTQ0ODE2MDcsImlhdCI6MTcxMzYxNzYwNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.Zcjp1lncQQ8kFTo2P0SpMf_VCar_RRSiTF9FQVniyJc',
+//       'Content-Type': 'application/json',
+//     },
+//   );
+//
+//   if (response.statusCode == 200) {
+//     List jsonResponse = json.decode(response.body);
+//     return jsonResponse.map((session) => Session.fromJson(session)).toList();
+//   } else {
+//     throw Exception('Failed to load sessions from API');
+//   }
+// }

@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:kidventory_flutter/core/data/mapper/token_mapper.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_state.dart';
 
 class SignInScreenViewModel extends ChangeNotifier {
   final AuthApiService _authApiService;
+  final TokenPreferencesManager _tokenPreferences;
 
-  SignInScreenViewModel(this._authApiService);
+  SignInScreenViewModel(this._authApiService, this._tokenPreferences);
 
   SignInScreenState _state = SignInScreenState();
   SignInScreenState get state => _state;
@@ -14,11 +17,8 @@ class SignInScreenViewModel extends ChangeNotifier {
     _update(loading: true);
     try {
       final tokenDto = await _authApiService.signIn(email, password);
-      if (tokenDto.statusCode == 200) {
-        _update(message: tokenDto.accessToken);
-      } else {
-        _update(message: "Incorrect email or password.");
-      }
+      _tokenPreferences.saveToken(tokenDto.toDomain());
+      _update(message: tokenDto.accessToken);
     } catch (exception) {
       _update(message: "Incorrect email or password.");
     } finally {

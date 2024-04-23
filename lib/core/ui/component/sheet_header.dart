@@ -5,13 +5,13 @@ import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 class SheetHeader extends StatelessWidget {
   final Widget? leading;
   final Widget title;
-  final Widget trailing;
+  final Widget? trailing;
 
   const SheetHeader({
     super.key,
     this.leading,
     required this.title,
-    required this.trailing,
+    this.trailing,
   });
 
   @override
@@ -31,7 +31,7 @@ class SheetHeader extends StatelessWidget {
                     child: const Icon(CupertinoIcons.xmark_circle),
                   ),
                   title,
-                  trailing,
+                  trailing ?? const SizedBox.shrink(),
                 ],
               ),
             ),

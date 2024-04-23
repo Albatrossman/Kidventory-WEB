@@ -1,27 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/csv/participant_csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service_impl.dart';
+import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/http/user_api_service_impl.dart';
+import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
+import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager_impl.dart';
+import 'package:kidventory_flutter/core/data/util/dio_client.dart';
+import 'package:kidventory_flutter/di/app_,module.dart';
+import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
+import 'package:kidventory_flutter/main_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setup();
   runApp(MultiProvider(
     providers: [
+      Provider<FlutterSecureStorage>(create: (_) => const FlutterSecureStorage()),
       Provider<AuthApiService>(create: (_) => AuthApiServiceImpl()),
+      Provider<UserApiService>(create: (_) => UserApiServiceImpl(getIt<DioClient>())),
       Provider<CSVParser>(create: (_) => ParticipantCSVParser()),
+      Provider<TokenPreferencesManager>(
+        create: (context) => TokenPreferencesManagerImpl(
+          storage: Provider.of<FlutterSecureStorage>(context, listen: false),
+        ),
+      ),
+      ChangeNotifierProvider<MainViewModel>(
+        create: (context) => MainViewModel(
+          Provider.of<TokenPreferencesManager>(context, listen: false)
+        ),
+      ),
       ChangeNotifierProvider<SignInScreenViewModel>(
         create: (context) => SignInScreenViewModel(
           Provider.of<AuthApiService>(context, listen: false),
+          Provider.of<TokenPreferencesManager>(context, listen: false),
         ),
       ),
       ChangeNotifierProvider<SignUpScreenViewModel>(
         create: (context) => SignUpScreenViewModel(
           Provider.of<AuthApiService>(context, listen: false),
+        ),
+      ),
+      ChangeNotifierProvider<HomeScreenViewModel>(
+        create: (context) => HomeScreenViewModel(
+          Provider.of<UserApiService>(context, listen: false),
         ),
       ),
       ChangeNotifierProvider<EditEventScreenViewModel>(
@@ -65,11 +95,16 @@ class _AppScreenState extends State<AppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const MainScreen();
-    // RepeatScreen();
-    // MainScreen();
-    // ChangePasswordScreen();
-    // SignInScreen();
-    // ProfileScreen();
+    return Consumer<MainViewModel>(
+      builder: (context, model, child) {
+        if (model.isLoading) {
+          return const Center(child: CircularProgressIndicator());  // Show loading indicator
+        } else if (model.isAuthenticated) {
+          return const MainScreen();
+        } else {
+          return const SignInScreen();
+        }
+      },
+    );
   }
 }
