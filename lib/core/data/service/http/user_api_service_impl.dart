@@ -11,7 +11,7 @@ class UserApiServiceImpl extends UserApiService {
 
   @override
   Future<List<SessionDto>> getUpcomingSessions(DateTime datetime, int limit) async {
-    Response response = await client.dio.get('v1/parent/getUpcomingSessions?limit=$limit&datetime=${datetime.toIso8601String()}');
+    Response response = await client.dio.get('parent/getUpcomingSessions?limit=$limit&datetime=${'${datetime.toUtc().toIso8601String().split('.')[0]}Z'}');
     return response.data.map((json) => SessionDto.fromJson(json)).toList();
   }
 
