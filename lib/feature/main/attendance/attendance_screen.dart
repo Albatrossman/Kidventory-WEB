@@ -123,7 +123,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                           const Expanded(child: SizedBox()),
                           CupertinoButton(
                             onPressed: () {},
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Text(
                               'Late',
                               style: Theme.of(context)
@@ -151,7 +151,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                           ),
                           CupertinoButton(
                             onPressed: () {},
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.only(right: 16),
                             child: Text(
                               'Present',
                               style: Theme.of(context)
@@ -180,28 +180,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                         .surfaceVariant
                         .withAlpha(48),
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: List.generate(
-                          20,
-                          (index) => Column(
-                            children: [
-                              AttendanceRow(
-                                name: 'Participant $index',
-                                attendance: _attendance,
-                                onAttendanceChanged:
-                                    (Attendance newAttendance) {
-                                  setState(() {
-                                    _attendance = newAttendance;
-                                  });
-                                },
-                              ),
-                              const Divider(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    child: _participantsList(context),
                   ),
                 ),
               ),
@@ -209,6 +188,28 @@ class _AttendanceScreenState extends State<AttendanceScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _participantsList(BuildContext context) {
+    return ListView.builder(
+      itemCount: 20,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            AttendanceRow(
+              name: 'Participant $index',
+              attendance: _attendance,
+              onAttendanceChanged: (Attendance newAttendance) {
+                setState(() {
+                  _attendance = newAttendance;
+                });
+              },
+            ),
+            const Divider(),
+          ],
+        );
+      },
     );
   }
 
