@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/component/child_row.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 import 'package:kidventory_flutter/core/ui/component/option.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/model/child_info.dart';
 import 'package:kidventory_flutter/feature/main/change_password/change_password_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen.dart';
@@ -16,7 +19,8 @@ class ProfileScreen extends StatefulWidget {
   }
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with MessageMixin, NavigationMixin {
+class _ProfileScreenState extends State<ProfileScreen>
+    with MessageMixin, NavigationMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,128 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> with MessageMixin, Naviga
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    childRow(context),
-                    const SizedBox(
-                      height: 8.0,
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                            width: 1.0,
-                          ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8.0))),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 56.0,
-                            height: 56.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant,
-                                width: 1.0,
-                              ),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: const CircleAvatar(
-                              radius: 96.0,
-                              backgroundColor: Colors.lightGreen,
-                              child: Image(
-                                image: NetworkImage(
-                                    "https://i.pravatar.cc/150?img=21"),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Alex Johnson",
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              Text(
-                                "12 Years old",
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          Icon(
-                            CupertinoIcons.forward,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8.0,
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant,
-                          width: 1.0,
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8.0),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 56.0,
-                            height: 56.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant,
-                                width: 1.0,
-                              ),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: const CircleAvatar(
-                              radius: 96.0,
-                              backgroundColor: Colors.lightGreen,
-                              child: Image(
-                                  image: NetworkImage(
-                                      "https://i.pravatar.cc/150?img=16")),
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Olivia Johnson",
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              Text(
-                                "8 Years old",
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          Icon(
-                            CupertinoIcons.forward,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                        ],
-                      ),
-                    ),
+                    childList(context),
                     addChildButton(context),
                   ],
                 ),
@@ -194,58 +77,24 @@ class _ProfileScreenState extends State<ProfileScreen> with MessageMixin, Naviga
     );
   }
 
-  Widget childRow(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
-      decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant,
-            width: 1.0,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(8.0))),
-      child: Row(
-        children: [
-          Container(
-            width: 56.0,
-            height: 56.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outlineVariant,
-                width: 1.0,
-              ),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: const CircleAvatar(
-              radius: 96.0,
-              backgroundColor: Colors.lightGreen,
-              child: Image(
-                  image: NetworkImage("https://i.pravatar.cc/150?img=12")),
-            ),
-          ),
-          const SizedBox(width: 8.0),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Emma Johnson",
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              Text(
-                "9 Years old",
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-          const Spacer(),
-          Icon(
-            CupertinoIcons.forward,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-        ],
+  Widget childList(BuildContext context) {
+    return ListView.separated(
+      physics: const BouncingScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: 3,
+      separatorBuilder: (context, index) => const SizedBox(
+        height: 8,
       ),
+      itemBuilder: (context, index) {
+        return childRow(context, ChildInfo(id: "$index", image: "", firstname: "firstname", lastname: "lastname", birthday: "birthday", relation: "relation"));
+      },
+    );
+  }
+
+  Widget childRow(BuildContext context, ChildInfo info) {
+    return Clickable(
+      onPressed: () => { push(const EditChildScreen()) },
+      child: ChildRow(info: info),
     );
   }
 
