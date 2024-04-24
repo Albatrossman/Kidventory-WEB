@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
-import 'package:kidventory_flutter/core/domain/model/participant.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 

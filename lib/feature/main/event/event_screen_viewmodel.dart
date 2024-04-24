@@ -36,8 +36,6 @@ class EventScreenViewModel extends ChangeNotifier {
 
   void _update({
     bool? loading,
-    bool? allDay,
-    String? message,
     RepeatUnit? selectedRepeatUnit,
     RepeatEnd? selectedRepeatEnd,
     List<File>? files,

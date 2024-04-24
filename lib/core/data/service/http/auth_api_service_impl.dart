@@ -32,4 +32,40 @@ class AuthApiServiceImpl implements AuthApiService {
 
     }
   }
+
+  @override
+  Future<Null> sendOTP(String email) async {
+    final response = await http.post(
+      Uri.parse("https://kidventory.aftersearch.com/api/auth/GenerateOtpCode?email=$email"),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+
+    }
+  }
+
+  @override
+  Future<Null> validateOTP(String email, String code) async {
+    final response = await http.get(
+      Uri.parse("https://kidventory.aftersearch.com/api/auth/ValidateOtpCode?email=$email&code=$code"),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+
+    }
+  }
+
+  @override
+  Future<Null> resetPassword(String email, String code, String password) async {
+    final response = await http.post(
+      Uri.parse("https://kidventory.aftersearch.com/api/auth/ResetPassword?email=$email&code=$code&password=$password&"),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+
+    }
+  }
 }

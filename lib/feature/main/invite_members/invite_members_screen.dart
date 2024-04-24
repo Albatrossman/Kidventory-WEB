@@ -176,7 +176,6 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
           ],
         ));
 
-    ;
   }
 
   Widget inviteLinkOptions(BuildContext context) {
@@ -362,11 +361,11 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CupertinoButton(
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(context),
           ),
           CupertinoButton(
-            child: Text('Done'),
+            child: const Text('Done'),
             onPressed: () {
               Navigator.pop(context);
             },

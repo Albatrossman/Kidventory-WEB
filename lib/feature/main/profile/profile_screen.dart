@@ -284,7 +284,7 @@ class _ProfileScreenState extends State<ProfileScreen> with MessageMixin, Naviga
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Icon(
             CupertinoIcons.slider_horizontal_3,
             color: Theme.of(context).colorScheme.outline,

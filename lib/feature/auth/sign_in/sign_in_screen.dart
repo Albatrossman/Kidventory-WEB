@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
@@ -19,12 +20,16 @@ class SignInScreen extends StatefulWidget {
   }
 }
 
-class _SignInScreenState extends State<SignInScreen> with MessageMixin, NavigationMixin {
+class _SignInScreenState extends State<SignInScreen>
+    with MessageMixin, NavigationMixin {
   late final SignInScreenViewModel _viewModel;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
+
+  bool isValidEmail = true;
 
   @override
   void initState() {
@@ -46,15 +51,14 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin, Navigati
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
+        child: Center(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Spacer(),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 48.0),
                     child: Image.asset(
@@ -70,13 +74,16 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin, Navigati
                         TextField(
                           controller: _emailController,
                           maxLines: 1,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
+                          decoration: InputDecoration(
+                            errorText: isValidEmail
+                                ? null
+                                : "Email address is invalid",
+                            border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(8.0),
                               ),
                             ),
-                            label: Text("Email"),
+                            label: const Text("Email"),
                           ),
                           keyboardType: TextInputType.emailAddress,
                           textCapitalization: TextCapitalization.none,
@@ -110,7 +117,6 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin, Navigati
                     child: signInButton(context),
                   ),
                   forgotPasswordButton(context),
-                  const Spacer(),
                   signUpRow(context)
                 ],
               ),
@@ -166,8 +172,8 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin, Navigati
         Text(
           "Don't have an account?",
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: Theme.of(context).colorScheme.outline,
-          ),
+                color: Theme.of(context).colorScheme.outline,
+              ),
         ),
         CupertinoButton(
           child: const Text("Sign Up"),
@@ -191,10 +197,22 @@ class _SignInScreenState extends State<SignInScreen> with MessageMixin, Navigati
   }
 
   void _onSignIn(BuildContext context) async {
-    _viewModel
-        .signIn(_emailController.text, _passwordController.text)
-        .catchError((error) => { snackbar(error.toString()) })
-        .whenComplete(() => _btnController.reset())
-        .then((value) => pushAndClear(const MainScreen(), fullscreenDialog: true));
+    setState(() {
+      isValidEmail = _emailController.text.isValidEmail();
+    });
+    if (isValidEmail) {
+      _viewModel
+          .signIn(_emailController.text, _passwordController.text)
+          .whenComplete(() => _btnController.reset())
+          .then(
+            (value) => pushAndClear(const MainScreen(), fullscreenDialog: true),
+            onError: (error) => {
+              snackbar(error.toString()),
+            },
+          );
+    } else {
+      _btnController.reset();
+      snackbar("Email is not valid");
+    }
   }
 }

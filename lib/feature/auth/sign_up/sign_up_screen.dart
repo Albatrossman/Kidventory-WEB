@@ -24,7 +24,8 @@ class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -42,118 +43,122 @@ class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
               middle: Text("Sign Up"),
             ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Image.asset(
-                  "assets/images/logo.png",
-                  width: 80,
-                  height: 80,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 32.0),
-                child: Text(
-                  "Join milions in making child education \n Safer, Easier, and Better.",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-              ),
-              SizedBox(
-                width: kIsWeb ? 420 : null,
-                height: null,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextField(
-                      controller: _emailController,
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8.0),
-                          ),
-                        ),
-                        label: Text("Email"),
-                      ),
+        child: Center(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: Image.asset(
+                      "assets/images/logo.png",
+                      width: 80,
+                      height: 80,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextField(
-                        controller: _firstnameController,
-                        maxLines: 1,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.0),
-                            ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 32.0),
+                    child: Text(
+                      "Join milions in making child education \n Safer, Easier, and Better.",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
-                          label: Text(
-                            "First Name",
-                          ),
-                        ),
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                      ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextField(
-                        controller: _lastnameController,
-                        maxLines: 1,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.0),
+                  ),
+                  SizedBox(
+                    width: kIsWeb ? 420 : null,
+                    height: null,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextField(
+                          controller: _emailController,
+                          maxLines: 1,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8.0),
+                              ),
                             ),
-                          ),
-                          label: Text(
-                            "Last Name",
+                            label: Text("Email"),
                           ),
                         ),
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: TextField(
+                            controller: _firstnameController,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                              ),
+                              label: Text(
+                                "First Name",
+                              ),
+                            ),
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: TextField(
+                            controller: _lastnameController,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                              ),
+                              label: Text(
+                                "Last Name",
+                              ),
+                            ),
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: TextField(
+                            controller: _passwordController,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                              ),
+                              label: Text(
+                                "Password",
+                              ),
+                            ),
+                            obscureText: true,
+                            enableSuggestions: false,
+                            autocorrect: false,
+                          ),
+                        )
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TextField(
-                        controller: _passwordController,
-                        maxLines: 1,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.0),
-                            ),
-                          ),
-                          label: Text(
-                            "Password",
-                          ),
-                        ),
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
+                    child: signUpButton(context),
+                  ),
+                  signUpRow(context)
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
-                child: signUpButton(context),
-              ),
-              const Spacer(),
-              signUpRow(context)
-            ],
+            ),
           ),
         ),
       ),
@@ -205,11 +210,13 @@ class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
   }
 
   void _onSignUp() async {
-    _viewModel.signUp(
-      _emailController.text,
-      _firstnameController.text,
-      _lastnameController.text,
-      _passwordController.text,
-    ).whenComplete(() => _btnController.reset());
+    _viewModel
+        .signUp(
+          _emailController.text,
+          _firstnameController.text,
+          _lastnameController.text,
+          _passwordController.text,
+        )
+        .whenComplete(() => _btnController.reset());
   }
 }

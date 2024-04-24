@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';

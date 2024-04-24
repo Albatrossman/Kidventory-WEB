@@ -10,6 +10,7 @@ import 'package:kidventory_flutter/core/data/service/preferences/token_preferenc
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager_impl.dart';
 import 'package:kidventory_flutter/core/data/util/dio_client.dart';
 import 'package:kidventory_flutter/di/app_,module.dart';
+import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
@@ -41,6 +42,12 @@ void main() {
       ),
       ChangeNotifierProvider<SignInScreenViewModel>(
         create: (context) => SignInScreenViewModel(
+          Provider.of<AuthApiService>(context, listen: false),
+          Provider.of<TokenPreferencesManager>(context, listen: false),
+        ),
+      ),
+      ChangeNotifierProvider<ForgotPasswordScreenViewModel>(
+        create: (context) => ForgotPasswordScreenViewModel(
           Provider.of<AuthApiService>(context, listen: false),
           Provider.of<TokenPreferencesManager>(context, listen: false),
         ),
