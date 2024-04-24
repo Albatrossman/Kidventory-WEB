@@ -26,9 +26,11 @@ void main() {
   setup();
   runApp(MultiProvider(
     providers: [
-      Provider<FlutterSecureStorage>(create: (_) => const FlutterSecureStorage()),
+      Provider<FlutterSecureStorage>(
+          create: (_) => const FlutterSecureStorage()),
       Provider<AuthApiService>(create: (_) => AuthApiServiceImpl()),
-      Provider<UserApiService>(create: (_) => UserApiServiceImpl(getIt<DioClient>())),
+      Provider<UserApiService>(
+          create: (_) => UserApiServiceImpl(getIt<DioClient>())),
       Provider<CSVParser>(create: (_) => ParticipantCSVParser()),
       Provider<TokenPreferencesManager>(
         create: (context) => TokenPreferencesManagerImpl(
@@ -37,8 +39,7 @@ void main() {
       ),
       ChangeNotifierProvider<MainViewModel>(
         create: (context) => MainViewModel(
-          Provider.of<TokenPreferencesManager>(context, listen: false)
-        ),
+            Provider.of<TokenPreferencesManager>(context, listen: false)),
       ),
       ChangeNotifierProvider<SignInScreenViewModel>(
         create: (context) => SignInScreenViewModel(
@@ -55,6 +56,7 @@ void main() {
       ChangeNotifierProvider<SignUpScreenViewModel>(
         create: (context) => SignUpScreenViewModel(
           Provider.of<AuthApiService>(context, listen: false),
+          Provider.of<TokenPreferencesManager>(context, listen: false),
         ),
       ),
       ChangeNotifierProvider<HomeScreenViewModel>(
@@ -85,7 +87,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 28, 176, 245)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 28, 176, 245)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -111,7 +114,8 @@ class _AppScreenState extends State<AppScreen> {
     return Consumer<MainViewModel>(
       builder: (context, model, child) {
         if (model.isLoading) {
-          return const Center(child: CircularProgressIndicator());  // Show loading indicator
+          return const Center(
+              child: CircularProgressIndicator()); // Show loading indicator
         } else if (model.isAuthenticated) {
           return const MainScreen();
         } else {
