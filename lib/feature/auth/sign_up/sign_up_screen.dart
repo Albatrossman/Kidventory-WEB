@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
@@ -17,7 +20,8 @@ class SignUpScreen extends StatefulWidget {
   }
 }
 
-class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
+class _SignUpScreenContent extends State<SignUpScreen>
+    with MessageMixin, NavigationMixin {
   late final SignUpScreenViewModel _viewModel;
 
   final TextEditingController _emailController = TextEditingController();
@@ -26,6 +30,9 @@ class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
   final TextEditingController _passwordController = TextEditingController();
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+
+  bool isValidEmail = true;
+  bool passwordStrong = true;
 
   @override
   void initState() {
@@ -79,13 +86,16 @@ class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
                         TextField(
                           controller: _emailController,
                           maxLines: 1,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
+                          decoration: InputDecoration(
+                            errorText: isValidEmail
+                                ? null
+                                : "Email address is invalid",
+                            border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(8.0),
                               ),
                             ),
-                            label: Text("Email"),
+                            label: const Text("Email"),
                           ),
                         ),
                         Padding(
@@ -133,13 +143,16 @@ class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
                           child: TextField(
                             controller: _passwordController,
                             maxLines: 1,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              errorText: passwordStrong
+                                ? null
+                                : "Password must contain at least one special character, one number, one capital letter and be at least one 6 characters long",
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(8.0),
                                 ),
                               ),
-                              label: Text(
+                              label: const Text(
                                 "Password",
                               ),
                             ),
@@ -210,13 +223,44 @@ class _SignUpScreenContent extends State<SignUpScreen> with MessageMixin {
   }
 
   void _onSignUp() async {
-    _viewModel
-        .signUp(
-          _emailController.text,
-          _firstnameController.text,
-          _lastnameController.text,
-          _passwordController.text,
-        )
-        .whenComplete(() => _btnController.reset());
+    setState(() {
+      isValidEmail = _emailController.text.isValidEmail();
+      passwordStrong = _passwordController.text.isStrongForPassowrd();
+    });
+
+    if (isValidEmail && passwordStrong) {
+      _viewModel
+          .signUp(
+            _emailController.text,
+            _firstnameController.text,
+            _lastnameController.text,
+            _passwordController.text,
+          )
+          .whenComplete(() => _btnController.reset())
+          .then(
+            (value) => {
+              _viewModel
+                  .signIn(_emailController.text, _passwordController.text)
+                  .whenComplete(() => _btnController.reset())
+                  .then(
+                    (value) => pushAndClear(const MainScreen(),
+                        fullscreenDialog: true),
+                    onError: (error) => {
+                      snackbar(error.toString()),
+                    },
+                  )
+            },
+            onError: (error) => {
+              snackbar(error.toString()),
+            },
+          );
+    } else {
+      _btnController.reset();
+      if (!isValidEmail) {
+        snackbar("Email is not valid");
+      } else if (!passwordStrong) {
+        snackbar("Password is not strong enough.");
+      }
+    }
   }
 }

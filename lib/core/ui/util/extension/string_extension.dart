@@ -14,4 +14,12 @@ extension StringExtension on String {
     return contains(RegExp(r'[A-Z]'));
   }
 
+  bool hasNumeric() {
+    return contains(RegExp(r'[0-9]'));
+  }
+
+  bool isStrongForPassowrd() {
+    return hasUppercase() && hasSpecialChar() && hasNumeric() && length > 6;
+  }
+
 }
