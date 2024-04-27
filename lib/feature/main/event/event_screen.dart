@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
+import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class EventScreen extends StatefulWidget {
-  const EventScreen({super.key});
+  const EventScreen({super.key, required this.id});
+
+  final String id;
 
   @override
   State<StatefulWidget> createState() {
@@ -17,8 +20,9 @@ class EventScreen extends StatefulWidget {
   }
 }
 
-class _EventScreenState extends State<EventScreen>
-    with MessageMixin, NavigationMixin {
+class _EventScreenState extends State<EventScreen> with MessageMixin, NavigationMixin {
+  late final EventScreenViewModel _viewModel;
+
   bool isLoading = false;
   List<String> members = [
     "test",
@@ -35,6 +39,13 @@ class _EventScreenState extends State<EventScreen>
     "test",
     "test",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
+    _viewModel.refresh(widget.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,18 +136,22 @@ class _EventScreenState extends State<EventScreen>
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Event Name',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+            Consumer<EventScreenViewModel>(
+                builder: (context, model, child) {
+                  return Text(
+                    model.state.event?.title ?? '',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  );
+                }
             ),
-            Text(
-              'Event By Baroody Camps',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
+            // Text(
+            //   'Event By Baroody Camps',
+            //   style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            //         color: Theme.of(context).colorScheme.primary,
+            //       ),
+            // ),
           ],
         ),
       ],

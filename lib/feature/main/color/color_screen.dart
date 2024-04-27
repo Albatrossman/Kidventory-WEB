@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/color_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
@@ -29,6 +31,7 @@ class _ColorScreenState extends State<ColorScreen> with MessageMixin, Navigation
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const SheetHeader(title: Text('Event color')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -44,19 +47,24 @@ class _ColorScreenState extends State<ColorScreen> with MessageMixin, Navigation
               EventColor color = EventColor.values[index];
               return Tooltip(
                 message: color.name,
-                child: InkWell(
-                  onTap: () => _viewModel.selectColor(color),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: color.value,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Consumer<EditEventScreenViewModel>(
-                      builder: (context, model, child) {
-                        return model.state.color == color
-                            ? const Icon(CupertinoIcons.checkmark)
-                            : const SizedBox.shrink();
-                      },
+                child: ClipOval(
+                  child: Clickable(
+                    onPressed: () => {
+                      _viewModel.selectColor(color),
+                      pop(),
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: color.value,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Consumer<EditEventScreenViewModel>(
+                        builder: (context, model, child) {
+                          return model.state.color == color
+                              ? const Icon(CupertinoIcons.checkmark)
+                              : const SizedBox.shrink();
+                        },
+                      ),
                     ),
                   ),
                 ),

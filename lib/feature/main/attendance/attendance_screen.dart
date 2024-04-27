@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/domain/model/attendance.dart';
 import 'package:kidventory_flutter/core/ui/component/attendance_row.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
@@ -16,8 +15,7 @@ class AttendanceScreen extends StatefulWidget {
   }
 }
 
-class _AttendanceScreenState extends State<AttendanceScreen>
-    with MessageMixin, NavigationMixin {
+class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, NavigationMixin {
   Attendance _attendance = Attendance.unspecified;
 
   @override

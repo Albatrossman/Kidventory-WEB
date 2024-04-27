@@ -1,5 +1,7 @@
 import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
+import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 
 abstract class EventApiService {
 
@@ -11,6 +13,14 @@ abstract class EventApiService {
 
   Future<void> deleteEvent(String id);
 
-  Future<void> addMembers(String id, AddMemberDto body);
+  Future<void> addMembers(String eventId, AddMemberDto body);
+
+  Future<List<ParticipantDto>> getMembers(String eventId, String sessionId);
+
+  Future<void> deleteMember(String eventId, String memberId);
+
+  Future<void> changeMemberRole(String eventId, ChangeMembersRoleDto membersRole);
+
+  Future<List<DateTime>> getSessions(String eventId);
 
 }

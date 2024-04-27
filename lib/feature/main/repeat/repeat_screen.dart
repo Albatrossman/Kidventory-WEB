@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/component/weekday_picker.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
@@ -21,27 +23,48 @@ class RepeatScreen extends StatefulWidget {
 }
 
 class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, NavigationMixin {
+  final FixedExtentScrollController _periodController = FixedExtentScrollController();
   final TextEditingController _occurrenceController = TextEditingController();
   late final EditEventScreenViewModel _viewModel;
   RepeatEnd _selectedRepeatEnd = RepeatEnd.onDate;
+  int period = 1;
+  List<WeekDay> daysOfWeek = [];
 
   @override
   void initState() {
     _viewModel = Provider.of<EditEventScreenViewModel>(context, listen: false);
     _occurrenceController.text = "1";
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This will check if the controller is attached and if not, will not attempt to jump
+      if (_periodController.hasClients) {
+        _periodController.jumpToItem(_viewModel.state.repeat.period - 1);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: SheetHeader(
+        title: const Text('Custom recurrence'),
+        trailing: Clickable(
+          onPressed: () => {
+            _viewModel.editRepeat(
+              period,
+              _viewModel.state.selectedRepeatUnit,
+              daysOfWeek,
+              _selectedRepeatEnd,
+            ),
+            pop()
+          },
+          child: const Text('Done'),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            CupertinoNavigationBar(
-              leading: CupertinoNavigationBarBackButton(onPressed: () => pop()),
-              middle: const Text('Custom recurrence'),
-            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -60,8 +83,13 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
                           height: 100,
                           child: CupertinoPicker(
                             itemExtent: 32,
-                            onSelectedItemChanged: (int index) => {},
                             looping: true,
+                            scrollController: _periodController,
+                            onSelectedItemChanged: (int index) => {
+                              setState(() {
+                                period = index + 1;
+                              })
+                            },
                             children: List.generate(
                               30,
                               (int index) => Center(child: Text((index + 1).toString())),
@@ -89,8 +117,8 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
                   AnimatedSize(
                     duration: const Duration(milliseconds: 300),
                     child: Consumer<EditEventScreenViewModel>(
-                      builder: (_, viewModel, __) {
-                        return viewModel.state.selectedRepeatUnit != RepeatUnit.week
+                      builder: (_, model, __) {
+                        return model.state.selectedRepeatUnit != RepeatUnit.week
                             ? const SizedBox(width: double.infinity, height: 0)
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,8 +130,8 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
                                   const Text('Repeats on'),
                                   const SizedBox(height: 8.0),
                                   WeekdayPicker(
-                                    initialSelectedDays: const {WeekDay.thursday},
-                                    onSelectionChanged: (_) => {},
+                                    initialSelectedDays: [WeekDay.values[DateTime.now().weekday]],
+                                    onSelectionChanged: (days) => {daysOfWeek = days},
                                   ),
                                 ],
                               );
@@ -126,10 +154,11 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
                             InkWell(
                               onTap: () => {},
                               child: AppCard(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(DateTime.now().plusMonths(12).formatDate()),
-                              )),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(DateTime.now().plusMonths(12).formatDate()),
+                                ),
+                              ),
                             ),
                           ],
                         ),

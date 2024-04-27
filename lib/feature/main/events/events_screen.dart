@@ -82,7 +82,7 @@ class _EventsScreenState extends State<EventsScreen>
                   return EventCard(
                     name: event.title,
                     time: "${event.startTime} - ${event.endTime}",
-                    onClick: () => {push(const EventScreen())},
+                    onClick: () => {push(EventScreen(id: event.id))},
                     imageUrl: event.imageUrl,
                   );
                 },

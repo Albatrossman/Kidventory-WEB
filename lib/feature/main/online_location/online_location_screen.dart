@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/domain/model/platform.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
+import 'package:kidventory_flutter/core/domain/model/event.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
@@ -18,7 +22,7 @@ class _OnlineLocationScreenState extends State<OnlineLocationScreen>
     with MessageMixin, NavigationMixin {
   late final EditEventScreenViewModel _viewModel;
 
-  int _selectedIndex = 0; // Default to the first image being selected
+  int _selectedIndex = 0;
 
   final List<String> _imagePaths = [
     'assets/images/app_meet_active.png',
@@ -40,140 +44,178 @@ class _OnlineLocationScreenState extends State<OnlineLocationScreen>
   @override
   void initState() {
     _viewModel = Provider.of<EditEventScreenViewModel>(context, listen: false);
+    _linkController.text = _viewModel.state.onlineLocation?.link ?? '';
+    _idController.text = _viewModel.state.onlineLocation?.meetingId ?? '';
+    _passwordController.text = _viewModel.state.onlineLocation?.password ?? '';
+    _commentController.text = _viewModel.state.onlineLocation?.comment ?? '';
+    _phoneController.text = _viewModel.state.onlineLocation?.phone ?? '';
+    _pinController.text = _viewModel.state.onlineLocation?.pin ?? '';
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: SheetHeader(
+        title: const Text('Online Location'),
+        trailing: Clickable(
+          onPressed: () => {
+            _viewModel.editOnlineLocation(
+              _getPlatformName(_selectedIndex),
+              _linkController.text,
+              _idController.text,
+              _passwordController.text,
+              _commentController.text,
+              _phoneController.text,
+              _pinController.text,
+            )
+          },
+          child: const Text('Done'),
+        ),
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Platform'),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: List.generate(_imagePaths.length, (index) {
-                  return IconButton(
-                    onPressed: () => setState(() {
-                      _selectedIndex = index;
-                    }),
-                    icon: Image.asset(
-                      _selectedIndex == index ? _imagePaths[index] : _bwImagePaths[index],
-                      width: 48,
-                      fit: BoxFit.contain,
-                    ),
-                  );
-                }),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _linkController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                  ),
-                  label: Text("Session Link"),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Platform'),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: List.generate(_imagePaths.length, (index) {
+                    return IconButton(
+                      onPressed: () => setState(() {
+                        _selectedIndex = index;
+                      }),
+                      icon: Image.asset(
+                        _selectedIndex == index ? _imagePaths[index] : _bwImagePaths[index],
+                        width: 48,
+                        fit: BoxFit.contain,
+                      ),
+                    );
+                  }),
                 ),
-                keyboardType: TextInputType.url,
-                textInputAction: TextInputAction.next,
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _idController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _linkController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
                     ),
+                    label: Text("Session Link"),
                   ),
-                  label: Text("Meeting ID"),
+                  keyboardType: TextInputType.url,
+                  textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
                 ),
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _idController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
                     ),
+                    label: Text("Meeting ID"),
                   ),
-                  label: Text("Password"),
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
                 ),
-                keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.next,
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _commentController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
                     ),
+                    label: Text("Password"),
                   ),
-                  label: Text("Comment"),
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
                 ),
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _phoneController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _commentController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
                     ),
+                    label: Text("Comment"),
                   ),
-                  label: Text("Phone"),
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
                 ),
-                keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.next,
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _pinController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _phoneController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
                     ),
+                    label: Text("Phone"),
                   ),
-                  label: Text("Pin"),
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
                 ),
-                keyboardType: TextInputType.number,
-                textInputAction: TextInputAction.done,
-                textCapitalization: TextCapitalization.none,
-                autocorrect: false,
-              ),
-            ],
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _pinController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
+                    ),
+                    label: Text("Pin"),
+                  ),
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.done,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Platform _getPlatformName(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return Platform.meet;
+      case 1:
+        return Platform.skype;
+      case 2:
+        return Platform.zoom;
+      default:
+        return Platform.meet;
+    }
   }
 }
