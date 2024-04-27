@@ -313,7 +313,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   Widget verifyCodeField(BuildContext context) {
     return OTPTextField(
       controller: _otpController,
-      length: 4,
+      length: 5,
       fieldWidth: 48,
       style: const TextStyle(fontSize: 14),
       textFieldAlignment: MainAxisAlignment.spaceAround,
@@ -472,6 +472,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           .whenComplete(() => _changePassowrdBtnController.reset())
           .then(
             (value) => {
+              _pageViewController.animateToPage(3,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut),
               _viewModel
                   .signIn(_emailController.text, _passwordController.text)
                   .whenComplete(() => _changePassowrdBtnController.reset())
