@@ -2,19 +2,60 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
+import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
+import 'package:kidventory_flutter/core/domain/model/online_location.dart';
+import 'package:kidventory_flutter/core/domain/model/platform.dart';
+import 'package:kidventory_flutter/core/domain/model/repeat.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
+import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_state.dart';
 
 class EditEventScreenViewModel extends ChangeNotifier {
   final CSVParser _parser;
+  final EventApiService _eventApiService;
 
-  EditEventScreenViewModel(this._parser);
+  EditEventScreenViewModel(this._parser, this._eventApiService);
 
   EditEventScreenState _state = EditEventScreenState();
   EditEventScreenState get state => _state;
+
+  void createEvent() {
+    // _eventApiService.createEvent()
+    // Event event = Event(
+    //     name: state.name,
+    //     repeat: Repeat(
+    //       period:
+    //     ),
+    //     timeMode: timeMode,
+    //     startTime: startTime,
+    //     endTime: endTime,
+    //     color: color,
+    //     inviteLink: inviteLink,
+    // )
+  }
+
+  void editName(String name) {
+    // _update(repeat: )
+  }
+
+  void editRepeat(int period, RepeatUnit unit, List<WeekDay> daysOfWeek, RepeatEnd end) {
+    Repeat repeat = Repeat(
+      period: period,
+      unit: unit,
+      daysOfWeek: daysOfWeek,
+      monthDay: '',
+      monthDate: 1,
+      startDateTime: DateTime.now(),
+      endsOnMode: RepeatEnd.onDate,
+      endDate: DateTime.now(),
+      maxOccurrence: 1,
+    );
+
+    _update(repeat: repeat);
+  }
 
   void toggleAllDay() {
     _update(allDay: !state.allDay);
@@ -43,17 +84,45 @@ class EditEventScreenViewModel extends ChangeNotifier {
     _update(filesAndParticipants: filesAndParticipants);
   }
 
+  void editOnlineLocation(
+    Platform platform,
+    String link,
+    String id,
+    String password,
+    String comment,
+    String phone,
+    String pin,
+  ) {
+    _update(
+      onlineLocation: OnlineLocation(
+        platform: Platform.meet,
+        link: link,
+        meetingId: id,
+        password: password,
+        comment: comment,
+        phone: phone,
+        pin: pin,
+      ),
+    );
+  }
+
   void selectColor(EventColor color) {
     _update(color: color);
+  }
+
+  void editDescription(String description) {
+    _update(description: description);
   }
 
   void _update({
     bool? loading,
     bool? allDay,
     String? message,
+    Repeat? repeat,
     RepeatUnit? selectedRepeatUnit,
     RepeatEnd? selectedRepeatEnd,
     Map<File, List<Member>>? filesAndParticipants,
+    OnlineLocation? onlineLocation,
     EventColor? color,
     String? description,
   }) {
@@ -61,9 +130,11 @@ class EditEventScreenViewModel extends ChangeNotifier {
       loading: loading,
       allDay: allDay,
       message: message,
+      repeat: repeat,
       selectedRepeatUnit: selectedRepeatUnit,
       selectedRepeatEnd: selectedRepeatEnd,
       filesAndParticipants: filesAndParticipants,
+      onlineLocation: onlineLocation,
       color: color,
       description: description,
     );

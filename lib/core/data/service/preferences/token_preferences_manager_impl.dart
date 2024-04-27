@@ -24,4 +24,9 @@ class TokenPreferencesManagerImpl extends TokenPreferencesManager {
     return Token.fromJson(json.decode(jsonToken));
   }
 
+  @override
+  Future<void> clearToken() {
+    return storage.delete(key: _tokenKey);
+  }
+
 }

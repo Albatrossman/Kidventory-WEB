@@ -28,12 +28,11 @@ class EditEventScreen extends StatefulWidget {
   }
 }
 
-class _EditEventScreenState extends State<EditEventScreen>
-    with MessageMixin, NavigationMixin, PickerMixin {
+class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, NavigationMixin, PickerMixin {
   late final EditEventScreenViewModel _viewModel;
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
   final TextEditingController _nameController = TextEditingController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   String selectedOption = 'Does not repeat';
 
   @override
@@ -54,226 +53,228 @@ class _EditEventScreenState extends State<EditEventScreen>
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  AppImagePicker(
-                    onImageSelected: (File image) => {},
-                    width: 72,
-                    height: 72,
-                  ),
-                  const SizedBox(width: 16.0),
-                  Expanded(
-                    child: TextField(
-                      controller: _nameController,
-                      maxLines: 1,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8.0),
-                          ),
-                        ),
-                        label: Text("Name"),
-                      ),
-                      keyboardType: TextInputType.name,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32.0),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
-                      child: Text(
-                        'Occurrence',
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelSmall
-                            ?.copyWith(color: Theme.of(context).colorScheme.outline),
-                      ),
+                    AppImagePicker(
+                      onImageSelected: (File image) => {},
+                      width: 72,
+                      height: 72,
                     ),
-                    EventOption(
-                      leading: Icon(
-                        CupertinoIcons.calendar,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20.0,
-                      ),
-                      label: selectedDate.formatDate(),
-                      onTap: () => datePicker(context, firstDate: DateTime.now().atStartOfDay),
-                    ),
-                    const SizedBox(height: 4.0),
-                    const Divider(
-                      height: 1.0,
-                      indent: 28 + 16,
-                    ),
-                    const SizedBox(height: 4.0),
-                    EventOption(
-                      label: 'Repeat',
-                      onTap: () => {showOptions()},
-                      leading: Icon(
-                        CupertinoIcons.repeat,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20.0,
-                      ),
-                      trailing: Container(
-                        width: 120,
-                        height: 32.0,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                          borderRadius: BorderRadius.circular(96.0),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: TextField(
+                        controller: _nameController,
+                        maxLines: 1,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8.0),
+                            ),
+                          ),
+                          label: Text("Name"),
                         ),
-                        child: Center(child: Text(selectedOption)),
+                        keyboardType: TextInputType.name,
                       ),
                     ),
-                    const SizedBox(height: 4.0),
-                    const Divider(
-                      height: 1.0,
-                      indent: 28 + 16,
-                    ),
-                    const SizedBox(height: 4.0),
-                    EventOption(
-                      label: 'All day',
-                      leading: Icon(
-                        CupertinoIcons.sun_max,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20.0,
-                      ),
-                      onTap: () => {_viewModel.toggleAllDay()},
-                      trailing: Consumer<EditEventScreenViewModel>(
-                        builder: (_, viewModel, __) {
-                          return Switch(
-                            value: _viewModel.state.allDay,
-                            onChanged: (_) => _viewModel.toggleAllDay(),
-                          );
-                        },
-                      ),
-                    ),
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 300),
-                      child: Consumer<EditEventScreenViewModel>(
-                        builder: (_, viewModel, __) {
-                          return viewModel.state.allDay
-                              ? const SizedBox(width: double.infinity, height: 0)
-                              : Column(
-                                  children: [
-                                    const SizedBox(height: 4.0),
-                                    const Divider(
-                                      height: 1.0,
-                                      indent: 28 + 16,
-                                    ),
-                                    const SizedBox(height: 4.0),
-                                    EventOption(
-                                      leading: Icon(
-                                        CupertinoIcons.clock,
-                                        color: Theme.of(context).colorScheme.primary,
-                                        size: 20.0,
-                                      ),
-                                      label: '9:00 AM - 10:00 AM',
-                                      onTap: () => { timePicker(context) },
-                                    ),
-                                  ],
-                                );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 12.0),
                   ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              EventOption(
-                leading: Icon(
-                  CupertinoIcons.person_crop_circle_badge_plus,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20.0,
+                const SizedBox(height: 32.0),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
+                        child: Text(
+                          'Occurrence',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(color: Theme.of(context).colorScheme.outline),
+                        ),
+                      ),
+                      EventOption(
+                        leading: Icon(
+                          CupertinoIcons.calendar,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 20.0,
+                        ),
+                        label: selectedDate.formatDate(),
+                        onTap: () => datePicker(context, firstDate: DateTime.now().atStartOfDay),
+                      ),
+                      const SizedBox(height: 4.0),
+                      const Divider(
+                        height: 1.0,
+                        indent: 28 + 16,
+                      ),
+                      const SizedBox(height: 4.0),
+                      EventOption(
+                        label: 'Repeat',
+                        onTap: () => {showOptions()},
+                        leading: Icon(
+                          CupertinoIcons.repeat,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 20.0,
+                        ),
+                        trailing: Container(
+                          width: 120,
+                          height: 32.0,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                            borderRadius: BorderRadius.circular(96.0),
+                          ),
+                          child: Center(child: Text(selectedOption)),
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
+                      const Divider(
+                        height: 1.0,
+                        indent: 28 + 16,
+                      ),
+                      const SizedBox(height: 4.0),
+                      EventOption(
+                        label: 'All day',
+                        leading: Icon(
+                          CupertinoIcons.sun_max,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 20.0,
+                        ),
+                        onTap: () => {_viewModel.toggleAllDay()},
+                        trailing: Consumer<EditEventScreenViewModel>(
+                          builder: (_, viewModel, __) {
+                            return Switch(
+                              value: _viewModel.state.allDay,
+                              onChanged: (_) => _viewModel.toggleAllDay(),
+                            );
+                          },
+                        ),
+                      ),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        child: Consumer<EditEventScreenViewModel>(
+                          builder: (_, viewModel, __) {
+                            return viewModel.state.allDay
+                                ? const SizedBox(width: double.infinity, height: 0)
+                                : Column(
+                                    children: [
+                                      const SizedBox(height: 4.0),
+                                      const Divider(
+                                        height: 1.0,
+                                        indent: 28 + 16,
+                                      ),
+                                      const SizedBox(height: 4.0),
+                                      EventOption(
+                                        leading: Icon(
+                                          CupertinoIcons.clock,
+                                          color: Theme.of(context).colorScheme.primary,
+                                          size: 20.0,
+                                        ),
+                                        label: '9:00 AM - 10:00 AM',
+                                        onTap: () => { timePicker(context) },
+                                      ),
+                                    ],
+                                  );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 12.0),
+                    ],
+                  ),
                 ),
-                label: 'Add members',
-                onTap: () => pushSheet(const AddMembersScreen()),
-                trailing: Icon(
-                  size: 20,
-                  CupertinoIcons.chevron_up,
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                const SizedBox(height: 16),
+                EventOption(
+                  leading: Icon(
+                    CupertinoIcons.person_crop_circle_badge_plus,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20.0,
+                  ),
+                  label: 'Add members',
+                  onTap: () => pushSheet(const AddMembersScreen()),
+                  trailing: Icon(
+                    size: 20,
+                    CupertinoIcons.chevron_up,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                 ),
-              ),
-              EventOption(
-                leading: Icon(
-                  CupertinoIcons.videocam_circle,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20.0,
+                EventOption(
+                  leading: Icon(
+                    CupertinoIcons.videocam_circle,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20.0,
+                  ),
+                  label: 'Online location',
+                  onTap: () => pushSheet(const OnlineLocationScreen()),
+                  trailing: Icon(
+                    size: 20,
+                    CupertinoIcons.chevron_up,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                 ),
-                label: 'Online location',
-                onTap: () => pushSheet(const OnlineLocationScreen()),
-                trailing: Icon(
-                  size: 20,
-                  CupertinoIcons.chevron_up,
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                EventOption(
+                  leading: Consumer<EditEventScreenViewModel>(
+                    builder: (_, model, __) {
+                      return Container(
+                        height: 20.0,
+                        width: 20.0,
+                        decoration: BoxDecoration(
+                            color: model.state.color.value,
+                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                            shape: BoxShape.circle),
+                      );
+                    },
+                  ),
+                  label: 'Color',
+                  onTap: () => pushSheet(const ColorScreen()),
+                  trailing: Icon(
+                    size: 20,
+                    CupertinoIcons.chevron_up,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                 ),
-              ),
-              EventOption(
-                leading: Consumer<EditEventScreenViewModel>(
-                  builder: (_, model, __) {
-                    return Container(
-                      height: 20.0,
-                      width: 20.0,
-                      decoration: BoxDecoration(
-                          color: model.state.color.value,
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                          shape: BoxShape.circle),
-                    );
-                  },
+                EventOption(
+                  leading: Icon(
+                    CupertinoIcons.pencil_circle,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20.0,
+                  ),
+                  label: 'Description',
+                  onTap: () => pushSheet(const DescriptionScreen()),
+                  trailing: Icon(
+                    size: 20,
+                    CupertinoIcons.chevron_up,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                 ),
-                label: 'Color',
-                onTap: () => pushSheet(const ColorScreen()),
-                trailing: Icon(
-                  size: 20,
-                  CupertinoIcons.chevron_up,
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                const SizedBox(
+                  height: 32,
                 ),
-              ),
-              EventOption(
-                leading: Icon(
-                  CupertinoIcons.pencil_circle,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20.0,
-                ),
-                label: 'Description',
-                onTap: () => pushSheet(const DescriptionScreen()),
-                trailing: Icon(
-                  size: 20,
-                  CupertinoIcons.chevron_up,
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                ),
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              saveButton(context),
-            ],
+                _buildSaveButton(context),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget saveButton(BuildContext context) {
+  Widget _buildSaveButton(BuildContext context) {
     return AppButton(
       controller: _btnController,
-      onPressed: () => {},
+      onPressed: () => _viewModel.createEvent(),
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
     );
   }

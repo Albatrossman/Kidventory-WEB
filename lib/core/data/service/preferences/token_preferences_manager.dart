@@ -6,4 +6,6 @@ abstract class TokenPreferencesManager {
 
   Future<Token?> getToken();
 
+  Future<void> clearToken();
+
 }

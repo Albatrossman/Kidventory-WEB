@@ -17,7 +17,7 @@ void setup() async {
 
   getIt.registerSingleton<DioClient>(
     DioClient(
-      "https://kidventory.aftersearch.com/api/",
+      "https://dev-kidsapi.softballforce.com/v1/",
       token?.accessToken ?? "",
     ),
   );

@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 
 class AppImagePicker extends StatefulWidget {
   final void Function(File) onImageSelected;
@@ -50,27 +52,27 @@ class _AppImagePickerState extends State<AppImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipOval(
-      child: InkWell(
-        onTap: _pickAndCropImage,
-        child: Container(
-          width: widget.width,
-          height: widget.height,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(96),
-          ),
-          child: _image == null
-              ? Icon(
-                  Icons.photo_size_select_actual,
-                  size: widget.width / 3,
-                  color: Colors.grey[400],
-                )
-              : FittedBox(
+    return Clickable(
+      onPressed: _pickAndCropImage,
+      child: Container(
+        width: widget.width,
+        height: widget.height,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(96),
+        ),
+        child: _image == null
+            ? Icon(
+                CupertinoIcons.photo_fill,
+                size: widget.width / 3,
+                color: Colors.grey[400],
+              )
+            : ClipOval(
+                child: FittedBox(
                   fit: BoxFit.cover,
                   child: Image.file(_image!),
                 ),
-        ),
+              ),
       ),
     );
   }

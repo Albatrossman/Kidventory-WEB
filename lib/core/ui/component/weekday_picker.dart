@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 
 class WeekdayPicker extends StatefulWidget {
-  final Set<WeekDay> initialSelectedDays;
-  final Function(Set<WeekDay>) onSelectionChanged;
+  final List<WeekDay> initialSelectedDays;
+  final Function(List<WeekDay>) onSelectionChanged;
 
   const WeekdayPicker({
     super.key,
@@ -16,12 +16,12 @@ class WeekdayPicker extends StatefulWidget {
 }
 
 class _WeekdayPickerState extends State<WeekdayPicker> {
-  late Set<WeekDay> _selectedDays;
+  late List<WeekDay> _selectedDays;
 
   @override
   void initState() {
     super.initState();
-    _selectedDays = Set.from(widget.initialSelectedDays);
+    _selectedDays = List.from(widget.initialSelectedDays);
   }
 
   @override

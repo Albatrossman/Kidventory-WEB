@@ -1,69 +1,38 @@
-enum Gender {
-  male,
-  female,
-  other,
-}
+import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 
-enum Role {
-  student,
-  teacher,
-  parent,
-}
+part 'participant_dto.g.dart';
 
-enum Attendance {
-  present,
-  absent,
-}
-
+@JsonSerializable()
 class ParticipantDto {
-  final String id;
-  final String? sessionId;
+  final String sessionId;
   final String? avatarUrl;
-  final String firstname;
-  final String lastname;
-  final String? email;
-  final List<String>? phones;
-  final int? age;
-  final String? gender;
-  final String? parent;
-  final String? guardian;
-  final String? address;
-  final String role;
-  final String? attendance;
+  final String memberId;
+  final String firstName;
+  final String lastName;
+  final DateTime startDateTime;
+  final DateTime endDateTime;
+  final String timeMode;
+  @JsonKey(name: 'atendance')
+  final AttendanceDto attendance;
+  final String color;
+  final RoleDto role;
 
   ParticipantDto({
-    required this.id,
-    this.sessionId,
     this.avatarUrl,
-    required this.firstname,
-    required this.lastname,
-    this.email,
-    this.phones,
-    this.age,
-    this.gender,
-    this.parent,
-    this.guardian,
-    this.address,
-    required this.role,
-    this.attendance,
+    required this.sessionId,
+    required this.firstName,
+    required this.lastName,
+    required this.memberId,
+    required this.startDateTime,
+    required this.endDateTime,
+    required this.timeMode,
+    required this.attendance,
+    required this.color,
+    required this.role
   });
 
-  factory ParticipantDto.fromJson(Map<String, dynamic> json) {
-    return ParticipantDto(
-      id: json['id'],
-      sessionId: json['sessionId'],
-      avatarUrl: json['avatarUrl'],
-      firstname: json['firstname'],
-      lastname: json['lastname'],
-      email: json['email'],
-      phones: List<String>.from(json['phones']),
-      age: json['age'],
-      gender: json['gender'],
-      parent: json['parent'],
-      guardian: json['guardian'],
-      address: json['address'],
-      role: json['role'],
-      attendance: json['attendance'],
-    );
-  }
+  factory ParticipantDto.fromJson(Map<String, dynamic> json) => _$ParticipantDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$ParticipantDtoToJson(this);
 }

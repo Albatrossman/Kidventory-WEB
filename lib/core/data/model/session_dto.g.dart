@@ -17,8 +17,7 @@ SessionDto _$SessionDtoFromJson(Map<String, dynamic> json) => SessionDto(
       endDateTime: DateTime.parse(json['endDateTime'] as String),
     );
 
-Map<String, dynamic> _$SessionDtoToJson(SessionDto instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$SessionDtoToJson(SessionDto instance) => <String, dynamic>{
       'sessionId': instance.sessionId,
       'eventId': instance.eventId,
       'imageUrl': instance.imageUrl,

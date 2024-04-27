@@ -15,8 +15,7 @@ class AttendanceScreen extends StatefulWidget {
   }
 }
 
-class _AttendanceScreenState extends State<AttendanceScreen>
-    with MessageMixin, NavigationMixin {
+class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, NavigationMixin {
   Attendance _attendance = Attendance.unspecified;
 
   @override

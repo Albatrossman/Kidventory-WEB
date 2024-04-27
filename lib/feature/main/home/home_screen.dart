@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
@@ -25,27 +26,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
-  // bool isLoading = false;
-  // List<Session> upcomingSessions = [];
-
 
   @override
   void initState() {
     super.initState();
-    // loadSessions();
   }
-
-  // void loadSessions() async {
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   try {
-  //     upcomingSessions = await fetchSessions();
-  //   } catch (e) {}
-  //   setState(() {
-  //     isLoading = false;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -164,9 +149,10 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                       child: const Text("You have no upcoming events"),
                     );
                   } else {
+                    SessionDto session = model.state.upcomingSessions[index];
                     return SessionCard(
-                      session: model.state.upcomingSessions[index],
-                      onClick: () => push(const EventScreen()),
+                      session: session,
+                      onClick: () => push(EventScreen(id: session.eventId)),
                     );
                   }
                 }
