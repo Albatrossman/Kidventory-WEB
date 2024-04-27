@@ -10,7 +10,8 @@ RepeatDto _$RepeatDtoFromJson(Map<String, dynamic> json) => RepeatDto(
       id: json['id'] as String,
       period: json['period'] as int,
       periodUnit: json['periodUnit'] as String,
-      weekDays: (json['weekDays'] as List<dynamic>).map((e) => e as String).toList(),
+      weekDays:
+          (json['weekDays'] as List<dynamic>).map((e) => e as String).toList(),
       monthDay: json['monthDay'] as String,
       dayNumberOfMonth: json['dayNumberOfMonth'] as int,
       startDateTime: DateTime.parse(json['startDateTime'] as String),

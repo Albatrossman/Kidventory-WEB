@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'sign_up_dto.g.dart';
+
+@JsonSerializable()
 class SignUpDto {
   final String email;
   final String firstname;
@@ -13,23 +18,7 @@ class SignUpDto {
     required this.timezone,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'firstName': firstname,
-      'lastName': lastname,
-      'password': password,
-      'timeZone': timezone,
-    };
-  }
-
-  factory SignUpDto.fromJson(Map<String, dynamic> json) {
-    return SignUpDto(
-      email: json['email'],
-      firstname: json['firstName'],
-      lastname: json['lastName'],
-      password: json['password'],
-      timezone: json['timeZone'],
-    );
-  }
+  factory SignUpDto.fromJson(Map<String, dynamic> json) =>
+      _$SignUpDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$SignUpDtoToJson(this);
 }

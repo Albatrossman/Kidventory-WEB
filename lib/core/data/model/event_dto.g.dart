@@ -17,7 +17,8 @@ EventDto _$EventDtoFromJson(Map<String, dynamic> json) => EventDto(
       startTime: json['startTime'] as String,
       endTime: json['endTime'] as String,
       color: json['color'] as String,
-      onlineLocation: OnlineLocationDto.fromJson(json['onlineLocation'] as Map<String, dynamic>),
+      onlineLocation: OnlineLocationDto.fromJson(
+          json['onlineLocation'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$EventDtoToJson(EventDto instance) => <String, dynamic>{

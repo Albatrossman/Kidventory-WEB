@@ -22,7 +22,7 @@ class SignUpScreenViewModel extends ChangeNotifier {
   ) async {
     _update(loading: true);
     try {
-      final tokenDto = await _authApiService.signUp(
+      final result = await _authApiService.signUp(
         SignUpDto(
           email: email,
           password: password,
@@ -32,8 +32,8 @@ class SignUpScreenViewModel extends ChangeNotifier {
         ),
       );
 
-      if (tokenDto.statusCode == 200) {
-        _update(message: tokenDto.accessToken);
+      if (result.statusCode == 200) {
+
       } else {
         _update(message: "Something went wrong");
       }
