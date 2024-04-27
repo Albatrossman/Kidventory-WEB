@@ -10,6 +10,8 @@ import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/main/change_password/change_password_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen.dart';
+import 'package:kidventory_flutter/feature/main/profile/profile_screen_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -22,6 +24,14 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with MessageMixin, NavigationMixin {
+  late final ProfileScreenViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = Provider.of<ProfileScreenViewModel>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,20 +92,17 @@ class _ProfileScreenState extends State<ProfileScreen>
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
       shrinkWrap: true,
-      itemCount: 3,
+      itemCount: _viewModel.state.profile?.children.length ?? 0,
       separatorBuilder: (context, index) => const SizedBox(
         height: 8,
       ),
       itemBuilder: (context, index) {
+        ChildInfo child =
+            _viewModel.state.profile!.children[index].convertToChildInfo();
         return childRow(
-            context,
-            ChildInfo(
-                id: "$index",
-                image: "",
-                firstName: "firstname",
-                lastName: "lastname",
-                birthday: DateTime.now(),
-                relation: "relation"));
+          context,
+          child,
+        );
       },
     );
   }
@@ -124,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
               image: const DecorationImage(
                 fit: BoxFit.cover,
-                image: NetworkImage("https://i.pravatar.cc/150?img=3"),
+                image: NetworkImage(""),
               ),
             ),
           ),
@@ -133,11 +140,11 @@ class _ProfileScreenState extends State<ProfileScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Pouya Rezaei",
+                "${_viewModel.state.profile?.firstName ?? ""}  ${_viewModel.state.profile?.lastName ?? ""}",
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
-                "Abbasbavarsad@gmail.com",
+                _viewModel.state.profile?.email ?? "",
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
@@ -197,8 +204,9 @@ class _ProfileScreenState extends State<ProfileScreen>
             CupertinoDialogAction(
               isDestructiveAction: true,
               onPressed: () => {
-                Navigator.pop(context),
-                pushAndClear(const SignInScreen()),
+                _viewModel
+                    .signOut()
+                    .whenComplete(() => _pushToSignInScreen(context))
               },
               child: const Text("Yes"),
             ),
@@ -206,5 +214,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
       },
     );
+  }
+
+  void _pushToSignInScreen(BuildContext context) {
+    Navigator.pop(context);
+    pushAndClear(const SignInScreen());
   }
 }

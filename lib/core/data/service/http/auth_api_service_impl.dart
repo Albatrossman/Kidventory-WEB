@@ -26,16 +26,7 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<Null> signUp(SignUpDto body) async {
-    Response response = await client.dio.post('auth/signup', data: {
-      {
-        "email": body.email,
-        "password": body.password,
-        "firstName": body.firstname,
-        "lastName": body.lastname,
-        "avatarUrl": "",
-        "timeZone": body.timezone
-      }
-    });
+    Response response = await client.dio.post('auth/signup', data: body.toJson());
 
     if (response.statusCode == 200) {
       return null;

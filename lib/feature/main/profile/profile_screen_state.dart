@@ -1,24 +1,24 @@
-import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 
 class ProfileScreenState {
   final bool loading;
-  final List<EventDto> events;
+  late ProfileDto? profile;
   final String? message;
 
   ProfileScreenState({
     this.loading = false,
-    List<EventDto>? events,
+    ProfileDto? profile,
     this.message,
-  }) : events = events ?? [];
+  }) : profile = profile ?? ProfileDto(id: "", avatarUrl: "", email: "", password: "", firstName: "", lastName: "", timeZone: "UTC", phone: [], children: []);
 
   ProfileScreenState copy({
     bool? loading,
-    List<EventDto>? events,
+    ProfileDto? profile,
     String? message,
   }) {
     return ProfileScreenState(
       loading: loading ?? this.loading,
-      events: events ?? this.events,
+      profile: profile ?? this.profile,
       message: message ?? this.message,
     );
   }

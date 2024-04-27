@@ -4,7 +4,7 @@ import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart'
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
-import 'package:kidventory_flutter/di/app_,module.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
@@ -14,6 +14,7 @@ import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dar
 import 'package:kidventory_flutter/feature/main/events/events_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
+import 'package:kidventory_flutter/feature/main/profile/profile_screen_viewmodel.dart';
 import 'package:kidventory_flutter/main_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,12 @@ void main() async {
       ChangeNotifierProvider<SignInScreenViewModel>(
         create: (context) => SignInScreenViewModel(
           getIt<AuthApiService>(),
+          getIt<TokenPreferencesManager>(),
+        ),
+      ),
+      ChangeNotifierProvider<ProfileScreenViewModel>(
+        create: (context) => ProfileScreenViewModel(
+          getIt<UserApiService>(),
           getIt<TokenPreferencesManager>(),
         ),
       ),
