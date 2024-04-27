@@ -16,7 +16,7 @@ class Participant {
   final String? guardian;
   final String? address;
   final Role role;
-  final Attendance? attendance;
+  final Attendance attendance;
 
   Participant({
     required this.id,
@@ -32,6 +32,6 @@ class Participant {
     this.guardian,
     this.address,
     required this.role,
-    this.attendance,
+    required this.attendance,
   });
 }
