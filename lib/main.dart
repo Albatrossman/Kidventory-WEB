@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
-import 'package:kidventory_flutter/core/data/service/csv/participant_csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
-import 'package:kidventory_flutter/core/data/service/http/auth_api_service_impl.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
-import 'package:kidventory_flutter/core/data/service/http/event_api_service_impl.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
-import 'package:kidventory_flutter/core/data/service/http/user_api_service_impl.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
-import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager_impl.dart';
-import 'package:kidventory_flutter/core/data/util/dio_client.dart';
 import 'package:kidventory_flutter/di/app_,module.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
@@ -24,63 +17,46 @@ import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:kidventory_flutter/main_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setup();
   runApp(MultiProvider(
     providers: [
-      Provider<FlutterSecureStorage>(create: (_) => const FlutterSecureStorage()),
-      Provider<AuthApiService>(create: (_) => AuthApiServiceImpl(getIt<DioClient>())),
-      Provider<UserApiService>(create: (_) => UserApiServiceImpl(getIt<DioClient>())),
-      Provider<EventApiService>(create: (_) => EventApiServiceImpl(getIt<DioClient>())),
-      Provider<CSVParser>(create: (_) => ParticipantCSVParser()),
-      Provider<TokenPreferencesManager>(
-        create: (context) => TokenPreferencesManagerImpl(
-          storage: Provider.of<FlutterSecureStorage>(context, listen: false),
-        ),
-      ),
       ChangeNotifierProvider<MainViewModel>(
-        create: (context) => MainViewModel(
-            Provider.of<TokenPreferencesManager>(context, listen: false)),
+        create: (context) => MainViewModel(getIt<TokenPreferencesManager>()),
       ),
       ChangeNotifierProvider<SignInScreenViewModel>(
         create: (context) => SignInScreenViewModel(
-          Provider.of<AuthApiService>(context, listen: false),
-          Provider.of<TokenPreferencesManager>(context, listen: false),
+          getIt<AuthApiService>(),
+          getIt<TokenPreferencesManager>(),
         ),
       ),
       ChangeNotifierProvider<ForgotPasswordScreenViewModel>(
         create: (context) => ForgotPasswordScreenViewModel(
-          Provider.of<AuthApiService>(context, listen: false),
-          Provider.of<TokenPreferencesManager>(context, listen: false),
+          getIt<AuthApiService>(),
+          getIt<TokenPreferencesManager>(),
         ),
       ),
       ChangeNotifierProvider<SignUpScreenViewModel>(
         create: (context) => SignUpScreenViewModel(
-          Provider.of<AuthApiService>(context, listen: false),
-          Provider.of<TokenPreferencesManager>(context, listen: false),
+          getIt<AuthApiService>(),
+          getIt<TokenPreferencesManager>(),
         ),
       ),
       ChangeNotifierProvider<HomeScreenViewModel>(
-        create: (context) => HomeScreenViewModel(
-          Provider.of<UserApiService>(context, listen: false),
-        ),
+        create: (context) => HomeScreenViewModel(getIt<UserApiService>()),
       ),
       ChangeNotifierProvider<EventsScreenViewModel>(
-        create: (context) => EventsScreenViewModel(
-          Provider.of<UserApiService>(context, listen: false),
-        ),
+        create: (context) => EventsScreenViewModel(getIt<UserApiService>()),
       ),
       ChangeNotifierProvider<EditEventScreenViewModel>(
         create: (context) => EditEventScreenViewModel(
-          Provider.of<CSVParser>(context, listen: false),
-          Provider.of<EventApiService>(context, listen: false),
+          getIt<CSVParser>(),
+          getIt<EventApiService>(),
         ),
       ),
       ChangeNotifierProvider<EventScreenViewModel>(
-        create: (context) => EventScreenViewModel(
-          Provider.of<EventApiService>(context, listen: false),
-        ),
+        create: (context) => EventScreenViewModel(getIt<EventApiService>()),
       ),
     ],
     child: const MyApp(),
@@ -100,7 +76,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const AppScreen(title: 'Kidventory'),
+      home: FutureBuilder(future: setup(), builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return const AppScreen(title: 'Kidventory');
+        }
+        return const Center(child: CircularProgressIndicator());
+      }),
     );
   }
 }

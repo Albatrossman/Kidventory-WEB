@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart';
+import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
@@ -15,7 +14,7 @@ class EventApiServiceImpl extends EventApiService {
   EventApiServiceImpl(this.client);
 
   @override
-  Future<EventDto> createEvent(EventDto event) async {
+  Future<EventDto> createEvent(CreateEventDto event) async {
     Response response = await client.dio.post('events', data: event.toJson());
     return EventDto.fromJson(response.data!);
   }

@@ -139,7 +139,7 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
             Consumer<EventScreenViewModel>(
                 builder: (context, model, child) {
                   return Text(
-                    model.state.event?.title ?? '',
+                    model.state.event?.name ?? '',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),

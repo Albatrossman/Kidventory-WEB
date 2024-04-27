@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 
 mixin PickerMixin<T extends StatefulWidget> on State<T> {
   DateTime selectedDate = DateTime.now();
@@ -51,14 +53,20 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
 
   void timePicker(
     BuildContext context, {
-    DateTime? firstDate,
-    DateTime? lastDate,
+    required Function(TimeOfDay) onTimeChanged,
+    Widget title = const Text('Pick a time'),
+    TimeOfDay? initialTime,
+    TimeOfDay? minimumTime,
+    TimeOfDay? maximumTime,
   }) {
+    initialTime ??= TimeOfDay.now();
+    minimumTime ??= TimeOfDay.now();
+    maximumTime ??= const TimeOfDay(hour: 23, minute: 59);
+
     if (kIsWeb) {
-      showDatePicker(
+      showTimePicker(
         context: context,
-        firstDate: firstDate ?? DateTime(1900),
-        lastDate: lastDate ?? DateTime(2100),
+        initialTime: initialTime,
       );
     } else {
       showCupertinoModalPopup(
@@ -66,25 +74,32 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
         builder: (_) => Wrap(
           children: [
             Container(
-              color: const Color.fromARGB(255, 255, 255, 255),
+              color: Theme.of(context).colorScheme.surface,
               child: Column(
                 children: [
+                  SheetHeader(title: title),
                   SizedBox(
                     height: 200,
                     child: CupertinoDatePicker(
                       mode: CupertinoDatePickerMode.time,
+                      onDateTimeChanged: (DateTime newTime) {
+                        onTimeChanged(TimeOfDay.fromDateTime(newTime));
+                      },
                       initialDateTime: DateTime(
                         selectedDate.year,
                         selectedDate.month,
                         selectedDate.day,
-                        selectedTime.hour,
-                        selectedTime.minute,
+                        initialTime?.hour ?? selectedDate.hour,
+                        initialTime?.minute ?? selectedDate.minute,
                       ),
-                      onDateTimeChanged: (DateTime newTime) {
-                        setState(() {
-                          selectedTime = TimeOfDay.fromDateTime(newTime);
-                        });
-                      },
+                      minimumDate: DateTime.now().copyWith(
+                        hour: minimumTime?.hour,
+                        minute: minimumTime?.minute,
+                      ),
+                      maximumDate: DateTime.now().copyWith(
+                        hour: maximumTime?.hour,
+                        minute: maximumTime?.minute,
+                      ),
                     ),
                   ),
                 ],

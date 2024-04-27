@@ -13,7 +13,8 @@ AddMemberDto _$AddMemberDtoFromJson(Map<String, dynamic> json) => AddMemberDto(
           .toList(),
     );
 
-Map<String, dynamic> _$AddMemberDtoToJson(AddMemberDto instance) => <String, dynamic>{
+Map<String, dynamic> _$AddMemberDtoToJson(AddMemberDto instance) =>
+    <String, dynamic>{
       'eventId': instance.eventId,
       'participants': instance.participants,
     };

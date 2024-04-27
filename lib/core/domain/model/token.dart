@@ -6,12 +6,10 @@ part 'token.g.dart';
 class Token {
   final String accessToken;
   final String refreshToken;
-  final String username;
 
   Token({
     required this.accessToken,
     required this.refreshToken,
-    required this.username,
   });
 
   factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
