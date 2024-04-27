@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/csv_card.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
@@ -32,6 +33,7 @@ class _AddMembersScreenState extends State<AddMembersScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const SheetHeader(title: Text('Add Members')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

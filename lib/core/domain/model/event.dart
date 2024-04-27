@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/online_location.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
@@ -14,7 +15,7 @@ class Event {
   final TimeOfDay startTime;
   final TimeOfDay endTime;
   final OnlineLocation? onlineLocation;
-  final Color color;
+  final EventColor color;
   final InviteLink inviteLink;
 
   Event({

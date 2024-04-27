@@ -1,6 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/mapper/online_location_mapper.dart';
+import 'package:kidventory_flutter/core/data/mapper/repeat_mapper.dart';
+import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
@@ -10,6 +13,7 @@ import 'package:kidventory_flutter/core/domain/model/platform.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
+import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_state.dart';
 
@@ -20,25 +24,23 @@ class EditEventScreenViewModel extends ChangeNotifier {
   EditEventScreenViewModel(this._parser, this._eventApiService);
 
   EditEventScreenState _state = EditEventScreenState();
+
   EditEventScreenState get state => _state;
 
-  void createEvent() {
-    // _eventApiService.createEvent()
-    // Event event = Event(
-    //     name: state.name,
-    //     repeat: Repeat(
-    //       period:
-    //     ),
-    //     timeMode: timeMode,
-    //     startTime: startTime,
-    //     endTime: endTime,
-    //     color: color,
-    //     inviteLink: inviteLink,
-    // )
-  }
+  void createEvent(String name) {
+    CreateEventDto event = CreateEventDto(
+      imageFile: '',
+      name: name,
+      description: state.description,
+      repeat: state.repeat.toDto(),
+      timeMode: state.allDay ? TimeMode.allDay : TimeMode.halting,
+      startTime: state.startTime,
+      endTime: state.endTime,
+      onlineLocation: state.onlineLocation?.toData(),
+      color: state.color
+    );
 
-  void editName(String name) {
-    // _update(repeat: )
+    _eventApiService.createEvent(event);
   }
 
   void editRepeat(int period, RepeatUnit unit, List<WeekDay> daysOfWeek, RepeatEnd end) {
@@ -59,6 +61,14 @@ class EditEventScreenViewModel extends ChangeNotifier {
 
   void toggleAllDay() {
     _update(allDay: !state.allDay);
+  }
+
+  void selectedStartTime(TimeOfDay time) {
+    _update(startTime: time);
+  }
+
+  void selectedEndTime(TimeOfDay time) {
+    _update(endTime: time);
   }
 
   void selectRepeatUnit(RepeatUnit unit) {
@@ -84,15 +94,13 @@ class EditEventScreenViewModel extends ChangeNotifier {
     _update(filesAndParticipants: filesAndParticipants);
   }
 
-  void editOnlineLocation(
-    Platform platform,
-    String link,
-    String id,
-    String password,
-    String comment,
-    String phone,
-    String pin,
-  ) {
+  void editOnlineLocation(Platform platform,
+      String link,
+      String id,
+      String password,
+      String comment,
+      String phone,
+      String pin,) {
     _update(
       onlineLocation: OnlineLocation(
         platform: Platform.meet,
@@ -121,6 +129,8 @@ class EditEventScreenViewModel extends ChangeNotifier {
     Repeat? repeat,
     RepeatUnit? selectedRepeatUnit,
     RepeatEnd? selectedRepeatEnd,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
     Map<File, List<Member>>? filesAndParticipants,
     OnlineLocation? onlineLocation,
     EventColor? color,
@@ -133,6 +143,8 @@ class EditEventScreenViewModel extends ChangeNotifier {
       repeat: repeat,
       selectedRepeatUnit: selectedRepeatUnit,
       selectedRepeatEnd: selectedRepeatEnd,
+      startTime: startTime,
+      endTime: endTime,
       filesAndParticipants: filesAndParticipants,
       onlineLocation: onlineLocation,
       color: color,

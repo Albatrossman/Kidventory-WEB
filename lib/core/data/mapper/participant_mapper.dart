@@ -3,7 +3,7 @@ import 'package:kidventory_flutter/core/data/mapper/role_mapper.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/participant.dart';
 
-extension ParticipantDtoExtension on ParticipantDto {
+extension DataExtension on ParticipantDto {
   Participant toDomain() {
     return Participant(
       id: memberId,
@@ -24,7 +24,7 @@ extension ParticipantDtoExtension on ParticipantDto {
   }
 }
 
-extension ParticipantExtension on Participant {
+extension DomainExtension on Participant {
   ParticipantDto toData() {
     return ParticipantDto(
       memberId: id,

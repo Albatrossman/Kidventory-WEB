@@ -8,12 +8,10 @@ class TokenDto {
   final String accessToken;
   @JsonKey(name: "refresh_token")
   final String refreshToken;
-  final String userName;
 
   TokenDto({
     required this.accessToken,
     required this.refreshToken,
-    required this.userName,
   });
 
   factory TokenDto.fromJson(Map<String, dynamic> json) => _$TokenDtoFromJson(json);

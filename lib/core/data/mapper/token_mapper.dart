@@ -6,7 +6,6 @@ extension DataExtension on TokenDto {
     return Token(
       accessToken: accessToken,
       refreshToken: refreshToken,
-      username: userName
     );
   }
 }
@@ -16,7 +15,6 @@ extension DomainExtension on Token {
     return TokenDto(
       accessToken: accessToken,
       refreshToken: refreshToken,
-      userName: username
     );
   }
 }

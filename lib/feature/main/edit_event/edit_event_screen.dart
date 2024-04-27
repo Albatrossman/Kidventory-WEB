@@ -7,6 +7,7 @@ import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/event_option.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/color_extension.dart';
+import 'package:kidventory_flutter/core/ui/util/extension/date_time_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
@@ -28,7 +29,8 @@ class EditEventScreen extends StatefulWidget {
   }
 }
 
-class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, NavigationMixin, PickerMixin {
+class _EditEventScreenState extends State<EditEventScreen>
+    with MessageMixin, NavigationMixin, PickerMixin {
   late final EditEventScreenViewModel _viewModel;
 
   final TextEditingController _nameController = TextEditingController();
@@ -102,7 +104,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                               ?.copyWith(color: Theme.of(context).colorScheme.outline),
                         ),
                       ),
-                      EventOption(
+                      EventOption.withText(
                         leading: Icon(
                           CupertinoIcons.calendar,
                           color: Theme.of(context).colorScheme.primary,
@@ -117,7 +119,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                         indent: 28 + 16,
                       ),
                       const SizedBox(height: 4.0),
-                      EventOption(
+                      EventOption.withText(
                         label: 'Repeat',
                         onTap: () => {showOptions()},
                         leading: Icon(
@@ -141,7 +143,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                         indent: 28 + 16,
                       ),
                       const SizedBox(height: 4.0),
-                      EventOption(
+                      EventOption.withText(
                         label: 'All day',
                         leading: Icon(
                           CupertinoIcons.sun_max,
@@ -172,14 +174,60 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                                         indent: 28 + 16,
                                       ),
                                       const SizedBox(height: 4.0),
-                                      EventOption(
+                                      EventOption.withWidget(
                                         leading: Icon(
                                           CupertinoIcons.clock,
                                           color: Theme.of(context).colorScheme.primary,
                                           size: 20.0,
                                         ),
-                                        label: '9:00 AM - 10:00 AM',
-                                        onTap: () => { timePicker(context) },
+                                        label: Row(
+                                          children: [
+                                            Consumer<EditEventScreenViewModel>(
+                                              builder: (_, model, __) {
+                                                return CupertinoButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () => {
+                                                    timePicker(
+                                                      context,
+                                                      onTimeChanged: (time) =>
+                                                          {_viewModel.selectedStartTime(time)},
+                                                      title: const Text('Select Start Time'),
+                                                      initialTime: model.state.startTime,
+                                                    ),
+                                                  },
+                                                  child: Text(
+                                                    model.state.startTime.formatted,
+                                                    style: Theme.of(context).textTheme.labelMedium,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            const SizedBox(width: 16.0),
+                                            const Text('-'),
+                                            const SizedBox(width: 16.0),
+                                            Consumer<EditEventScreenViewModel>(
+                                              builder: (_, model, __) {
+                                                return CupertinoButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () => {
+                                                    timePicker(context,
+                                                        onTimeChanged: (time) =>
+                                                            {_viewModel.selectedEndTime(time)},
+                                                        title: const Text('Select End Time'),
+                                                        initialTime: model.state.endTime,
+                                                        minimumTime: model.state.startTime
+                                                            .roundedToNextQuarter()),
+                                                  },
+                                                  child: Text(
+                                                    model.state.endTime.formatted,
+                                                    style: Theme.of(context).textTheme.labelMedium,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () => {},
                                       ),
                                     ],
                                   );
@@ -191,7 +239,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                   ),
                 ),
                 const SizedBox(height: 16),
-                EventOption(
+                EventOption.withText(
                   leading: Icon(
                     CupertinoIcons.person_crop_circle_badge_plus,
                     color: Theme.of(context).colorScheme.primary,
@@ -205,7 +253,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),
                 ),
-                EventOption(
+                EventOption.withText(
                   leading: Icon(
                     CupertinoIcons.videocam_circle,
                     color: Theme.of(context).colorScheme.primary,
@@ -219,7 +267,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),
                 ),
-                EventOption(
+                EventOption.withText(
                   leading: Consumer<EditEventScreenViewModel>(
                     builder: (_, model, __) {
                       return Container(
@@ -240,7 +288,7 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),
                 ),
-                EventOption(
+                EventOption.withText(
                   leading: Icon(
                     CupertinoIcons.pencil_circle,
                     color: Theme.of(context).colorScheme.primary,
@@ -269,12 +317,12 @@ class _EditEventScreenState extends State<EditEventScreen> with MessageMixin, Na
   Widget _buildSaveButton(BuildContext context) {
     return AppButton(
       controller: _btnController,
-      onPressed: () => _viewModel.createEvent(),
+      onPressed: () => _viewModel.createEvent(_nameController.text),
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
       ),
     );
   }

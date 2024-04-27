@@ -76,7 +76,7 @@ class _JoinEventScreenState extends State<JoinEventScreen>
                 itemBuilder: (context, index) {
                   final EventDto event = model.state.events[index];
                   return EventCard(
-                    name: event.title,
+                    name: event.name,
                     time: "${event.startTime} - ${event.endTime}",
                     onClick: () => {  },
                     imageUrl: event.imageUrl,

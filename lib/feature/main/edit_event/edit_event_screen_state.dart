@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 import 'package:kidventory_flutter/core/domain/model/online_location.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
+import 'package:kidventory_flutter/core/ui/util/extension/date_time_extension.dart';
 
 class EditEventScreenState {
   final bool loading;
@@ -14,6 +16,8 @@ class EditEventScreenState {
   final Repeat repeat;
   final RepeatUnit selectedRepeatUnit;
   final RepeatEnd selectedRepeatEnd;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
   final Map<File, List<Member>> filesAndParticipants;
   final OnlineLocation? onlineLocation;
   final EventColor color;
@@ -28,17 +32,24 @@ class EditEventScreenState {
     Repeat? repeat,
     this.selectedRepeatUnit = RepeatUnit.day,
     this.selectedRepeatEnd = RepeatEnd.onDate,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
     Map<File, List<Member>>? filesAndParticipants,
     this.onlineLocation,
     this.color = EventColor.peacock,
     this.description = '',
-  }) : repeat = repeat ?? Repeat.defaultRepeat(), filesAndParticipants = filesAndParticipants ?? {};
+  })  : repeat = repeat ?? Repeat.defaultRepeat(),
+        startTime = startTime ?? TimeOfDay.now().roundedToNextQuarter(),
+        endTime = endTime ?? startTime?.roundedToNextQuarter().replacing(hour: (startTime.hour) % 24) ?? TimeOfDay.now().roundedToNextQuarter().replacing(hour: (TimeOfDay.now().hour + 1) % 24),
+        filesAndParticipants = filesAndParticipants ?? {};
 
   EditEventScreenState copy({
     bool? loading,
     String? name,
     bool? allDay,
     String? message,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
     Repeat? repeat,
     RepeatUnit? selectedRepeatUnit,
     RepeatEnd? selectedRepeatEnd,
@@ -52,6 +63,8 @@ class EditEventScreenState {
       name: name ?? this.name,
       allDay: allDay ?? this.allDay,
       message: message ?? this.message,
+      startTime: startTime,
+      endTime: endTime,
       selectedRepeatUnit: selectedRepeatUnit ?? this.selectedRepeatUnit,
       selectedRepeatEnd: selectedRepeatEnd ?? this.selectedRepeatEnd,
       filesAndParticipants: filesAndParticipants ?? this.filesAndParticipants,

@@ -80,7 +80,7 @@ class _EventsScreenState extends State<EventsScreen>
                 itemBuilder: (context, index) {
                   final EventDto event = model.state.events[index];
                   return EventCard(
-                    name: event.title,
+                    name: event.name,
                     time: "${event.startTime} - ${event.endTime}",
                     onClick: () => {push(EventScreen(id: event.id))},
                     imageUrl: event.imageUrl,

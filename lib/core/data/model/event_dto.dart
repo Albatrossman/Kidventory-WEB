@@ -9,7 +9,8 @@ class EventDto {
   final String id;
   final String imageFile;
   final String imageUrl;
-  final String title;
+  @JsonKey(name: 'title')
+  final String name;
   final String description;
   final RepeatDto repeat;
   final String timeMode;
@@ -22,7 +23,7 @@ class EventDto {
     required this.id,
     required this.imageFile,
     required this.imageUrl,
-    required this.title,
+    required this.name,
     required this.description,
     required this.repeat,
     required this.timeMode,
