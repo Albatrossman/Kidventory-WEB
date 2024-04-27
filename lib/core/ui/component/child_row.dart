@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/util/model/child_info.dart';
 
 class ChildRow extends StatelessWidget {
@@ -47,11 +48,11 @@ class ChildRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${info.firstname} ${info.lastname}",
+                "${info.firstName} ${info.lastName}",
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               Text(
-                info.birthday,
+                info.birthday.formatDate(),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

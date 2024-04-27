@@ -3,15 +3,19 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
 import 'package:kidventory_flutter/core/ui/component/option.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/model/child_info.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class EditChildScreen extends StatefulWidget {
-  const EditChildScreen({super.key});
+  final ChildInfo? childInfo;
+  const EditChildScreen({super.key, this.childInfo});
 
   @override
   State<StatefulWidget> createState() {
@@ -19,7 +23,7 @@ class EditChildScreen extends StatefulWidget {
   }
 }
 
-class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, NavigationMixin {
+class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, NavigationMixin, PickerMixin {
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final RoundedLoadingButtonController _btnController =
@@ -30,6 +34,13 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
   //   super.initState();
   //   _viewModel = Provider.of<EditChildScreenViewModel>(context, listen: false);
   // }
+
+  @override
+  void initState() {
+    _firstnameController.text = widget.childInfo?.firstName ?? "";
+    _lastnameController.text = widget.childInfo?.lastName ?? "";
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +160,7 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
       iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
       label: "Birthday",
       onTap: () => {_showDatePicker()},
-      trailing: const Text("20/08/1997"),
+      trailing: Text(widget.childInfo?.birthday.formatDate() ?? selectedDate.formatDate()),
     );
   }
 
@@ -178,40 +189,11 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
   }
 
   void _showDatePicker() {
-    if (kIsWeb) {
-      showDatePicker(context: context, firstDate: DateTime(1900), lastDate: DateTime.now())
-          .then((_) => {});
-    } else {
-      showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 260,
-            padding: const EdgeInsets.only(top: 6),
-            color: CupertinoColors.systemBackground.resolveFrom(context),
-            child: Column(
-              children: [
-                // Header with done button
-                _buildHeader(context),
-                // Date picker
-                Expanded(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: DateTime.now(),
-                    onDateTimeChanged: (DateTime date) {},
-                    maximumDate: DateTime.now(),
-                    minimumDate: DateTime(1900),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ).then((_) {});
-    }
+    datePicker(context, firstDate: DateTime(1900), lastDate: DateTime.now());
   }
 
   void _showRelationPicker() {
+    
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
@@ -233,6 +215,7 @@ class _EditChildScreenState extends State<EditChildScreen> with MessageMixin, Na
             CupertinoActionSheetAction(
               child: const Text("None"),
               onPressed: () {
+                widget.childInfo?.relation = "";
                 Navigator.pop(context);
               },
             ),

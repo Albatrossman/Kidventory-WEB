@@ -6,6 +6,7 @@ import 'package:kidventory_flutter/core/ui/component/option.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/model/child_info.dart';
+import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/main/change_password/change_password_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen.dart';
@@ -86,14 +87,22 @@ class _ProfileScreenState extends State<ProfileScreen>
         height: 8,
       ),
       itemBuilder: (context, index) {
-        return childRow(context, ChildInfo(id: "$index", image: "", firstname: "firstname", lastname: "lastname", birthday: "birthday", relation: "relation"));
+        return childRow(
+            context,
+            ChildInfo(
+                id: "$index",
+                image: "",
+                firstName: "firstname",
+                lastName: "lastname",
+                birthday: DateTime.now(),
+                relation: "relation"));
       },
     );
   }
 
   Widget childRow(BuildContext context, ChildInfo info) {
     return Clickable(
-      onPressed: () => { push(const EditChildScreen()) },
+      onPressed: () => {push(EditChildScreen(childInfo: info))},
       child: ChildRow(info: info),
     );
   }
@@ -170,28 +179,32 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget signOutButton(BuildContext context) {
     return Option(
-        icon: CupertinoIcons.arrow_left_circle_fill,
-        iconBackgroundColor: Theme.of(context).colorScheme.errorContainer,
-        iconColor: Theme.of(context).colorScheme.onErrorContainer,
-        label: 'Sign Out',
-        onTap: () => {
-              dialog(
-                const Text("Sign Out"),
-                const Text(
-                    "Are you sure you want to sign out? You will need to sign in again to access your account."),
-                [
-                  CupertinoDialogAction(
-                    isDefaultAction: true,
-                    onPressed: () => {Navigator.pop(context)},
-                    child: const Text("No"),
-                  ),
-                  CupertinoDialogAction(
-                    isDestructiveAction: true,
-                    onPressed: () => {Navigator.pop(context)},
-                    child: const Text("Yes"),
-                  ),
-                ],
-              ),
-            });
+      icon: CupertinoIcons.arrow_left_circle_fill,
+      iconBackgroundColor: Theme.of(context).colorScheme.errorContainer,
+      iconColor: Theme.of(context).colorScheme.onErrorContainer,
+      label: 'Sign Out',
+      onTap: () => {
+        dialog(
+          const Text("Sign Out"),
+          const Text(
+              "Are you sure you want to sign out? You will need to sign in again to access your account."),
+          [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () => {Navigator.pop(context)},
+              child: const Text("No"),
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () => {
+                Navigator.pop(context),
+                pushAndClear(const SignInScreen()),
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        ),
+      },
+    );
   }
 }
