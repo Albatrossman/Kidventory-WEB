@@ -35,10 +35,10 @@ class SignUpScreenViewModel extends ChangeNotifier {
       if (tokenDto.statusCode == 200) {
         _update(message: tokenDto.accessToken);
       } else {
-        _update(message: "Incorrect email or password.");
+        _update(message: "Something went wrong");
       }
     } catch (exception) {
-      _update(message: "Incorrect email or password.");
+      _update(message: "Something went wrong");
     } finally {
       _update(loading: false);
     }
