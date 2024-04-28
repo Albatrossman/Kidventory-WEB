@@ -33,7 +33,8 @@ class UserApiServiceImpl extends UserApiService {
   @override
   Future<ProfileDto> getProfile(String id) async {
     Response response = await client.dio.get('users/$id');
-    return response.data.map<ProfileDto>((json) => ProfileDto.fromJson(json));
+    
+    return ProfileDto.fromJson(response.data);
   }
 
   @override

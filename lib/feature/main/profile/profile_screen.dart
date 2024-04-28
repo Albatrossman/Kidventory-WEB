@@ -33,6 +33,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -42,7 +47,11 @@ class _ProfileScreenState extends State<ProfileScreen>
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: accountButton(context),
+                child: Consumer<ProfileScreenViewModel>(
+                  builder: (_, model, __) {
+                    return accountButton(context);
+                  },
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
@@ -57,7 +66,35 @@ class _ProfileScreenState extends State<ProfileScreen>
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    childList(context),
+                    Consumer<ProfileScreenViewModel>(
+                      builder: (_, model, __) {
+                        if (model.state.profile?.children?.isEmpty ?? true) {
+                          if (model.state.loading) {
+                            return const SizedBox(
+                                height: 64,
+                                child:
+                                    Center(child: CircularProgressIndicator()));
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Container(
+                                width: double.infinity,
+                                height: 64,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: const Text("You have no children"),
+                              ),
+                            );
+                          }
+                        } else {
+                          return childList(context);
+                        }
+                      },
+                    ),
                     addChildButton(context),
                   ],
                 ),
@@ -92,13 +129,13 @@ class _ProfileScreenState extends State<ProfileScreen>
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
       shrinkWrap: true,
-      itemCount: _viewModel.state.profile?.children.length ?? 0,
+      itemCount: _viewModel.state.profile?.children?.length ?? 0,
       separatorBuilder: (context, index) => const SizedBox(
         height: 8,
       ),
       itemBuilder: (context, index) {
         ChildInfo child =
-            _viewModel.state.profile!.children[index].convertToChildInfo();
+            _viewModel.state.profile!.children![index].convertToChildInfo();
         return childRow(
           context,
           child,
@@ -129,9 +166,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 color: Theme.of(context).colorScheme.outlineVariant,
                 width: 1.0,
               ),
-              image: const DecorationImage(
+              image: DecorationImage(
                 fit: BoxFit.cover,
-                image: NetworkImage(""),
+                image: NetworkImage(_viewModel.state.profile?.avatarUrl ?? ""),
               ),
             ),
           ),
@@ -140,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${_viewModel.state.profile?.firstName ?? ""}  ${_viewModel.state.profile?.lastName ?? ""}",
+                "${_viewModel.state.profile?.firstName ?? ""} ${_viewModel.state.profile?.lastName ?? ""}",
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
@@ -161,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget addChildButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
+      padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
       child: SizedBox(
         width: double.infinity,
         height: 40,

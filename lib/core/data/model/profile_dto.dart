@@ -12,8 +12,8 @@ class ProfileDto {
   final String firstName;
   final String lastName;
   final String timeZone;
-  final List<String> phone;
-  final List<ChildDto> children;
+  final List<String>? phone;
+  final List<ChildDto>? children;
 
   ProfileDto({
     required this.id,
@@ -23,8 +23,8 @@ class ProfileDto {
     required this.firstName,
     required this.lastName,
     required this.timeZone,
-    required this.phone,
-    required this.children,
+    this.phone,
+    this.children,
   });
 
 

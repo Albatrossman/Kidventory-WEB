@@ -14,9 +14,10 @@ ProfileDto _$ProfileDtoFromJson(Map<String, dynamic> json) => ProfileDto(
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       timeZone: json['timeZone'] as String,
-      phone: (json['phone'] as List<dynamic>).map((e) => e as String).toList(),
-      children: (json['children'] as List<dynamic>)
-          .map((e) => ChildDto.fromJson(e as Map<String, dynamic>))
+      phone:
+          (json['phone'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      children: (json['children'] as List<dynamic>?)
+          ?.map((e) => ChildDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
