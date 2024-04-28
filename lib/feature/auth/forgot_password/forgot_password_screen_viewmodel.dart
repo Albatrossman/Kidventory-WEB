@@ -18,7 +18,6 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
     try {
       final tokenDto = await _authApiService.signIn(email, password);
       _tokenPreferences.saveToken(tokenDto.toDomain());
-      _update(message: tokenDto.accessToken);
     } catch (exception) {
       _update(message: "Email does not exist");
       rethrow;
@@ -30,7 +29,7 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   Future<void> sendOTP(String email) async {
     _update(loading: true);
     try {
-      final tokenDto = await _authApiService.sendOTP(email);
+      final _ = await _authApiService.sendOTP(email);
       
     } finally {
       _update(loading: false);
@@ -40,7 +39,7 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   Future<void> verifyOTP(String email, String code) async {
     _update(loading: true);
     try {
-      final tokenDto = await _authApiService.validateOTP(email, code);
+      final _ = await _authApiService.validateOTP(email, code);
     } finally {
       _update(loading: false);
     }
@@ -49,7 +48,7 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   Future<void> resetPassword(String email, String code, String password) async {
     _update(loading: true);
     try {
-      final tokenDto =
+      final _ =
           await _authApiService.resetPassword(email, code, password);
     } finally {
       _update(loading: false);

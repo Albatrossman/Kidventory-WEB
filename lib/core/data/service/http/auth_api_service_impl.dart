@@ -59,9 +59,20 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<Null> resetPassword(String email, String code, String password) async {
-    final response = await http.post(
+    final response = await http.patch(
       Uri.parse(
           "https://kidventory.aftersearch.com/api/auth/ResetPassword?email=$email&code=$code&password=$password&"),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {}
+  }
+
+   @override
+  Future<Null> changePassword(String email, String currentPassword, String newPassword, String confirmNewPassword) async {
+    final response = await http.patch(
+      Uri.parse(
+          "https://kidventory.aftersearch.com/api/auth/ChangePassword?email=$email&currentPassword=$currentPassword&newPassword=$newPassword&confirmNewPassword=$confirmNewPassword"),
       headers: {'Content-Type': 'application/json'},
     );
 

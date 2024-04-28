@@ -18,7 +18,6 @@ class SignInScreenViewModel extends ChangeNotifier {
     try {
       final tokenDto = await _authApiService.signIn(email, password);
       _tokenPreferences.saveToken(tokenDto.toDomain());
-      _update(message: tokenDto.accessToken);
     } catch (exception) {
       _update(message: "Incorrect email or password.");
       rethrow;

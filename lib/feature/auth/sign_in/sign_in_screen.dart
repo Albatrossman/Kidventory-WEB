@@ -151,6 +151,7 @@ class _SignInScreenState extends State<SignInScreen>
         "Forgot Password?",
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600
             ),
       ),
       onPressed: () => {
@@ -176,7 +177,13 @@ class _SignInScreenState extends State<SignInScreen>
               ),
         ),
         CupertinoButton(
-          child: const Text("Sign Up"),
+          child: Text(
+            "Sign Up",
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold
+                ),
+          ),
           onPressed: () => {
             Navigator.push(
               context,
