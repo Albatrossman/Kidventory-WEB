@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';

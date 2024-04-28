@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/child_row.dart';
@@ -166,9 +167,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                 color: Theme.of(context).colorScheme.outlineVariant,
                 width: 1.0,
               ),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(_viewModel.state.profile?.avatarUrl ?? ""),
+            ),
+            child: ClipOval(
+              child: SizedBox.fromSize(
+                child: CachedNetworkImage(
+                  imageUrl: _viewModel.state.profile?.avatarUrl ?? "",
+                  placeholder: (context, url) => const Icon(
+                    CupertinoIcons.person,
+                  ),
+                  errorWidget: (context, url, error) => const Icon(
+                    CupertinoIcons.person,
+                  ),
+                ),
               ),
             ),
           ),

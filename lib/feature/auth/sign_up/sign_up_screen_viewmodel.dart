@@ -22,7 +22,7 @@ class SignUpScreenViewModel extends ChangeNotifier {
   ) async {
     _update(loading: true);
     try {
-      final result = await _authApiService.signUp(
+      final _ = await _authApiService.signUp(
         SignUpDto(
           email: email,
           password: password,

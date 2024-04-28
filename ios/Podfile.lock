@@ -47,6 +47,9 @@ PODS:
   - SDWebImage (5.19.1):
     - SDWebImage/Core (= 5.19.1)
   - SDWebImage/Core (5.19.1)
+  - sqflite (0.0.3):
+    - Flutter
+    - FlutterMacOS
   - SwiftyGif (5.4.4)
   - TOCropViewController (2.6.1)
 
@@ -57,6 +60,7 @@ DEPENDENCIES:
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - sqflite (from `.symlinks/plugins/sqflite/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -79,6 +83,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/darwin"
 
 SPEC CHECKSUMS:
   DKImagePickerController: a7836546cfdfe014171694f643a7d575bc8ace7f
@@ -90,6 +96,7 @@ SPEC CHECKSUMS:
   image_picker_ios: b545a5f16c0fa88e3ecbbce3ed4de45567a8ec18
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   SDWebImage: 40b0b4053e36c660a764958bff99eed16610acbb
+  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
 

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
@@ -95,11 +96,22 @@ class _HomeScreenState extends State<HomeScreen>
               color: Theme.of(context).colorScheme.outlineVariant,
               width: 1.0,
             ),
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(_viewModel.state.profile?.avatarUrl ?? ""),
-            ),
           ),
+          child: ClipOval(
+              child: SizedBox.fromSize(
+                child: CachedNetworkImage(
+                  imageUrl: _viewModel.state.profile?.avatarUrl ?? "",
+                  placeholder: (context, url) => Icon(
+                    CupertinoIcons.person,
+                    color: Theme.of(context).colorScheme.primary
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    CupertinoIcons.person,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
         ),
         const SizedBox(width: 8.0),
         Expanded(
