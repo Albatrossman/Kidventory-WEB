@@ -171,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
                       color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    child: const Center(child: CircularProgressIndicator(),),
                   );
                 } else {
                   if (model.state.upcomingSessions.isEmpty) {
