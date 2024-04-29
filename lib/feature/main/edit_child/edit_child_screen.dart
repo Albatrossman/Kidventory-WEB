@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
@@ -12,6 +13,7 @@ import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/model/child_info.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
@@ -48,14 +50,17 @@ class _EditChildScreenState extends State<EditChildScreen>
     _lastnameController.text = widget.childInfo?.lastName ?? "";
     _relation = widget.childInfo?.relation ?? "None";
     _selectedDate = widget.childInfo?.birthday ?? DateTime.now().atStartOfDay;
-    _viewModel = Provider.of<EditChildScreenViewModel>(context, listen: false);
+    _viewModel = EditChildScreenViewModel(
+        getIt<UserApiService>());
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return ChangeNotifierProvider<EditChildScreenViewModel>.value(
+      value: _viewModel,
+      child: Stack(
       children: [
         Scaffold(
           appBar: AppBar(
@@ -150,7 +155,7 @@ class _EditChildScreenState extends State<EditChildScreen>
             ),
           ),
       ],
-    );
+    ),);
   }
 
   Widget firstNameField(BuildContext context) {

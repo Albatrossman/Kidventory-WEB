@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/ui/component/event_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen_viewmodel.dart';
 import 'package:kidventory_flutter/main.dart';
@@ -28,6 +30,13 @@ class _EventsScreenState extends State<EventsScreen>
     routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
   }
 
+  @override
+  void initState() {
+    _viewModel = EventsScreenViewModel(
+        getIt<UserApiService>() ); 
+    super.initState();
+  }
+
 @override
   void dispose() {
     _viewModel.dispose();
@@ -43,7 +52,9 @@ class _EventsScreenState extends State<EventsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ChangeNotifierProvider<EventsScreenViewModel>.value(
+      value: _viewModel,
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => pop(),
@@ -66,7 +77,7 @@ class _EventsScreenState extends State<EventsScreen>
           ),
         ),
       ),
-    );
+    ),);
   }
 
   Widget searchBar(BuildContext context) {

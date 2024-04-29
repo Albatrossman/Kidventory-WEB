@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/model/user_info.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
@@ -40,14 +42,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
   void initState() {
     _firstnameController.text = widget.userInfo?.firstName ?? "";
     _lastnameController.text = widget.userInfo?.lastName ?? "";
-    _viewModel = Provider.of<EditProfileScreenViewModel>(context, listen: false);
+    _viewModel = EditProfileScreenViewModel(
+        getIt<UserApiService>()); 
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ChangeNotifierProvider<EditProfileScreenViewModel>.value(
+      value: _viewModel,
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => pop(),
@@ -100,7 +105,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
           ),
         ),
       ),
-    );
+    ),);
   }
 
   Widget firstNameField(BuildContext context) {
