@@ -8,7 +8,7 @@ import 'package:kidventory_flutter/core/data/model/update_profile_dto.dart';
 abstract class UserApiService {
   Future<List<SessionDto>> getUpcomingSessions(DateTime datetime, int limit);
 
-  Future<List<EventDto>> getEvents(int limit, int offset);
+  Future<List<EventDto>> getEvents(int pageSize, int page);
 
   Future<ProfileDto> getProfile(String id);
 

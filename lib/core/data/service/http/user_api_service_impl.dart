@@ -24,9 +24,9 @@ class UserApiServiceImpl extends UserApiService {
   }
 
   @override
-  Future<List<EventDto>> getEvents(int limit, int offset) async {
+  Future<List<EventDto>> getEvents(int pageSize, int page) async {
     Response response = await client.dio
-        .get('users/events?limit=$limit&offset=$offset&IsOwner=true');
+        .get('users/me/events?Page=$page&PageSize=$pageSize&IsOwner=true');
     return response.data
         .map<EventDto>((json) => EventDto.fromJson(json))
         .toList();

@@ -6,6 +6,7 @@ import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen_viewmodel.dart';
+import 'package:kidventory_flutter/main.dart';
 import 'package:provider/provider.dart';
 
 class EventsScreen extends StatefulWidget {
@@ -18,7 +19,28 @@ class EventsScreen extends StatefulWidget {
 }
 
 class _EventsScreenState extends State<EventsScreen>
-    with MessageMixin, NavigationMixin {
+    with MessageMixin, NavigationMixin, RouteAware {
+  late final EventsScreenViewModel _viewModel;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
+  }
+
+@override
+  void dispose() {
+    _viewModel.dispose();
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _viewModel.getEvents();
+    super.didPopNext();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
