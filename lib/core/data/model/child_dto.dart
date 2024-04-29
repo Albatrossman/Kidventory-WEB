@@ -6,9 +6,9 @@ part 'child_dto.g.dart';
 @JsonSerializable()
 class ChildDto {
   final String id;
-  final String parentId;
-  final String avatarFile;
-  final String avatarUrl;
+  final String? parentId;
+  final String? avatarFile;
+  final String? avatarUrl;
   final String firstName;
   final String lastName;
   final String relation;
@@ -18,9 +18,9 @@ class ChildDto {
 
   ChildDto({
     required this.id,
-    required this.parentId,
-    required this.avatarFile,
-    required this.avatarUrl,
+    this.parentId,
+    this.avatarFile,
+    this.avatarUrl,
     required this.firstName,
     required this.lastName,
     required this.relation,
@@ -36,7 +36,7 @@ class ChildDto {
   ChildInfo convertToChildInfo() {
     return ChildInfo(
       id: id,
-      image: avatarUrl,
+      image: avatarUrl ?? "",
       firstName: firstName,
       lastName: lastName,
       birthday: birthday,

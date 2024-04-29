@@ -251,7 +251,7 @@ class _SignUpScreenContent extends State<SignUpScreen>
       passwordStrong = _passwordController.text.isStrongForPassowrd();
     });
 
-    if (isValidEmail && passwordStrong) {
+    if (isValidEmail && passwordStrong && validFirstname && validFirstname) {
       _viewModel
           .signUp(
             _emailController.text,

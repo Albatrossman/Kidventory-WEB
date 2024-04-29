@@ -2,12 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
+import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/feature/main/change_password/change_password_viewmodel.dart';
+import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({super.key});
+  final String email;
+
+  const ChangePasswordScreen(
+      {super.key, required this.email});
 
   @override
   State<StatefulWidget> createState() {
@@ -15,13 +21,27 @@ class ChangePasswordScreen extends StatefulWidget {
   }
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> with MessageMixin, NavigationMixin {
+class _ChangePasswordScreenState extends State<ChangePasswordScreen>
+    with MessageMixin, NavigationMixin {
+  late final ChangePasswordScreenViewModel _viewModel;
+
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _newPasswordConfirmationController =
       TextEditingController();
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+
+  bool newPasswordsMatch = true;
+  bool passwordStrong = true;
+
+  @override
+  void initState() {
+    _viewModel =
+        Provider.of<ChangePasswordScreenViewModel>(context, listen: false);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +84,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> with Messag
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
+                    padding: const EdgeInsets.only(
+                        top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
                     child: savePasswordButton(context),
                   ),
                 ],
@@ -100,13 +121,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> with Messag
     return TextField(
       controller: _newPasswordController,
       maxLines: 1,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(
+      decoration: InputDecoration(
+        errorText: passwordStrong
+            ? newPasswordsMatch
+                ? null
+                : ""
+            : "",
+        border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(8.0),
           ),
         ),
-        label: Text("New Password"),
+        label: const Text("New Password"),
       ),
       keyboardType: TextInputType.visiblePassword,
       textCapitalization: TextCapitalization.none,
@@ -120,13 +146,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> with Messag
     return TextField(
       controller: _newPasswordConfirmationController,
       maxLines: 1,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(
+      decoration: InputDecoration(
+        errorMaxLines: 6,
+        errorText: passwordStrong
+            ? newPasswordsMatch
+                ? null
+                : "Passwords do not match"
+            : "Password must contain at least:\nOne special character\nOne number,\nOne capital letter\nAnd be at least 6 characters long",
+        border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(8.0),
           ),
         ),
-        label: Text("Confirm New Password"),
+        label: const Text("Confirm New Password"),
       ),
       keyboardType: TextInputType.visiblePassword,
       textCapitalization: TextCapitalization.none,
@@ -139,7 +171,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> with Messag
   Widget savePasswordButton(BuildContext context) {
     return AppButton(
       controller: _btnController,
-      onPressed: () => {},
+      onPressed: () => {_onSave(context)},
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -147,5 +179,36 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> with Messag
             ),
       ),
     );
+  }
+
+  void _onSave(BuildContext context) async {
+    setState(() {
+      newPasswordsMatch = (_newPasswordConfirmationController.text ==
+          _newPasswordController.text);
+      passwordStrong = _newPasswordController.text.isStrongForPassowrd();
+    });
+    if (newPasswordsMatch && passwordStrong) {
+      _viewModel
+          .changePassword(
+            widget.email,
+            _passwordController.text,
+            _newPasswordController.text,
+            _newPasswordConfirmationController.text,
+          )
+          .whenComplete(() => _btnController.reset())
+          .then(
+            (value) => pop(),
+            onError: (error) => {
+              snackbar(error.toString()),
+            },
+          );
+    } else {
+      _btnController.reset();
+      if (!passwordStrong) {
+        snackbar("Password is not strong enough");
+      } else if (!newPasswordsMatch) {
+        snackbar("Passwords do not match");
+      }
+    }
   }
 }

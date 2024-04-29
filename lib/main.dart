@@ -9,12 +9,14 @@ import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/change_password/change_password_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
-import 'package:kidventory_flutter/feature/main/profile/profile_screen_viewmodel.dart';
 import 'package:kidventory_flutter/main_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -32,12 +34,7 @@ void main() async {
           getIt<TokenPreferencesManager>(),
         ),
       ),
-      ChangeNotifierProvider<ProfileScreenViewModel>(
-        create: (context) => ProfileScreenViewModel(
-          getIt<UserApiService>(),
-          getIt<TokenPreferencesManager>(),
-        ),
-      ),
+      
       ChangeNotifierProvider<ForgotPasswordScreenViewModel>(
         create: (context) => ForgotPasswordScreenViewModel(
           getIt<AuthApiService>(),
@@ -62,6 +59,21 @@ void main() async {
           getIt<EventApiService>(),
         ),
       ),
+      ChangeNotifierProvider<EditChildScreenViewModel>(
+        create: (context) => EditChildScreenViewModel(
+          getIt<UserApiService>(),
+        ),
+      ),
+      ChangeNotifierProvider<EditProfileScreenViewModel>(
+        create: (context) => EditProfileScreenViewModel(
+          getIt<UserApiService>(),
+        ),
+      ),
+      ChangeNotifierProvider<ChangePasswordScreenViewModel>(
+        create: (context) => ChangePasswordScreenViewModel(
+          getIt<AuthApiService>(),
+        ),
+      ),
       ChangeNotifierProvider<EventScreenViewModel>(
         create: (context) => EventScreenViewModel(getIt<EventApiService>()),
       ),
@@ -70,7 +82,9 @@ void main() async {
   ));
 }
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 class MyApp extends StatelessWidget {
+
   const MyApp({super.key});
 
   @override
@@ -83,6 +97,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
+      navigatorObservers: [routeObserver],
       home: FutureBuilder(future: setup(), builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return const AppScreen(title: 'Kidventory');

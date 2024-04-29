@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -7,10 +8,14 @@ import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/model/user_info.dart';
+import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen_viewmodel.dart';
+import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+    final UserInfo? userInfo;
+  const EditProfileScreen({super.key, this.userInfo});
 
   @override
   State<StatefulWidget> createState() {
@@ -19,10 +24,26 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin, NavigationMixin {
+    late final EditProfileScreenViewModel _viewModel;
+
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+
+  bool validFirstname = true;
+  bool validLastname = true;
+  bool isDeleting = false;
+  File? _selectedImage;
+
+  @override
+  void initState() {
+    _firstnameController.text = widget.userInfo?.firstName ?? "";
+    _lastnameController.text = widget.userInfo?.lastName ?? "";
+    _viewModel = Provider.of<EditProfileScreenViewModel>(context, listen: false);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +68,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
                 children: [
                   const SizedBox(height: 16.0),
                   AppImagePicker(
-                    onImageSelected: (File image) => {},
+                    onImageSelected: (File image) => {
+                      _selectedImage = image
+                    },
                     width: 100,
                     height: 100,
                   ),
@@ -121,7 +144,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
               color: Theme.of(context).colorScheme.onPrimary,
             ),
       ),
-      onPressed: () => {},
+      onPressed: () => {_onSave(context, widget.userInfo!)},
     );
+  }
+
+  void _onSave(BuildContext context, UserInfo info) async {
+    setState(() {
+      validFirstname = _firstnameController.text.isNotEmpty;
+      validLastname = _lastnameController.text.isNotEmpty;
+    });
+    if (validFirstname && validLastname) {
+      _viewModel
+          .editUser(
+            _firstnameController.text,
+            _lastnameController.text,
+            _selectedImage == null ? null : info.image,
+            _selectedImage == null
+                ? null
+                : base64Encode(_selectedImage!.readAsBytesSync()),
+          )
+          .whenComplete(() => _btnController.reset())
+          .then(
+            (value) => pop(),
+            onError: (error) => {
+              snackbar(error.toString()),
+            },
+          );
+    } else {
+      _btnController.reset();
+      snackbar("First name and last name is required");
+    }
   }
 }

@@ -1,12 +1,13 @@
 import 'package:kidventory_flutter/core/data/model/child_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/ui/util/model/user_info.dart';
 
 part 'profile_dto.g.dart';
 
 @JsonSerializable()
 class ProfileDto {
   final String id;
-  final String avatarUrl;
+  final String? avatarUrl;
   final String email;
   final String password;
   final String firstName;
@@ -17,7 +18,7 @@ class ProfileDto {
 
   ProfileDto({
     required this.id,
-    required this.avatarUrl,
+    this.avatarUrl,
     required this.email,
     required this.password,
     required this.firstName,
@@ -31,4 +32,13 @@ class ProfileDto {
  factory ProfileDto.fromJson(Map<String, dynamic> json) =>
       _$ProfileDtoFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileDtoToJson(this);
+
+   UserInfo convertToUserInfo() {
+    return UserInfo(
+      id: id,
+      image: avatarUrl ?? "",
+      firstName: firstName,
+      lastName: lastName,
+    );
+  }
 }

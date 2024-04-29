@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 
 mixin PickerMixin<T extends StatefulWidget> on State<T> {
@@ -15,12 +14,16 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
     BuildContext context, {
     DateTime? firstDate,
     DateTime? lastDate,
+    DateTime? initialDateTime,
+    final void Function(DateTime)? onSelectedDate,
   }) {
     if (kIsWeb) {
       showDatePicker(
         context: context,
         firstDate: firstDate ?? DateTime(1900),
         lastDate: lastDate ?? DateTime(2100),
+        currentDate: initialDateTime,
+        
       );
     } else {
       showCupertinoModalPopup(
@@ -34,12 +37,14 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
                 height: 200,
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
-                  initialDateTime: selectedDate,
+                  initialDateTime: initialDateTime ?? DateTime.now(),
                   minimumDate: firstDate ?? DateTime(1900),
                   maximumDate: lastDate ?? DateTime(2100),
                   onDateTimeChanged: (DateTime newDate) {
                     setState(() {
-                      selectedDate = newDate;
+                      if (onSelectedDate != null) {
+                        onSelectedDate(newDate);
+                      }
                     });
                   },
                 ),

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:kidventory_flutter/core/data/model/sign_up_dto.dart';
 import 'package:kidventory_flutter/core/data/model/token_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_password_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:kidventory_flutter/core/data/util/dio_client.dart';
@@ -24,7 +25,8 @@ class AuthApiServiceImpl implements AuthApiService {
 
   @override
   Future<Null> signUp(SignUpDto body) async {
-    Response response = await client.dio.post('auth/signup', data: body.toJson());
+    Response response =
+        await client.dio.post('auth/signup', data: body.toJson());
 
     if (response.statusCode == 200) {
       return null;
@@ -66,14 +68,17 @@ class AuthApiServiceImpl implements AuthApiService {
     if (response.statusCode == 200) {}
   }
 
-   @override
-  Future<Null> changePassword(String email, String currentPassword, String newPassword, String confirmNewPassword) async {
-    final response = await http.patch(
-      Uri.parse(
-          "https://kidventory.aftersearch.com/api/auth/ChangePassword?email=$email&currentPassword=$currentPassword&newPassword=$newPassword&confirmNewPassword=$confirmNewPassword"),
-      headers: {'Content-Type': 'application/json'},
+  @override
+  Future<Null> changePassword(UpdatePasswordDto body) async {
+    Response response = await client.dio.patch(
+      'Auth/ChangePassword',
+      data: body.toJson(),
     );
 
-    if (response.statusCode == 200) {}
+    if (response.statusCode == 200) {
+    } else {
+      //422 incorrect password
+      throw Exception('Something went wrong');
+    }
   }
 }

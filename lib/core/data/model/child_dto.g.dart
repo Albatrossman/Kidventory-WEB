@@ -8,9 +8,9 @@ part of 'child_dto.dart';
 
 ChildDto _$ChildDtoFromJson(Map<String, dynamic> json) => ChildDto(
       id: json['id'] as String,
-      parentId: json['parentId'] as String,
-      avatarFile: json['avatarFile'] as String,
-      avatarUrl: json['avatarUrl'] as String,
+      parentId: json['parentId'] as String?,
+      avatarFile: json['avatarFile'] as String?,
+      avatarUrl: json['avatarUrl'] as String?,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       relation: json['relation'] as String,
