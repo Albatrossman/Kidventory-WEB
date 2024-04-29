@@ -300,6 +300,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             "Sign In",
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold
                 ),
           ),
           onPressed: () => {
@@ -313,7 +314,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   Widget verifyCodeField(BuildContext context) {
     return OTPTextField(
       controller: _otpController,
-      length: 4,
+      length: 5,
       fieldWidth: 48,
       style: const TextStyle(fontSize: 14),
       textFieldAlignment: MainAxisAlignment.spaceAround,
@@ -358,7 +359,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             ),
       ),
       onPressed: () => {
-        Navigator.pop(context),
+        _sendEmail(context, resend: true),
       },
     );
   }
@@ -424,7 +425,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     }
   }
 
-  void _sendEmail(BuildContext context) async {
+  void _sendEmail(BuildContext context, {bool resend = false}) async {
     setState(() {
       isValidEmail = _emailController.text.isValidEmail();
     });
@@ -433,9 +434,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           .sendOTP(_emailController.text)
           .whenComplete(() => _btnController.reset())
           .then(
-            (value) => _pageViewController.animateToPage(1,
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeInOut),
+            (value) => {
+              if (resend)
+                {snackbar("Code successfully sent")}
+              else
+                {
+                  _pageViewController.animateToPage(1,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut),
+                },
+            },
             onError: (error) => {
               snackbar(error.toString()),
             },
@@ -472,6 +480,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           .whenComplete(() => _changePassowrdBtnController.reset())
           .then(
             (value) => {
+              _pageViewController.animateToPage(3,
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut),
               _viewModel
                   .signIn(_emailController.text, _passwordController.text)
                   .whenComplete(() => _changePassowrdBtnController.reset())

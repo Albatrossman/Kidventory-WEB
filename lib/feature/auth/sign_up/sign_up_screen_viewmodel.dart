@@ -22,7 +22,7 @@ class SignUpScreenViewModel extends ChangeNotifier {
   ) async {
     _update(loading: true);
     try {
-      final result = await _authApiService.signUp(
+      final _ = await _authApiService.signUp(
         SignUpDto(
           email: email,
           password: password,
@@ -31,14 +31,6 @@ class SignUpScreenViewModel extends ChangeNotifier {
           timezone: "UTC",
         ),
       );
-
-      if (result.statusCode == 200) {
-
-      } else {
-        _update(message: "Something went wrong");
-      }
-    } catch (exception) {
-      _update(message: "Something went wrong");
     } finally {
       _update(loading: false);
     }
@@ -49,7 +41,6 @@ class SignUpScreenViewModel extends ChangeNotifier {
     try {
       final tokenDto = await _authApiService.signIn(email, password);
       _tokenPreferences.saveToken(tokenDto.toDomain());
-      _update(message: tokenDto.accessToken);
     } catch (exception) {
       _update(message: "Incorrect email or password.");
       rethrow;

@@ -13,12 +13,11 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   ForgotPasswordScreenState _state = ForgotPasswordScreenState();
   ForgotPasswordScreenState get state => _state;
 
-   Future<void> signIn(String email, String password) async {
+  Future<void> signIn(String email, String password) async {
     _update(loading: true);
     try {
       final tokenDto = await _authApiService.signIn(email, password);
       _tokenPreferences.saveToken(tokenDto.toDomain());
-      _update(message: tokenDto.accessToken);
     } catch (exception) {
       _update(message: "Email does not exist");
       rethrow;
@@ -30,12 +29,8 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   Future<void> sendOTP(String email) async {
     _update(loading: true);
     try {
-      final tokenDto = await _authApiService.sendOTP(email);
-      _tokenPreferences.saveToken(tokenDto.toDomain());
-      _update(message: tokenDto.accessToken);
-    } catch (exception) {
-      _update(message: "Incorrect email or password.");
-      rethrow;
+      final _ = await _authApiService.sendOTP(email);
+      
     } finally {
       _update(loading: false);
     }
@@ -44,11 +39,7 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   Future<void> verifyOTP(String email, String code) async {
     _update(loading: true);
     try {
-      final tokenDto = await _authApiService.validateOTP(email, code);
-      _update(message: tokenDto.accessToken);
-    } catch (exception) {
-      _update(message: "Code is incorrect or has expired.");
-      rethrow;
+      final _ = await _authApiService.validateOTP(email, code);
     } finally {
       _update(loading: false);
     }
@@ -57,11 +48,8 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   Future<void> resetPassword(String email, String code, String password) async {
     _update(loading: true);
     try {
-      final tokenDto = await _authApiService.resetPassword(email, code, password);
-      _update(message: tokenDto.accessToken); 
-    } catch (exception) {
-      _update(message: "Code is incorrect or has expired.");
-      rethrow;
+      final _ =
+          await _authApiService.resetPassword(email, code, password);
     } finally {
       _update(loading: false);
     }

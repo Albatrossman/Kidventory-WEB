@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
+import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
@@ -25,11 +27,25 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with NavigationMixin, RouteAware {
+  late final HomeScreenViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
+    _viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
   }
 
   @override
@@ -41,7 +57,11 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                greetingsWidget(context),
+                Consumer<HomeScreenViewModel>(
+                  builder: (_, model, __) {
+                    return greetingsWidget(context);
+                  },
+                ),
                 const SizedBox(height: 32.0),
                 Column(
                   children: [
@@ -76,11 +96,22 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
               color: Theme.of(context).colorScheme.outlineVariant,
               width: 1.0,
             ),
-            image: const DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage("https://i.pravatar.cc/150?img=3"),
-            ),
           ),
+          child: ClipOval(
+              child: SizedBox.fromSize(
+                child: CachedNetworkImage(
+                  imageUrl: _viewModel.state.profile?.avatarUrl ?? "",
+                  placeholder: (context, url) => Icon(
+                    CupertinoIcons.person,
+                    color: Theme.of(context).colorScheme.primary
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    CupertinoIcons.person,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
         ),
         const SizedBox(width: 8.0),
         Expanded(
@@ -90,18 +121,18 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
               Row(
                 children: [
                   Text(
-                    "greeting",
+                    "greetings",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(width: 4.0),
                   Text(
-                    "Pouya Rezaei",
+                    "${_viewModel.state.profile?.firstName ?? ""} ${_viewModel.state.profile?.lastName ?? ""}",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
               ),
               Text(
-                "21 Feb, 2024",
+                DateTime.now().formatDate(),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
@@ -123,9 +154,12 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
         ),
         const SizedBox(height: 16.0),
         Consumer<HomeScreenViewModel>(
-          builder: (context, model, child) {
+          builder: (_, model, __) {
             return Column(
-              children: List.generate(model.state.upcomingSessions.isEmpty ? 1 : model.state.upcomingSessions.length, (index) {
+              children: List.generate(
+                  model.state.upcomingSessions.isEmpty
+                      ? 1
+                      : model.state.upcomingSessions.length, (index) {
                 if (model.state.loading) {
                   return Container(
                     width: double.infinity,
@@ -186,10 +220,6 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
-              Text(
-                '3 events',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
             ],
           ),
         ),
@@ -218,10 +248,6 @@ class _HomeScreenState extends State<HomeScreen> with NavigationMixin {
                   'Create Event',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
-              ),
-              Text(
-                'Create a new event',
-                style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
           ),
