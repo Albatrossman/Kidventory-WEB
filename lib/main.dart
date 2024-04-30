@@ -1,20 +1,17 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
-import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
-import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
-import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
-import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen_viewmodel.dart';
-import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
-import 'package:kidventory_flutter/feature/main/events/events_screen_viewmodel.dart';
-import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/join%20event/join_event_screen.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
-import 'package:kidventory_flutter/feature/main/profile/profile_screen_viewmodel.dart';
 import 'package:kidventory_flutter/main_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -25,36 +22,6 @@ void main() async {
     providers: [
       ChangeNotifierProvider<MainViewModel>(
         create: (context) => MainViewModel(getIt<TokenPreferencesManager>()),
-      ),
-      ChangeNotifierProvider<SignInScreenViewModel>(
-        create: (context) => SignInScreenViewModel(
-          getIt<AuthApiService>(),
-          getIt<TokenPreferencesManager>(),
-        ),
-      ),
-      ChangeNotifierProvider<ProfileScreenViewModel>(
-        create: (context) => ProfileScreenViewModel(
-          getIt<UserApiService>(),
-          getIt<TokenPreferencesManager>(),
-        ),
-      ),
-      ChangeNotifierProvider<ForgotPasswordScreenViewModel>(
-        create: (context) => ForgotPasswordScreenViewModel(
-          getIt<AuthApiService>(),
-          getIt<TokenPreferencesManager>(),
-        ),
-      ),
-      ChangeNotifierProvider<SignUpScreenViewModel>(
-        create: (context) => SignUpScreenViewModel(
-          getIt<AuthApiService>(),
-          getIt<TokenPreferencesManager>(),
-        ),
-      ),
-      ChangeNotifierProvider<HomeScreenViewModel>(
-        create: (context) => HomeScreenViewModel(getIt<UserApiService>()),
-      ),
-      ChangeNotifierProvider<EventsScreenViewModel>(
-        create: (context) => EventsScreenViewModel(getIt<UserApiService>()),
       ),
       ChangeNotifierProvider<EditEventScreenViewModel>(
         create: (context) => EditEventScreenViewModel(
@@ -70,6 +37,8 @@ void main() async {
   ));
 }
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -83,12 +52,15 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder(future: setup(), builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return const AppScreen(title: 'Kidventory');
-        }
-        return const Center(child: CircularProgressIndicator());
-      }),
+      navigatorObservers: [routeObserver],
+      home: FutureBuilder(
+          future: setup(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return const AppScreen(title: 'Kidventory');
+            }
+            return const Center(child: CircularProgressIndicator());
+          }),
     );
   }
 }
@@ -102,8 +74,42 @@ class AppScreen extends StatefulWidget {
   State<AppScreen> createState() => _AppScreenState();
 }
 
-class _AppScreenState extends State<AppScreen> {
+class _AppScreenState extends State<AppScreen> with NavigationMixin {
   bool isLoading = false;
+  late AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
+
+  Future<void> initDeepLinks() async {
+    _appLinks = AppLinks();
+
+    // Check initial link if app was in cold state (terminated)
+    final appLink = await _appLinks.getInitialAppLink();
+    if (appLink != null) {
+      openAppLink(appLink);
+    }
+
+    // Handle link when app is in warm state (front or background)
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+      openAppLink(uri);
+    });
+  }
+
+  void openAppLink(Uri uri) {
+    String? id = uri.queryParameters['id'];
+    pushSheet(const JoinEventScreen());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initDeepLinks();
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

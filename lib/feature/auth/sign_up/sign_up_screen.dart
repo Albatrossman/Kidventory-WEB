@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:provider/provider.dart';
@@ -41,13 +44,16 @@ class _SignUpScreenContent extends State<SignUpScreen>
   @override
   void initState() {
     super.initState();
-    _viewModel = Provider.of<SignUpScreenViewModel>(context, listen: false);
+    _viewModel = SignUpScreenViewModel(
+        getIt<AuthApiService>(), getIt<TokenPreferencesManager>()); 
     _viewModel.addListener(_listener);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ChangeNotifierProvider<SignUpScreenViewModel>.value(
+      value: _viewModel,
+      child: Scaffold(
       appBar: kIsWeb
           ? null
           : const CupertinoNavigationBar(
@@ -191,7 +197,7 @@ class _SignUpScreenContent extends State<SignUpScreen>
           ),
         ],
       )),
-    );
+    ),);
   }
 
   Widget signUpButton(BuildContext context) {
@@ -251,7 +257,7 @@ class _SignUpScreenContent extends State<SignUpScreen>
       passwordStrong = _passwordController.text.isStrongForPassowrd();
     });
 
-    if (isValidEmail && passwordStrong) {
+    if (isValidEmail && passwordStrong && validFirstname && validFirstname) {
       _viewModel
           .signUp(
             _emailController.text,

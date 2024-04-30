@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen.dart';
 import 'package:kidventory_flutter/feature/auth/sign_up/sign_up_screen.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
@@ -34,7 +38,8 @@ class _SignInScreenState extends State<SignInScreen>
   @override
   void initState() {
     super.initState();
-    _viewModel = Provider.of<SignInScreenViewModel>(context, listen: false);
+    _viewModel = SignInScreenViewModel(
+        getIt<AuthApiService>(), getIt<TokenPreferencesManager>());
     _viewModel.addListener(_listener);
   }
 
@@ -48,77 +53,80 @@ class _SignInScreenState extends State<SignInScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 48.0),
-                    child: Image.asset(
-                      "assets/images/logo.png",
-                      width: 100,
-                      height: 100,
+    return ChangeNotifierProvider<SignInScreenViewModel>.value(
+      value: _viewModel,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 48.0),
+                      child: Image.asset(
+                        "assets/images/logo.png",
+                        width: 100,
+                        height: 100,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: kIsWeb ? 420 : null,
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _emailController,
-                          maxLines: 1,
-                          decoration: InputDecoration(
-                            errorText: isValidEmail
-                                ? null
-                                : "Email address is invalid",
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(8.0),
-                              ),
-                            ),
-                            label: const Text("Email"),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          textCapitalization: TextCapitalization.none,
-                          autocorrect: false,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: TextField(
-                            controller: _passwordController,
+                    SizedBox(
+                      width: kIsWeb ? 420 : null,
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _emailController,
                             maxLines: 1,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              errorText: isValidEmail
+                                  ? null
+                                  : "Email address is invalid",
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(8.0),
                                 ),
                               ),
-                              label: Text("Password"),
+                              label: const Text("Email"),
                             ),
-                            keyboardType: TextInputType.visiblePassword,
+                            keyboardType: TextInputType.emailAddress,
                             textCapitalization: TextCapitalization.none,
-                            obscureText: true,
-                            enableSuggestions: false,
                             autocorrect: false,
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: TextField(
+                              controller: _passwordController,
+                              maxLines: 1,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8.0),
+                                  ),
+                                ),
+                                label: Text("Password"),
+                              ),
+                              keyboardType: TextInputType.visiblePassword,
+                              textCapitalization: TextCapitalization.none,
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
-                    child: signInButton(context),
-                  ),
-                  forgotPasswordButton(context),
-                  signUpRow(context)
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
+                      child: signInButton(context),
+                    ),
+                    forgotPasswordButton(context),
+                    signUpRow(context)
+                  ],
+                ),
               ),
             ),
           ),
@@ -150,9 +158,8 @@ class _SignInScreenState extends State<SignInScreen>
       child: Text(
         "Forgot Password?",
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w600
-            ),
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w600),
       ),
       onPressed: () => {
         Navigator.push(
@@ -180,9 +187,8 @@ class _SignInScreenState extends State<SignInScreen>
           child: Text(
             "Sign Up",
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold
-                ),
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold),
           ),
           onPressed: () => {
             Navigator.push(

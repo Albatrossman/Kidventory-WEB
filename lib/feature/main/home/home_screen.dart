@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
+import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen.dart';
@@ -34,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
+    _viewModel = HomeScreenViewModel(getIt<UserApiService>());
   }
 
   @override
@@ -50,33 +52,36 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Consumer<HomeScreenViewModel>(
-                  builder: (_, model, __) {
-                    return greetingsWidget(context);
-                  },
-                ),
-                const SizedBox(height: 32.0),
-                Column(
-                  children: [
-                    upcomingEvents(context),
-                    const SizedBox(height: 32.0),
-                    Row(
-                      children: [
-                        manageEventsButton(context),
-                        const SizedBox(width: 16),
-                        createEventButton(context),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+    return ChangeNotifierProvider<HomeScreenViewModel>.value(
+      value: _viewModel,
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Consumer<HomeScreenViewModel>(
+                    builder: (_, model, __) {
+                      return greetingsWidget(context);
+                    },
+                  ),
+                  const SizedBox(height: 32.0),
+                  Column(
+                    children: [
+                      upcomingEvents(context),
+                      const SizedBox(height: 32.0),
+                      Row(
+                        children: [
+                          manageEventsButton(context),
+                          const SizedBox(width: 16),
+                          createEventButton(context),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -98,20 +103,18 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
           child: ClipOval(
-              child: SizedBox.fromSize(
-                child: CachedNetworkImage(
-                  imageUrl: _viewModel.state.profile?.avatarUrl ?? "",
-                  placeholder: (context, url) => Icon(
-                    CupertinoIcons.person,
-                    color: Theme.of(context).colorScheme.primary
-                  ),
-                  errorWidget: (context, url, error) => Icon(
-                    CupertinoIcons.person,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+            child: SizedBox.fromSize(
+              child: CachedNetworkImage(
+                imageUrl: _viewModel.state.profile?.avatarUrl ?? "",
+                placeholder: (context, url) => Icon(CupertinoIcons.person,
+                    color: Theme.of(context).colorScheme.primary),
+                errorWidget: (context, url, error) => Icon(
+                  CupertinoIcons.person,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
+          ),
         ),
         const SizedBox(width: 8.0),
         Expanded(
@@ -168,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
                       color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    child: const Center(child: CircularProgressIndicator(),),
                   );
                 } else {
                   if (model.state.upcomingSessions.isEmpty) {

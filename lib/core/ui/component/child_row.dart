@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
@@ -15,7 +16,7 @@ class ChildRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
+      padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           border: Border.all(
@@ -26,8 +27,8 @@ class ChildRow extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 56.0,
-            height: 56.0,
+            width: 48.0,
+            height: 48.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -38,12 +39,20 @@ class ChildRow extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: CircleAvatar(
               radius: 96.0,
-              backgroundColor: Colors.lightGreen,
-              child: Image(
-                  image: NetworkImage(info.image)),
+              child: SizedBox.fromSize(
+                child: CachedNetworkImage(
+                  imageUrl: info.image,
+                  placeholder: (context, url) => const Icon(
+                    CupertinoIcons.person,
+                  ),
+                  errorWidget: (context, url, error) => const Icon(
+                    CupertinoIcons.person,
+                  ),
+                ),
+              ),
             ),
           ),
-          const SizedBox(width: 8.0),
+          const SizedBox(width: 12.0),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:otp_text_field/otp_text_field.dart';
@@ -49,7 +52,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   void initState() {
     super.initState();
     _viewModel =
-        Provider.of<ForgotPasswordScreenViewModel>(context, listen: false);
+        ForgotPasswordScreenViewModel(
+        getIt<AuthApiService>(), getIt<TokenPreferencesManager>()); 
     _viewModel.addListener(_listener);
   }
 
@@ -62,22 +66,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: kIsWeb ? null : const CupertinoNavigationBar(),
-      body: SafeArea(
-        child: PageView(
-          controller: _pageViewController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            sendEmailPage(context),
-            verifyOTPPage(context),
-            changePasswordPage(context),
-            const Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
+    return ChangeNotifierProvider<ForgotPasswordScreenViewModel>.value(
+      value: _viewModel,
+      child: Scaffold(
+        appBar: kIsWeb ? null : const CupertinoNavigationBar(),
+        body: SafeArea(
+          child: PageView(
+            controller: _pageViewController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              sendEmailPage(context),
+              verifyOTPPage(context),
+              changePasswordPage(context),
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -299,9 +306,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           child: Text(
             "Sign In",
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold
-                ),
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold),
           ),
           onPressed: () => {
             Navigator.pop(context),
