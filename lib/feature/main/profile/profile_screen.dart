@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         builder: (_, model, __) {
                           if (model.state.loading) {
                             return const Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8),
                               child: SizedBox(
                                 height: 64,
                                 child: Center(
