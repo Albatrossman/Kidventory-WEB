@@ -6,15 +6,15 @@ extension DataExtension on OnlineLocationDto {
   OnlineLocation toDomain() {
     return OnlineLocation(
       platform: Platform.values.firstWhere(
-              (e) => e.toString().split('.').last.toLowerCase() == meetingApp.toLowerCase(),
+              (e) => e.toString().split('.').last.toLowerCase() == meetingApp?.toLowerCase(),
           orElse: () => Platform.meet  // Handle case where meetingApp does not match any Platform enum
       ),
-      link: sessionLink,
-      meetingId: meetingId.isNotEmpty ? meetingId : null,
-      password: password.isNotEmpty ? password : null,
-      comment: comment.isNotEmpty ? comment : null,
-      phone: phone.isNotEmpty ? phone : null,
-      pin: pin.isNotEmpty ? pin : null,
+      link: sessionLink ?? "",
+      meetingId: meetingId,
+      password: password,
+      comment: comment,
+      phone: phone,
+      pin: pin,
     );
   }
 }

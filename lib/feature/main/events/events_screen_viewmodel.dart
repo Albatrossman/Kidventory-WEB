@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/event_list_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen_state.dart';
 
@@ -16,8 +17,8 @@ class EventsScreenViewModel extends ChangeNotifier {
   void getEvents() async {
     _update(loading: true);
     try {
-      List<EventDto> events = await _userApiService.getEvents(100, 0);
-      _update(events: events, loading: false);
+      EventListDto events = await _userApiService.getEvents(100, 0);
+      _update(events: events.items, loading: false);
     } catch (e) {
       _update(loading: false);
     }

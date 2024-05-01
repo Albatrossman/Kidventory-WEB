@@ -1,7 +1,7 @@
-
 import 'package:dio/dio.dart';
 import 'package:kidventory_flutter/core/data/model/child_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/event_list_dto.dart';
 import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_profile_dto.dart';
@@ -24,12 +24,10 @@ class UserApiServiceImpl extends UserApiService {
   }
 
   @override
-  Future<List<EventDto>> getEvents(int pageSize, int page) async {
+  Future<EventListDto> getEvents(int pageSize, int page) async {
     Response response = await client.dio
         .get('users/me/events?Page=$page&PageSize=$pageSize&IsOwner=true');
-    return response.data
-        .map<EventDto>((json) => EventDto.fromJson(json))
-        .toList();
+    return EventListDto.fromJson(response.data);
   }
 
   @override

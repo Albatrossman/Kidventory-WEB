@@ -114,7 +114,8 @@ class _EventsScreenState extends State<EventsScreen>
                   final EventDto event = model.state.events[index];
                   return EventCard(
                     name: event.name,
-                    time: "${event.startTime} - ${event.endTime}",
+                    //TODO: - Add .timeOfDay
+                    time: "${event.repeat.startDateTime} - ${event.repeat.endDate}",
                     onClick: () => {push(EventScreen(id: event.id))},
                     imageUrl: event.imageUrl,
                   );

@@ -8,13 +8,13 @@ part of 'online_location_dto.dart';
 
 OnlineLocationDto _$OnlineLocationDtoFromJson(Map<String, dynamic> json) =>
     OnlineLocationDto(
-      meetingApp: json['meetingApp'] as String,
-      sessionLink: json['sessionLink'] as String,
-      meetingId: json['meetingId'] as String,
-      password: json['password'] as String,
-      comment: json['comment'] as String,
-      phone: json['phone'] as String,
-      pin: json['pin'] as String,
+      meetingApp: json['meetingApp'] as String?,
+      sessionLink: json['sessionLink'] as String?,
+      meetingId: json['meetingId'] as String?,
+      password: json['password'] as String?,
+      comment: json['comment'] as String?,
+      phone: json['phone'] as String?,
+      pin: json['pin'] as String?,
     );
 
 Map<String, dynamic> _$OnlineLocationDtoToJson(OnlineLocationDto instance) =>
