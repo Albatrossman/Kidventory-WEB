@@ -1,19 +1,20 @@
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
+import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 
 class Repeat {
   final int period;
   final RepeatUnit unit;
   final List<WeekDay>? daysOfWeek;
-  final String? monthDay;
+  final WeekDay? monthDay;
   final int? monthDate;
-  final DateTime startDateTime;
+  final DateTime startDatetime;
+  final DateTime endDatetime;
   final RepeatEnd endsOnMode;
-  final DateTime endDate;
   final int maxOccurrence;
 
-  bool get isNever => (endsOnMode == RepeatEnd.onDate && startDateTime == endDate) ||
+  bool get isNever => (endsOnMode == RepeatEnd.onDate && startDatetime == endDatetime) ||
       (endsOnMode == RepeatEnd.afterOccurrence && maxOccurrence == 1);
 
   Repeat({
@@ -22,9 +23,9 @@ class Repeat {
     this.daysOfWeek,
     this.monthDay,
     this.monthDate,
-    required this.startDateTime,
+    required this.startDatetime,
     required this.endsOnMode,
-    required this.endDate,
+    required this.endDatetime,
     required this.maxOccurrence,
   });
 
@@ -35,9 +36,9 @@ class Repeat {
       daysOfWeek: null,
       monthDay: null,
       monthDate: null,
-      startDateTime: DateTime.now(),
+      startDatetime: DateTime.now(),
       endsOnMode: RepeatEnd.onDate,
-      endDate: DateTime.now().add(const Duration(days: 365)),
+      endDatetime: DateTime.now().add(const Duration(days: 365, hours: 1)),
       maxOccurrence: 1,
     );
   }

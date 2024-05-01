@@ -14,6 +14,7 @@ import 'package:kidventory_flutter/core/domain/model/repeat.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
+import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_state.dart';
 
@@ -27,32 +28,42 @@ class EditEventScreenViewModel extends ChangeNotifier {
 
   EditEventScreenState get state => _state;
 
-  void createEvent(String name) {
-    CreateEventDto event = CreateEventDto(
-      imageFile: '',
-      name: name,
-      description: state.description,
-      repeat: state.repeat.toDto(),
-      timeMode: state.allDay ? TimeMode.allDay : TimeMode.halting,
-      startTime: state.startTime,
-      endTime: state.endTime,
-      onlineLocation: state.onlineLocation?.toData(),
-      color: state.color
-    );
+  Future<void> createEvent(String name) async {
+    try {
+      CreateEventDto event = CreateEventDto(
+        imageFile: null,
+        name: name,
+        description: state.description,
+        repeat: state.repeat.toDto(),
+        timeMode: state.allDay ? TimeMode.allDay : TimeMode.halting,
+        onlineLocation: state.onlineLocation?.toData(),
+        color: state.color,
+      );
 
-    _eventApiService.createEvent(event);
+      await _eventApiService.createEvent(event);
+    } catch (exception) {
+      rethrow;
+    }
   }
 
-  void editRepeat(int period, RepeatUnit unit, List<WeekDay> daysOfWeek, RepeatEnd end) {
+  Future<void> addMembers() async {}
+
+  void editRepeat(
+    int period,
+    RepeatUnit unit,
+    List<WeekDay> daysOfWeek,
+    RepeatEnd end,
+    maxOccurrence,
+  ) {
     Repeat repeat = Repeat(
       period: period,
       unit: unit,
       daysOfWeek: daysOfWeek,
-      monthDay: '',
+      monthDay: null,
       monthDate: 1,
-      startDateTime: DateTime.now(),
+      startDatetime: DateTime.now(),
+      endDatetime: DateTime.now().plusMonths(3).copyWithTime(const TimeOfDay(hour: 10, minute: 51)),
       endsOnMode: RepeatEnd.onDate,
-      endDate: DateTime.now(),
       maxOccurrence: 1,
     );
 
@@ -94,13 +105,15 @@ class EditEventScreenViewModel extends ChangeNotifier {
     _update(filesAndParticipants: filesAndParticipants);
   }
 
-  void editOnlineLocation(Platform platform,
-      String link,
-      String id,
-      String password,
-      String comment,
-      String phone,
-      String pin,) {
+  void editOnlineLocation(
+    Platform platform,
+    String link,
+    String id,
+    String password,
+    String comment,
+    String phone,
+    String pin,
+  ) {
     _update(
       onlineLocation: OnlineLocation(
         platform: Platform.meet,

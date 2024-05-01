@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
@@ -15,6 +16,7 @@ import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.d
 import 'package:kidventory_flutter/feature/main/color/color_screen.dart';
 import 'package:kidventory_flutter/feature/main/description/description_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/online_location/online_location_screen.dart';
 import 'package:kidventory_flutter/feature/main/repeat/repeat_screen.dart';
 import 'package:provider/provider.dart';
@@ -317,7 +319,13 @@ class _EditEventScreenState extends State<EditEventScreen>
   Widget _buildSaveButton(BuildContext context) {
     return AppButton(
       controller: _btnController,
-      onPressed: () => _viewModel.createEvent(_nameController.text),
+      onPressed: () => _viewModel
+          .createEvent(_nameController.text)
+          .whenComplete(() => _btnController.reset())
+          .then(
+            (value) => replace(const EventScreen(id: "")),
+            onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+          ),
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
