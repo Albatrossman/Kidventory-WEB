@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/online_location_dto.dart';
 import 'package:kidventory_flutter/core/data/model/repeat_dto.dart';
 import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
@@ -21,6 +22,8 @@ class EventDto {
   @JsonKey(fromJson: EnumSerializer.eventColorFromJson, toJson: EnumSerializer.toJson)
   final EventColor color;
   final OnlineLocationDto? onlineLocation;
+  @JsonKey(name: 'nearestSession')
+  final EventSessionDto nearestSession;
 
   EventDto({
     required this.id,
@@ -31,6 +34,7 @@ class EventDto {
     required this.timeMode,
     required this.color,
     required this.onlineLocation,
+    required this.nearestSession
   });
 
   factory EventDto.fromJson(Map<String, dynamic> json) => _$EventDtoFromJson(json);

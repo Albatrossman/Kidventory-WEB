@@ -46,9 +46,9 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
     super.initState();
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
     _viewModel.refresh(widget.id).then(
-      (value) => {},
-      onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
-    );
+          (value) => {},
+          onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+        );
   }
 
   @override
@@ -73,7 +73,11 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
               const SizedBox(height: 16),
               sessionOption(context),
               const SizedBox(height: 16),
-              attendanceButton(context),
+              attendanceButton(
+                context,
+                _viewModel.state.event?.id ?? "",
+                _viewModel.state.event?.nearestSession.id ?? "",
+              ),
               membersList(context),
             ],
           ),
@@ -210,12 +214,12 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
     );
   }
 
-  Widget attendanceButton(BuildContext context) {
+  Widget attendanceButton(BuildContext context, String eventId, String sessionId) {
     return SizedBox(
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
       child: FilledButton(
-        onPressed: () => pushSheet(const AttendanceScreen()),
+        onPressed: () => pushSheet(AttendanceScreen(eventId: eventId, sessionId: sessionId)),
         style: ButtonStyle(
             backgroundColor: MaterialStateColor.resolveWith(
                 (states) => Theme.of(context).colorScheme.primaryContainer)),

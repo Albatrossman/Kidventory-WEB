@@ -36,8 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _viewModel = ProfileScreenViewModel(
-        getIt<UserApiService>(), getIt<TokenPreferencesManager>());
+    _viewModel = ProfileScreenViewModel(getIt<UserApiService>(), getIt<TokenPreferencesManager>());
   }
 
   @override

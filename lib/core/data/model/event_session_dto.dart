@@ -1,4 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
+import 'package:kidventory_flutter/core/domain/model/color.dart';
+import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 
 part 'event_session_dto.g.dart';
 
@@ -8,8 +11,10 @@ class EventSessionDto {
   final String title;
   final DateTime startDateTime;
   final DateTime endDateTime;
-  final String timeMode;
-  final String color;
+  @JsonKey(fromJson: EnumSerializer.timeModeFromJson, toJson: EnumSerializer.toJson)
+  final TimeMode timeMode;
+  @JsonKey(fromJson: EnumSerializer.eventColorFromJson, toJson: EnumSerializer.toJson)
+  final EventColor color;
 
   EventSessionDto({
     required this.id,

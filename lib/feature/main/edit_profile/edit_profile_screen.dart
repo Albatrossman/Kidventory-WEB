@@ -43,8 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
   void initState() {
     _firstnameController.text = widget.userInfo?.firstName ?? "";
     _lastnameController.text = widget.userInfo?.lastName ?? "";
-    _viewModel = EditProfileScreenViewModel(
-        getIt<UserApiService>()); 
+    _viewModel = EditProfileScreenViewModel(getIt<UserApiService>());
 
     super.initState();
   }

@@ -1,3 +1,5 @@
+import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
@@ -56,5 +58,19 @@ class EnumSerializer{
       throw ArgumentError('Index out of bounds for EventColor decoding: $index');
     }
     return EventColor.values[index];
+  }
+
+  static AttendanceDto attendanceFromJson(int index) {
+    if (index < 0 || index >= AttendanceDto.values.length) {
+      throw ArgumentError('Index out of bounds for AttendanceDto decoding: $index');
+    }
+    return AttendanceDto.values[index];
+  }
+
+  static RoleDto roleFromJson(int index) {
+    if (index < 0 || index >= EventColor.values.length) {
+      throw ArgumentError('Index out of bounds for RoleDto decoding: $index');
+    }
+    return RoleDto.values[index];
   }
 }

@@ -12,8 +12,8 @@ EventSessionDto _$EventSessionDtoFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       startDateTime: DateTime.parse(json['startDateTime'] as String),
       endDateTime: DateTime.parse(json['endDateTime'] as String),
-      timeMode: json['timeMode'] as String,
-      color: json['color'] as String,
+      timeMode: EnumSerializer.timeModeFromJson(json['timeMode'] as int),
+      color: EnumSerializer.eventColorFromJson(json['color'] as int),
     );
 
 Map<String, dynamic> _$EventSessionDtoToJson(EventSessionDto instance) =>
@@ -22,6 +22,6 @@ Map<String, dynamic> _$EventSessionDtoToJson(EventSessionDto instance) =>
       'title': instance.title,
       'startDateTime': instance.startDateTime.toIso8601String(),
       'endDateTime': instance.endDateTime.toIso8601String(),
-      'timeMode': instance.timeMode,
-      'color': instance.color,
+      'timeMode': EnumSerializer.toJson(instance.timeMode),
+      'color': EnumSerializer.toJson(instance.color),
     };

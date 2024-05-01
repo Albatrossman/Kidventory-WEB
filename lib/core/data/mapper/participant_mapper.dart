@@ -7,7 +7,6 @@ extension DataExtension on ParticipantDto {
   Participant toDomain() {
     return Participant(
       id: memberId,
-      sessionId: sessionId,
       avatarUrl: avatarUrl,
       firstname: firstName,
       lastname: lastName,
@@ -28,15 +27,10 @@ extension DomainExtension on Participant {
   ParticipantDto toData() {
     return ParticipantDto(
       memberId: id,
-      sessionId: sessionId ?? "",
       avatarUrl: avatarUrl,
       firstName: firstname,
       lastName: lastname,
-      startDateTime: DateTime.now(),
-      endDateTime: DateTime.now(),
-      timeMode: 'default',
       attendance: attendance.toData(),
-      color: 'defaultColor',
       role: role.toData(),
     );
   }

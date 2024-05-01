@@ -9,30 +9,20 @@ part of 'participant_dto.dart';
 ParticipantDto _$ParticipantDtoFromJson(Map<String, dynamic> json) =>
     ParticipantDto(
       avatarUrl: json['avatarUrl'] as String?,
-      sessionId: json['sessionId'] as String,
       firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
+      lastName: json['lastNam'] as String,
       memberId: json['memberId'] as String,
-      startDateTime: DateTime.parse(json['startDateTime'] as String),
-      endDateTime: DateTime.parse(json['endDateTime'] as String),
-      timeMode: json['timeMode'] as String,
-      attendance: $enumDecode(_$AttendanceDtoEnumMap, json['atendance']),
-      color: json['color'] as String,
-      role: $enumDecode(_$RoleDtoEnumMap, json['role']),
+      attendance: EnumSerializer.attendanceFromJson(json['atendance'] as int),
+      role: EnumSerializer.roleFromJson(json['role'] as int),
     );
 
 Map<String, dynamic> _$ParticipantDtoToJson(ParticipantDto instance) =>
     <String, dynamic>{
-      'sessionId': instance.sessionId,
-      'avatarUrl': instance.avatarUrl,
       'memberId': instance.memberId,
+      'avatarUrl': instance.avatarUrl,
       'firstName': instance.firstName,
-      'lastName': instance.lastName,
-      'startDateTime': instance.startDateTime.toIso8601String(),
-      'endDateTime': instance.endDateTime.toIso8601String(),
-      'timeMode': instance.timeMode,
+      'lastNam': instance.lastName,
       'atendance': _$AttendanceDtoEnumMap[instance.attendance]!,
-      'color': instance.color,
       'role': _$RoleDtoEnumMap[instance.role]!,
     };
 

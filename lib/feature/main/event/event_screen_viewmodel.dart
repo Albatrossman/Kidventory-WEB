@@ -18,11 +18,16 @@ class EventScreenViewModel extends ChangeNotifier {
   Future<void> refresh(String id) async {
     try {
       EventDto event = await _eventApiService.getEvent(id);
-      // List<ParticipantDto> participants = await _eventApiService.getMembers(id, '');
-      _update(event: event);
+      List<ParticipantDto> participants = await _eventApiService.getMembers(id, event.nearestSession.id);
+      _update(event: event, participants: participants);
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> getMembers(String eventId, String sessionId) async {
+    List<ParticipantDto> participants = await _eventApiService.getMembers(eventId, sessionId);
+    _update(participants: participants);
   }
 
   void importCSV(File file) {

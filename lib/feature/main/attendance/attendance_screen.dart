@@ -5,9 +5,14 @@ import 'package:kidventory_flutter/core/ui/component/attendance_row.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class AttendanceScreen extends StatefulWidget {
-  const AttendanceScreen({super.key});
+  const AttendanceScreen({super.key, required this.eventId, required this.sessionId});
+
+  final String eventId;
+  final String sessionId;
 
   @override
   State<StatefulWidget> createState() {
@@ -16,11 +21,14 @@ class AttendanceScreen extends StatefulWidget {
 }
 
 class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, NavigationMixin {
+  late final EventScreenViewModel _viewModel;
   Attendance _attendance = Attendance.unspecified;
 
   @override
   void initState() {
     super.initState();
+    _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
+    _viewModel.getMembers(widget.eventId, widget.sessionId);
   }
 
   @override
