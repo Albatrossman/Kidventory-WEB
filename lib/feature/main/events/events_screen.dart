@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
-import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/event_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
@@ -24,6 +24,7 @@ class EventsScreen extends StatefulWidget {
 class _EventsScreenState extends State<EventsScreen>
     with MessageMixin, NavigationMixin, RouteAware {
   late final EventsScreenViewModel _viewModel;
+  String _searchQuery = "";
 
   @override
   void didChangeDependencies() {
@@ -33,12 +34,11 @@ class _EventsScreenState extends State<EventsScreen>
 
   @override
   void initState() {
-    _viewModel = EventsScreenViewModel(
-        getIt<UserApiService>() ); 
+    _viewModel = EventsScreenViewModel(getIt<UserApiService>());
     super.initState();
   }
 
-@override
+  @override
   void dispose() {
     _viewModel.dispose();
     routeObserver.unsubscribe(this);
@@ -56,41 +56,47 @@ class _EventsScreenState extends State<EventsScreen>
     return ChangeNotifierProvider<EventsScreenViewModel>.value(
       value: _viewModel,
       child: Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => pop(),
-          icon: const Icon(CupertinoIcons.back),
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => pop(),
+            icon: const Icon(CupertinoIcons.back),
+          ),
+          title: const Text('Manage Events'),
+          centerTitle: true,
         ),
-        title: const Text('Manage Events'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              searchBar(context),
-              const SizedBox(height: 16),
-              const Divider(height: 2),
-              eventsList(context),
-            ],
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                searchBar(context),
+                const SizedBox(height: 16),
+                const Divider(height: 2),
+                eventsList(context),
+              ],
+            ),
           ),
         ),
       ),
-    ),);
+    );
   }
 
   Widget searchBar(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SearchBar(
-        leading: Padding(
+        leading: const Padding(
           padding: EdgeInsets.only(left: 8),
           child: Icon(CupertinoIcons.search),
         ),
         hintText: 'Search events',
-        elevation: MaterialStatePropertyAll(1),
+        elevation: const MaterialStatePropertyAll(1),
+        onChanged: (text) {
+          setState(() {
+            _searchQuery = text;
+          });
+        },
       ),
     );
   }
@@ -98,10 +104,16 @@ class _EventsScreenState extends State<EventsScreen>
   Widget eventsList(BuildContext context) {
     return Consumer<EventsScreenViewModel>(
       builder: (context, model, child) {
+        final List<EventDto> events = model.state.events
+            .where((event) => event.name.contains(_searchQuery))
+            .toList();
         if (model.state.loading) {
           return loadingView(context);
         } else if (model.state.events.isEmpty) {
-          return emptyView(context);
+          return emptyView(context, "You have not created any events");
+        } else if (events.isEmpty) {
+          return emptyView(
+              context, "No events containing the \"$_searchQuery\" were found");
         } else {
           return Expanded(
             child: SizedBox(
@@ -110,12 +122,13 @@ class _EventsScreenState extends State<EventsScreen>
                 padding: const EdgeInsets.all(16),
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
-                itemCount: model.state.events.length,
+                itemCount: events.length,
                 itemBuilder: (context, index) {
-                  final EventDto event = model.state.events[index];
+                  final EventDto event = events[index];
                   return EventCard(
                     name: event.name,
-                    time: "${event.repeat.startDateTime.timeOfDay} - ${event.repeat.endDateTime.timeOfDay}",
+                    time:
+                        "${DateFormat.jm().format(event.repeat.startDateTime)} - ${DateFormat.jm().format(event.repeat.endDateTime)}",
                     onClick: () => {push(EventScreen(id: event.id))},
                     imageUrl: event.imageUrl,
                   );
@@ -136,21 +149,24 @@ class _EventsScreenState extends State<EventsScreen>
     );
   }
 
-  Widget emptyView(BuildContext context) {
-    return const Expanded(
+  Widget emptyView(BuildContext context, String text) {
+    return Expanded(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               CupertinoIcons.doc_text_search,
               size: 48,
             ),
-            SizedBox(height: 16),
-            Text(
-              "You have not created any events",
-              textAlign: TextAlign.center,
-            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+              ),
+            )
           ],
         ),
       ),

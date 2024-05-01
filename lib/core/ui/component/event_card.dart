@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/component/card.dart';
 
 class EventCard extends StatelessWidget {
   final String? imageUrl;
@@ -23,71 +25,81 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.only(bottom: 8), child: GestureDetector(
-      onTap: onClick,
-      onLongPress: onLongPress ?? onClick,
-      onDoubleTap: onDoubleTap ?? onClick,
-      child: Card(
-        shape: shape ??
-            RoundedRectangleBorder(
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: GestureDetector(
+        onTap: onClick,
+        onLongPress: onLongPress ?? onClick,
+        onDoubleTap: onDoubleTap ?? onClick,
+        child: Card(
+          shape: shape ??
+              RoundedRectangleBorder(
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+                borderRadius: BorderRadius.circular(12.0),
               ),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-        elevation: 0,
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56.0,
-                      height: 56.0,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                            width: 1.0),
-                        borderRadius: BorderRadius.circular(4.0),
-                        image: DecorationImage(
-                          image: NetworkImage(imageUrl ?? ""),
-                          fit: BoxFit.cover,
-                          onError: (exception, stackTrace) => Icons.error,
+          elevation: 0,
+          child: Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 56.0,
+                        height: 56.0,
+                        child: AppCard(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4.0),
+                            child: SizedBox.fromSize(
+                              child: CachedNetworkImage(
+                                imageUrl: imageUrl ?? "",
+                                placeholder: (context, url) => Icon(
+                                    CupertinoIcons.photo,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                errorWidget: (context, url, error) => Icon(
+                                  CupertinoIcons.photo,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            name,
-                            style: Theme.of(context).textTheme.titleMedium,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            time,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
+                      const SizedBox(width: 8.0),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              style: Theme.of(context).textTheme.titleMedium,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              time,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(CupertinoIcons.chevron_right)
-                  ],
+                      const Icon(CupertinoIcons.chevron_right)
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Container(
-              width: 12.0,
-              color: Colors.blueAccent,
-            ),
-          ],
+              Container(
+                width: 12.0,
+                color: Colors.blueAccent,
+              ),
+            ],
+          ),
         ),
       ),
-    ),);
+    );
   }
 }
 
