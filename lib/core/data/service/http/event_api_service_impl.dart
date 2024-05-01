@@ -44,7 +44,8 @@ class EventApiServiceImpl extends EventApiService {
   @override
   Future<List<ParticipantDto>> getMembers(String eventId, String sessionId) async {
     Response response = await client.dio.get('events/$eventId/sessions/$sessionId/members');
-    return response.data.map<ParticipantDto>((json) => ParticipantDto.fromJson(json));
+    var participantsJson = response.data as List;
+    return participantsJson.map<ParticipantDto>((json) => ParticipantDto.fromJson(json)).toList();
   }
 
   @override
