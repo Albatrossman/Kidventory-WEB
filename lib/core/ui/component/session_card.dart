@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
+import 'package:kidventory_flutter/core/ui/component/card.dart';
 
 class SessionCard extends StatelessWidget {
   final SessionDto session;
@@ -41,21 +44,28 @@ class SessionCard extends StatelessWidget {
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: [
-                    Container(
-                      width: 56.0,
-                      height: 56.0,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                            width: 1.0),
-                        borderRadius: BorderRadius.circular(4.0),
-                        image: DecorationImage(
-                          image: NetworkImage(session.imageUrl ?? ""),
-                          fit: BoxFit.cover,
-                          onError: (exception, stackTrace) => Icons.error,
+                    SizedBox(
+                        width: 56.0,
+                        height: 56.0,
+                        child: AppCard(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4.0),
+                            child: SizedBox.fromSize(
+                              child: CachedNetworkImage(
+                                imageUrl: session.imageUrl ?? "",
+                                placeholder: (context, url) => Icon(
+                                    CupertinoIcons.photo,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                errorWidget: (context, url, error) => Icon(
+                                  CupertinoIcons.photo,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
                     const SizedBox(width: 8.0),
                     Expanded(
                       child: Column(
