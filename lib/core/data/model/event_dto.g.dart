@@ -8,13 +8,15 @@ part of 'event_dto.dart';
 
 EventDto _$EventDtoFromJson(Map<String, dynamic> json) => EventDto(
       id: json['id'] as String,
-      imageUrl: json['imageUrl'] as String,
+      imageUrl: json['imageUrl'] as String?,
       name: json['title'] as String,
-      description: json['description'] as String,
+      description: json['description'] as String?,
       repeat: RepeatDto.fromJson(json['repeat'] as Map<String, dynamic>),
       color: json['color'] as String,
-      onlineLocation: OnlineLocationDto.fromJson(
-          json['onlineLocation'] as Map<String, dynamic>),
+      onlineLocation: json['onlineLocation'] == null
+          ? null
+          : OnlineLocationDto.fromJson(
+              json['onlineLocation'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$EventDtoToJson(EventDto instance) => <String, dynamic>{
