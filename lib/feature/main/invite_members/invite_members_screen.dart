@@ -4,11 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
+import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.dart';
+import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class InviteMembersScreen extends StatefulWidget {
   const InviteMembersScreen({super.key});
@@ -19,8 +25,17 @@ class InviteMembersScreen extends StatefulWidget {
   }
 }
 
-class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageMixin, NavigationMixin {
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+class _InviteMembersScreenState extends State<InviteMembersScreen>
+    with MessageMixin, NavigationMixin, PickerMixin {
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
+  late final EventScreenViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
+  }
 
   final MaterialStateProperty<Icon?> _thumbIcon =
       MaterialStateProperty.resolveWith<Icon?>(
@@ -32,7 +47,8 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
     },
   );
 
-  late final String _inviteLink = "https://kidventory.baseballforce.com/invite?id=6612334a83788182defcbleb";
+  late final String _inviteLink =
+      "https://kidventory.baseballforce.com/invite?id=${_viewModel.state.event?.inviteLink.referenceId ?? ""}";
   bool _isPrivate = false;
   bool _canExpire = false;
   DateTime _expirationDate = DateTime.now().add(const Duration(days: 1));
@@ -40,16 +56,16 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => pop(),
-          icon: const Icon(CupertinoIcons.arrow_left),
+      appBar: SheetHeader(
+        title: const Text("Add members"),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => {},
+          child: const Text("Confirm"),
         ),
-        title: const Text('Add Members'),
-        centerTitle: true,
       ),
       body: Center(
-        heightFactor: kIsWeb ? null : 1.0,
+        heightFactor: kIsWeb ? null : 1.3,
         child: SingleChildScrollView(
           clipBehavior: Clip.none,
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -71,11 +87,6 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
                         uploadCSVButton(context),
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
-                    child: saveButton(context),
                   ),
                 ],
               ),
@@ -161,8 +172,10 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
                                   .onPrimaryContainer,
                             ),
                       ),
-                      onPressed: () =>
-                          {_btnController.stop(), _btnController.reset()},
+                      onPressed: () => {
+                        Share.share(
+                            "You are invited to join ${_viewModel.state.event?.name ?? ""}!\n\n$_inviteLink${_canExpire ? "\n\n This link expires on ${_expirationDate.formatDate()}" : ""}")
+                      },
                     ),
                   ),
                 ),
@@ -172,7 +185,6 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
             inviteLinkOptions(context),
           ],
         ));
-
   }
 
   Widget inviteLinkOptions(BuildContext context) {
@@ -277,7 +289,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
       width: 800,
       height: 40,
       child: OutlinedButton(
-          onPressed: () => {},
+          onPressed: () => {pushSheet(const AddMembersScreen())},
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -294,57 +306,18 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
     );
   }
 
-  Widget saveButton(BuildContext context) {
-    return AppButton(
-      controller: _btnController,
-      child: Text(
-        "Save",
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-      ),
-      onPressed: () => {},
-    );
-  }
-
   void _showDatePicker() {
-    if (kIsWeb) {
-      showDatePicker(
-        context: context,
-        firstDate: DateTime.now(),
-        lastDate: DateTime(3000),
-      ).then((selectedDate) =>
-          {_expirationDate = selectedDate ?? _expirationDate});
-    } else {
-      showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 260,
-            padding: const EdgeInsets.only(top: 6),
-            color: CupertinoColors.systemBackground.resolveFrom(context),
-            child: Column(
-              children: [
-                // Header with done button
-                _buildHeader(context),
-                // Date picker
-                Expanded(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: DateTime.now(),
-                    onDateTimeChanged: (DateTime date) {},
-                    maximumDate: DateTime.now(),
-                    minimumDate: DateTime(1900),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ).then((selectedDate) {
-        _expirationDate = selectedDate;
-      });
-    }
+    datePicker(
+      context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateTime: _expirationDate,
+      onSelectedDate: (date) => {
+        setState(() {
+          _expirationDate = date;
+        })
+      },
+    );
   }
 
   Widget _buildHeader(BuildContext context) {

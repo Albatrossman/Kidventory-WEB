@@ -4,11 +4,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 
 mixin PickerMixin<T extends StatefulWidget> on State<T> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
+
+  late DateTime _unSavedSelectedDate;
 
   void datePicker(
     BuildContext context, {
@@ -17,43 +20,82 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
     DateTime? initialDateTime,
     final void Function(DateTime)? onSelectedDate,
   }) {
+    _unSavedSelectedDate = initialDateTime ?? DateTime.now();
     if (kIsWeb) {
       showDatePicker(
         context: context,
-        firstDate: firstDate ?? DateTime(1900),
+        firstDate: firstDate?.atStartOfDay ?? DateTime(1900),
         lastDate: lastDate ?? DateTime(2100),
         currentDate: initialDateTime,
-        
       );
     } else {
-      showCupertinoModalPopup(
+      showModalBottomSheet(
         context: context,
-        builder: (_) => Container(
-          height: 250,
-          color: const Color.fromARGB(255, 255, 255, 255),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 200,
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: initialDateTime ?? DateTime.now(),
-                  minimumDate: firstDate ?? DateTime(1900),
-                  maximumDate: lastDate ?? DateTime(2100),
-                  onDateTimeChanged: (DateTime newDate) {
-                    setState(() {
-                      if (onSelectedDate != null) {
-                        onSelectedDate(newDate);
-                      }
-                    });
-                  },
+        builder: (BuildContext context) {
+          return Container(
+            height: 300,
+            padding: const EdgeInsets.only(top: 6),
+            color: CupertinoColors.systemBackground.resolveFrom(context),
+            child: Column(
+              children: [
+                // Header with done button
+                _buildHeader(context,
+                    onDone: () => {
+                          if (onSelectedDate != null)
+                            {onSelectedDate(_unSavedSelectedDate)}
+                        }),
+                // Date picker
+                Expanded(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: initialDateTime ?? DateTime.now(),
+                    minimumDate: firstDate?.atStartOfDay ?? DateTime(1900),
+                    maximumDate: lastDate ?? DateTime(2100),
+                    onDateTimeChanged: (DateTime date) {
+                      setState(() {
+                        _unSavedSelectedDate = date;
+                      });
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+                const SizedBox(
+                  height: 16,
+                )
+              ],
+            ),
+          );
+        },
       );
     }
+  }
+
+  Widget _buildHeader(BuildContext context,
+      {required void Function()? onDone}) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(
+                  color: CupertinoColors.separator.resolveFrom(context),
+                  width: 0.0))),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CupertinoButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          CupertinoButton(
+            child: const Text('Done'),
+            onPressed: () {
+              if (onDone != null) {
+                onDone(); // Call the callback
+              }
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   void timePicker(

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:kidventory_flutter/core/data/model/child_dto.dart';
-import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_list_dto.dart';
 import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';

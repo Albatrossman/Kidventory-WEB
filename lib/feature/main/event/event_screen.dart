@@ -8,6 +8,7 @@ import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/invite_members/invite_members_screen.dart';
 import 'package:provider/provider.dart';
 
 class EventScreen extends StatefulWidget {
@@ -21,7 +22,8 @@ class EventScreen extends StatefulWidget {
   }
 }
 
-class _EventScreenState extends State<EventScreen> with MessageMixin, NavigationMixin {
+class _EventScreenState extends State<EventScreen>
+    with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
 
   bool isLoading = false;
@@ -47,7 +49,8 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
     _viewModel.refresh(widget.id).then(
           (value) => {},
-          onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+          onError: (error) => snackbar(
+              (error as DioException).message ?? "Something went wrong"),
         );
   }
 
@@ -65,7 +68,7 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
           child: Column(
             children: [
               const SizedBox(height: 16),
@@ -98,6 +101,7 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
       onSelected: (String result) {
         switch (result) {
           case 'Invite members':
+            pushSheet(const InviteMembersScreen());
             break;
           case 'Edit':
             break;
@@ -181,18 +185,14 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
               children: [
                 Text(
                   DateTime.now().formatDate(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
                 const Spacer(),
                 Text(
                   "11:00 AM - 12:30 PM",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
               ],
             ),
@@ -214,12 +214,14 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
     );
   }
 
-  Widget attendanceButton(BuildContext context, String eventId, String sessionId) {
+  Widget attendanceButton(
+      BuildContext context, String eventId, String sessionId) {
     return SizedBox(
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
       child: FilledButton(
-        onPressed: () => pushSheet(AttendanceScreen(eventId: eventId, sessionId: sessionId)),
+        onPressed: () =>
+            pushSheet(AttendanceScreen(eventId: eventId, sessionId: sessionId)),
         style: ButtonStyle(
             backgroundColor: MaterialStateColor.resolveWith(
                 (states) => Theme.of(context).colorScheme.primaryContainer)),
@@ -254,11 +256,14 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
             children: List.generate(
               members.length,
               (index) {
-                return ParticipantRow(
-                  avatarUrl:
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadDlQU2JAgnWtWITD4JYn6Gudy8b0LIhL-tohNNsvWw&s',
-                  name: 'Pouya Rezaei',
-                  onClick: () => {},
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: ParticipantRow(
+                    avatarUrl:
+                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadDlQU2JAgnWtWITD4JYn6Gudy8b0LIhL-tohNNsvWw&s',
+                    name: 'Pouya Rezaei',
+                    onClick: () => {},
+                  ),
                 );
               },
             ),

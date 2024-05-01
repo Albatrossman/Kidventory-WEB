@@ -20,6 +20,8 @@ EventDto _$EventDtoFromJson(Map<String, dynamic> json) => EventDto(
               json['onlineLocation'] as Map<String, dynamic>),
       nearestSession: EventSessionDto.fromJson(
           json['nearestSession'] as Map<String, dynamic>),
+      inviteLink:
+          InviteLinkDto.fromJson(json['inviteLink'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$EventDtoToJson(EventDto instance) => <String, dynamic>{
@@ -32,4 +34,5 @@ Map<String, dynamic> _$EventDtoToJson(EventDto instance) => <String, dynamic>{
       'color': EnumSerializer.toJson(instance.color),
       'onlineLocation': instance.onlineLocation,
       'nearestSession': instance.nearestSession,
+      'inviteLink': instance.inviteLink,
     };
