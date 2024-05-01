@@ -22,7 +22,6 @@ class OnlineLocationDto {
     this.pin,
   });
 
-  factory OnlineLocationDto.fromJson(Map<String, dynamic> json) =>
-      _$OnlineLocationDtoFromJson(json);
+  factory OnlineLocationDto.fromJson(Map<String, dynamic> json) => _$OnlineLocationDtoFromJson(json);
   Map<String, dynamic> toJson() => _$OnlineLocationDtoToJson(this);
 }

@@ -1,6 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kidventory_flutter/core/data/model/online_location_dto.dart';
 import 'package:kidventory_flutter/core/data/model/repeat_dto.dart';
+import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
+import 'package:kidventory_flutter/core/domain/model/color.dart';
+import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 
 part 'event_dto.g.dart';
 
@@ -10,9 +13,13 @@ class EventDto {
   final String? imageUrl;
   @JsonKey(name: 'title')
   final String name;
+  @JsonKey(name: 'descrption')
   final String? description;
   final RepeatDto repeat;
-  final String color;
+  @JsonKey(fromJson: EnumSerializer.fromJson, toJson: EnumSerializer.toJson)
+  final TimeMode timeMode;
+  @JsonKey(fromJson: EnumSerializer.fromJson, toJson: EnumSerializer.toJson)
+  final EventColor color;
   final OnlineLocationDto? onlineLocation;
 
   EventDto({
@@ -21,6 +28,7 @@ class EventDto {
     required this.name,
     required this.description,
     required this.repeat,
+    required this.timeMode,
     required this.color,
     required this.onlineLocation,
   });

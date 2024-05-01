@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,10 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
   void initState() {
     super.initState();
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
-    _viewModel.refresh(widget.id);
+    _viewModel.refresh(widget.id).then(
+      (value) => {},
+      onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+    );
   }
 
   @override
@@ -136,16 +140,14 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Consumer<EventScreenViewModel>(
-                builder: (context, model, child) {
-                  return Text(
-                    model.state.event?.name ?? '',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            Consumer<EventScreenViewModel>(builder: (context, model, child) {
+              return Text(
+                model.state.event?.name ?? '',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
-                  );
-                }
-            ),
+              );
+            }),
             // Text(
             //   'Event By Baroody Camps',
             //   style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -175,14 +177,18 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
               children: [
                 Text(
                   DateTime.now().formatDate(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                 ),
                 const Spacer(),
                 Text(
                   "11:00 AM - 12:30 PM",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                 ),
               ],
             ),

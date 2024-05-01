@@ -15,13 +15,13 @@ class EventScreenViewModel extends ChangeNotifier {
   EventScreenState _state = EventScreenState();
   EventScreenState get state => _state;
 
-  void refresh(String id) async {
+  Future<void> refresh(String id) async {
     try {
       EventDto event = await _eventApiService.getEvent(id);
-      List<ParticipantDto> participants = await _eventApiService.getMembers(id, '');
-      _update(event: event, participants: participants);
+      // List<ParticipantDto> participants = await _eventApiService.getMembers(id, '');
+      _update(event: event);
     } catch (e) {
-      // Donno yet
+      rethrow;
     }
   }
 
