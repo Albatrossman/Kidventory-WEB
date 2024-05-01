@@ -12,8 +12,8 @@ EventDto _$EventDtoFromJson(Map<String, dynamic> json) => EventDto(
       name: json['title'] as String,
       description: json['descrption'] as String?,
       repeat: RepeatDto.fromJson(json['repeat'] as Map<String, dynamic>),
-      timeMode: EnumSerializer.fromJson(json['timeMode'] as int),
-      color: EnumSerializer.fromJson(json['color'] as int),
+      timeMode: EnumSerializer.timeModeFromJson(json['timeMode'] as int),
+      color: EnumSerializer.eventColorFromJson(json['color'] as int),
       onlineLocation: json['onlineLocation'] == null
           ? null
           : OnlineLocationDto.fromJson(

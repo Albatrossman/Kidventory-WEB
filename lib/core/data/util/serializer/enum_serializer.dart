@@ -29,7 +29,8 @@ class EnumSerializer{
     return RepeatUnit.values[index];
   }
 
-  static WeekDay weekDayFromJson(int index) {
+  static WeekDay? weekDayFromJson(int? index) {
+    if (index == null) return null;
     if (index < 0 || index >= WeekDay.values.length) {
       throw ArgumentError('Index out of bounds for WeekDay decoding: $index');
     }
