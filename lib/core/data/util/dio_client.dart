@@ -18,7 +18,7 @@ class DioClient {
 
     if (kIsWeb) {
       //TODO: Add addaptor for web client
-      
+
       // (dio.httpClientAdapter as HttpClientAdapter).createHttpClient = () =>
       //     HttpClient()
       //       ..badCertificateCallback =
@@ -29,5 +29,29 @@ class DioClient {
             ..badCertificateCallback =
                 (X509Certificate cert, String host, int port) => true;
     }
+
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (error, handler) {
+          if (error.response != null) {
+            // If the response has data and it contains an "error" field,
+            // throw the error message back instead of using the default DioException.
+            final responseData = error.response!.data;
+            if (responseData is Map && responseData.containsKey('error')) {
+              final errorMessage = responseData['error'];
+              throw DioException(
+                requestOptions: error.requestOptions,
+                response: error.response,
+                type: error.type,
+                error: error.response?.statusCode!.toString(),
+                message: errorMessage,
+              );
+            }
+          }
+          // If the error doesn't match the custom condition, just let it pass through.
+          handler.next(error);
+        },
+      ),
+    );
   }
 }

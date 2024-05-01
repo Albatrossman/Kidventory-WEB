@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -203,7 +204,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
           .then(
             (value) => pop(),
             onError: (error) => {
-              snackbar(error.toString()),
+              snackbar((error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {

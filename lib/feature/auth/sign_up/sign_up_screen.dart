@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -280,13 +281,13 @@ class _SignUpScreenContent extends State<SignUpScreen>
                     (value) => pushAndClear(const MainScreen(),
                         fullscreenDialog: true),
                     onError: (error) => {
-                      snackbar(error.toString()),
+                      snackbar((error as DioException).message ?? "Something went wrong"),
                     },
                   )
             },
             onError: (error) => {
               pop(),
-              snackbar(error.toString()),
+              snackbar((error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {

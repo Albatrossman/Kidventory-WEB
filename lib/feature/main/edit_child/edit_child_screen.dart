@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -376,7 +377,7 @@ class _EditChildScreenState extends State<EditChildScreen>
           .then(
             (value) => pop(),
             onError: (error) => {
-              snackbar(error.toString()),
+              snackbar((error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {
@@ -406,7 +407,7 @@ class _EditChildScreenState extends State<EditChildScreen>
           .then(
             (value) => pop(),
             onError: (error) => {
-              snackbar(error.toString()),
+              snackbar((error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {
@@ -423,7 +424,7 @@ class _EditChildScreenState extends State<EditChildScreen>
     _viewModel.deleteChild(info.id).whenComplete(() => isDeleting = true).then(
           (value) => pop(),
           onError: (error) => {
-            snackbar(error.toString()),
+            snackbar((error as DioException).message ?? "Something went wrong"),
           },
         );
   }
