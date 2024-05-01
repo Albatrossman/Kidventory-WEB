@@ -7,28 +7,20 @@ part 'event_dto.g.dart';
 @JsonSerializable()
 class EventDto {
   final String id;
-  final String imageFile;
-  final String imageUrl;
+  final String? imageUrl;
   @JsonKey(name: 'title')
   final String name;
-  final String description;
+  final String? description;
   final RepeatDto repeat;
-  final String timeMode;
-  final String startTime;
-  final String endTime;
   final String color;
-  final OnlineLocationDto onlineLocation;
+  final OnlineLocationDto? onlineLocation;
 
   EventDto({
     required this.id,
-    required this.imageFile,
     required this.imageUrl,
     required this.name,
     required this.description,
     required this.repeat,
-    required this.timeMode,
-    required this.startTime,
-    required this.endTime,
     required this.color,
     required this.onlineLocation,
   });

@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kidventory_flutter/core/data/model/online_location_dto.dart';
 import 'package:kidventory_flutter/core/data/model/repeat_dto.dart';
-import 'package:kidventory_flutter/core/data/util/serializer/time_of_day_serializer.dart';
+import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 
@@ -10,27 +9,23 @@ part 'create_event_dto.g.dart';
 
 @JsonSerializable()
 class CreateEventDto {
-  final String imageFile;
+  final String? imageFile;
   @JsonKey(name: 'title')
   final String name;
-  final String description;
+  final String? description;
   final RepeatDto repeat;
+  @JsonKey(toJson: EnumSerializer.toJson)
   final TimeMode timeMode;
-  @JsonKey(fromJson: TimeOfDaySerializer.fromJson, toJson: TimeOfDaySerializer.toJson)
-  final TimeOfDay startTime;
-  @JsonKey(fromJson: TimeOfDaySerializer.fromJson, toJson: TimeOfDaySerializer.toJson)
-  final TimeOfDay endTime;
+  @JsonKey(toJson: EnumSerializer.toJson)
   final EventColor color;
   final OnlineLocationDto? onlineLocation;
 
   CreateEventDto({
-    required this.imageFile,
+    this.imageFile,
     required this.name,
-    required this.description,
+    this.description,
     required this.repeat,
     required this.timeMode,
-    required this.startTime,
-    required this.endTime,
     required this.color,
     this.onlineLocation,
   });

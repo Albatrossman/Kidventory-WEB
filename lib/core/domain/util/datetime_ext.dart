@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 extension DateTimeFormatting on DateTime {
@@ -10,6 +11,10 @@ extension DateTimeFormatting on DateTime {
     } else {
       return DateFormat.yMMMMd().format(this);
     }
+  }
+
+  DateTime copyWithTime(TimeOfDay time) {
+    return DateTime(year, month, day, time.hour, time.minute);
   }
 
   DateTime plusMonths(int months) {
@@ -26,6 +31,8 @@ extension DateTimeFormatting on DateTime {
 
     return DateTime(newYear, newMonth, newDay);
   }
+
+  TimeOfDay get timeOfDay => TimeOfDay(hour: hour, minute: minute);
 
   DateTime get firstDayOfMonth => DateTime(year, month, 1);
 

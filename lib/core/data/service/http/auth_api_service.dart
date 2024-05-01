@@ -8,7 +8,10 @@ abstract class AuthApiService {
   Future<Null> signUp(SignUpDto body);
 
   Future<Null> sendOTP(String email);
+
   Future<Null> validateOTP(String email, String code);
+
   Future<Null> resetPassword(String email, String code, String password);
+
   Future<Null> changePassword(UpdatePasswordDto body);
 }

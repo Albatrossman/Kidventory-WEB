@@ -7,28 +7,47 @@ part of 'repeat_dto.dart';
 // **************************************************************************
 
 RepeatDto _$RepeatDtoFromJson(Map<String, dynamic> json) => RepeatDto(
-      id: json['id'] as String,
       period: json['period'] as int,
-      periodUnit: json['periodUnit'] as String,
-      weekDays:
+      periodUnit: $enumDecode(_$RepeatUnitEnumMap, json['periodUnit']),
+      daysOfWeek:
           (json['weekDays'] as List<dynamic>).map((e) => e as String).toList(),
-      monthDay: json['monthDay'] as String,
+      monthDay: $enumDecodeNullable(_$WeekDayEnumMap, json['monthDay']),
       dayNumberOfMonth: json['dayNumberOfMonth'] as int,
       startDateTime: DateTime.parse(json['startDateTime'] as String),
-      endsOnMode: json['endsOnMode'] as String,
-      endDate: DateTime.parse(json['endDate'] as String),
+      endsOnMode: $enumDecode(_$RepeatEndEnumMap, json['endsOnMode']),
+      endDateTime: DateTime.parse(json['endDateTime'] as String),
       maxOccurrence: json['maxOccurrence'] as int,
     );
 
 Map<String, dynamic> _$RepeatDtoToJson(RepeatDto instance) => <String, dynamic>{
-      'id': instance.id,
       'period': instance.period,
-      'periodUnit': instance.periodUnit,
-      'weekDays': instance.weekDays,
-      'monthDay': instance.monthDay,
+      'periodUnit': EnumSerializer.toJson(instance.periodUnit),
+      'weekDays': instance.daysOfWeek,
+      'monthDay': EnumSerializer.toJson(instance.monthDay),
       'dayNumberOfMonth': instance.dayNumberOfMonth,
-      'startDateTime': instance.startDateTime.toIso8601String(),
-      'endsOnMode': instance.endsOnMode,
-      'endDate': instance.endDate.toIso8601String(),
+      'startDateTime': DateTimeSerializer.toJson(instance.startDateTime),
+      'endDateTime': DateTimeSerializer.toJson(instance.endDateTime),
+      'endsOnMode': EnumSerializer.toJson(instance.endsOnMode),
       'maxOccurrence': instance.maxOccurrence,
     };
+
+const _$RepeatUnitEnumMap = {
+  RepeatUnit.day: 'day',
+  RepeatUnit.week: 'week',
+  RepeatUnit.month: 'month',
+};
+
+const _$WeekDayEnumMap = {
+  WeekDay.sunday: 'sunday',
+  WeekDay.monday: 'monday',
+  WeekDay.tuesday: 'tuesday',
+  WeekDay.wednesday: 'wednesday',
+  WeekDay.thursday: 'thursday',
+  WeekDay.friday: 'friday',
+  WeekDay.saturday: 'saturday',
+};
+
+const _$RepeatEndEnumMap = {
+  RepeatEnd.onDate: 'onDate',
+  RepeatEnd.afterOccurrence: 'afterOccurrence',
+};

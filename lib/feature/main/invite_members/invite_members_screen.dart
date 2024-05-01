@@ -20,10 +20,7 @@ class InviteMembersScreen extends StatefulWidget {
 }
 
 class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageMixin, NavigationMixin {
-  final TextEditingController _firstnameController = TextEditingController();
-  final TextEditingController _lastnameController = TextEditingController();
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
   final MaterialStateProperty<Icon?> _thumbIcon =
       MaterialStateProperty.resolveWith<Icon?>(

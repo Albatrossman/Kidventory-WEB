@@ -8,13 +8,11 @@ part of 'create_event_dto.dart';
 
 CreateEventDto _$CreateEventDtoFromJson(Map<String, dynamic> json) =>
     CreateEventDto(
-      imageFile: json['imageFile'] as String,
+      imageFile: json['imageFile'] as String?,
       name: json['title'] as String,
-      description: json['description'] as String,
+      description: json['description'] as String?,
       repeat: RepeatDto.fromJson(json['repeat'] as Map<String, dynamic>),
       timeMode: $enumDecode(_$TimeModeEnumMap, json['timeMode']),
-      startTime: TimeOfDaySerializer.fromJson(json['startTime'] as String),
-      endTime: TimeOfDaySerializer.fromJson(json['endTime'] as String),
       color: $enumDecode(_$EventColorEnumMap, json['color']),
       onlineLocation: json['onlineLocation'] == null
           ? null
@@ -28,10 +26,8 @@ Map<String, dynamic> _$CreateEventDtoToJson(CreateEventDto instance) =>
       'title': instance.name,
       'description': instance.description,
       'repeat': instance.repeat,
-      'timeMode': _$TimeModeEnumMap[instance.timeMode]!,
-      'startTime': TimeOfDaySerializer.toJson(instance.startTime),
-      'endTime': TimeOfDaySerializer.toJson(instance.endTime),
-      'color': _$EventColorEnumMap[instance.color]!,
+      'timeMode': EnumSerializer.toJson(instance.timeMode),
+      'color': EnumSerializer.toJson(instance.color),
       'onlineLocation': instance.onlineLocation,
     };
 

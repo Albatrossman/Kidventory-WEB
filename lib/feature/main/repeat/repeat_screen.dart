@@ -56,6 +56,7 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
               _viewModel.state.selectedRepeatUnit,
               daysOfWeek,
               _selectedRepeatEnd,
+              _occurrenceController.text
             ),
             pop()
           },

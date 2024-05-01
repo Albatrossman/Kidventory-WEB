@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
+import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/event_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
@@ -114,7 +115,7 @@ class _EventsScreenState extends State<EventsScreen>
                   final EventDto event = model.state.events[index];
                   return EventCard(
                     name: event.name,
-                    time: "${event.startTime} - ${event.endTime}",
+                    time: "${event.repeat.startDateTime.timeOfDay} - ${event.repeat.endDateTime.timeOfDay}",
                     onClick: () => {push(EventScreen(id: event.id))},
                     imageUrl: event.imageUrl,
                   );
