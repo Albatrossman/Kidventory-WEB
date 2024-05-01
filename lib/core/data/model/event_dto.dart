@@ -16,9 +16,9 @@ class EventDto {
   @JsonKey(name: 'descrption')
   final String? description;
   final RepeatDto repeat;
-  @JsonKey(fromJson: EnumSerializer.fromJson, toJson: EnumSerializer.toJson)
+  @JsonKey(fromJson: EnumSerializer.timeModeFromJson, toJson: EnumSerializer.toJson)
   final TimeMode timeMode;
-  @JsonKey(fromJson: EnumSerializer.fromJson, toJson: EnumSerializer.toJson)
+  @JsonKey(fromJson: EnumSerializer.eventColorFromJson, toJson: EnumSerializer.toJson)
   final EventColor color;
   final OnlineLocationDto? onlineLocation;
 

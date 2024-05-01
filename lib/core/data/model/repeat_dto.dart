@@ -10,18 +10,18 @@ part 'repeat_dto.g.dart';
 @JsonSerializable()
 class RepeatDto {
   final int period;
-  @JsonKey(fromJson: EnumSerializer.fromJson, toJson: EnumSerializer.toJson)
+  @JsonKey(fromJson: EnumSerializer.repeatUnitFromJson, toJson: EnumSerializer.toJson)
   final RepeatUnit periodUnit;
   @JsonKey(name: 'weekDays')
   final List<String> daysOfWeek;
-  @JsonKey(fromJson: EnumSerializer.fromJson, toJson: EnumSerializer.toJson)
+  @JsonKey(fromJson: EnumSerializer.weekDayFromJson, toJson: EnumSerializer.toJson)
   final WeekDay? monthDay;
   final int dayNumberOfMonth;
   @JsonKey(toJson: DateTimeSerializer.toJson)
   final DateTime startDateTime;
   @JsonKey(toJson: DateTimeSerializer.toJson)
   final DateTime endDateTime;
-  @JsonKey(fromJson: EnumSerializer.fromJson, toJson: EnumSerializer.toJson)
+  @JsonKey(fromJson: EnumSerializer.repeatEndFromJson, toJson: EnumSerializer.toJson)
   final RepeatEnd endsOnMode;
   final int maxOccurrence;
 

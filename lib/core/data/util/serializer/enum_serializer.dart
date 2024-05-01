@@ -2,6 +2,7 @@ import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
+import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 
 class EnumSerializer{
   static final Map<Type, List<dynamic>> _enumValues = {
@@ -19,5 +20,40 @@ class EnumSerializer{
       throw ArgumentError('Index out of bounds for enum decoding: $T');
     }
     return values[index];
+  }
+
+  static RepeatUnit repeatUnitFromJson(int index) {
+    if (index < 0 || index >= RepeatUnit.values.length) {
+      throw ArgumentError('Index out of bounds for RepeatUnit decoding: $index');
+    }
+    return RepeatUnit.values[index];
+  }
+
+  static WeekDay weekDayFromJson(int index) {
+    if (index < 0 || index >= WeekDay.values.length) {
+      throw ArgumentError('Index out of bounds for WeekDay decoding: $index');
+    }
+    return WeekDay.values[index];
+  }
+
+  static RepeatEnd repeatEndFromJson(int index) {
+    if (index < 0 || index >= RepeatEnd.values.length) {
+      throw ArgumentError('Index out of bounds for RepeatEnd decoding: $index');
+    }
+    return RepeatEnd.values[index];
+  }
+
+  static TimeMode timeModeFromJson(int index) {
+    if (index < 0 || index >= TimeMode.values.length) {
+      throw ArgumentError('Index out of bounds for TimeMode decoding: $index');
+    }
+    return TimeMode.values[index];
+  }
+
+  static EventColor eventColorFromJson(int index) {
+    if (index < 0 || index >= EventColor.values.length) {
+      throw ArgumentError('Index out of bounds for EventColor decoding: $index');
+    }
+    return EventColor.values[index];
   }
 }
