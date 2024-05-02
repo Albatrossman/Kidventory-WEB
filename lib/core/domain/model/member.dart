@@ -1,3 +1,4 @@
+import 'package:kidventory_flutter/core/domain/model/gender.dart';
 import 'package:kidventory_flutter/core/domain/model/role.dart';
 
 class Member {
@@ -5,11 +6,11 @@ class Member {
   String lastName;
   String email;
   int age;
-  String gender;
-  String address;
-  Role role;
+  Gender? gender;
+  String? address;
+  Role? role;
   String? primaryGuardian;
-  List<String> phone;
+  String? phone;
 
   Member({
     required this.firstName,

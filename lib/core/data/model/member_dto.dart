@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/data/model/gender_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
-import 'package:kidventory_flutter/core/domain/model/role.dart';
+import 'package:kidventory_flutter/core/data/util/serializer/date_serializer.dart';
+import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
 
 part 'member_dto.g.dart';
 
@@ -9,18 +11,21 @@ class MemberDto {
   String firstName;
   String lastName;
   String email;
-  int age;
-  String gender;
-  String address;
-  RoleDto role;
+  @JsonKey(name: 'birthDate', toJson: DateSerializer.toJson)
+  DateTime? birthday;
+  @JsonKey(toJson: EnumSerializer.toJson)
+  GenderDto? gender;
+  String? address;
+  @JsonKey(toJson: EnumSerializer.toJson)
+  RoleDto? role;
   String? primaryGuardian;
-  List<String> phone;
+  String? phone;
 
   MemberDto({
     required this.firstName,
     required this.lastName,
     required this.email,
-    required this.age,
+    required this.birthday,
     required this.gender,
     required this.address,
     required this.role,

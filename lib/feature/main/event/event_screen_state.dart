@@ -31,10 +31,10 @@ class EventScreenState {
   }) {
     return EventScreenState(
       loading: loading ?? this.loading,
-      event: event,
+      event: event ?? this.event,
       participants: participants ?? this.participants,
       participantsByRole: participantsByRole ?? this.participantsByRole,
-      updatedAttendances: updatedAttendances,
+      updatedAttendances: updatedAttendances ?? this.updatedAttendances,
       files: files ?? this.files,
     );
   }

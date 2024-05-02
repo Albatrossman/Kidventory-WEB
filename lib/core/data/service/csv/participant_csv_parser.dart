@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
+import 'package:kidventory_flutter/core/domain/model/gender.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 import 'package:kidventory_flutter/core/domain/model/role.dart';
 
@@ -35,11 +36,11 @@ class ParticipantCSVParser implements CSVParser<List<Member>> {
           lastName: values[1].trim(),
           email: values[6].trim(),
           age: age,
-          gender: values[3].trim(),
+          gender: _parseGender(values[3]),
           address: values[9].trim(),
           role: Role.participant,
           primaryGuardian: "${values[4].trim()} ${values[5].trim()}",
-          phone: [values[7].trim(), values[8].trim()].where((phone) => phone.isNotEmpty).toList(),
+          phone: values[7].trim(),
         ));
       } catch (e) {
         print('Error parsing line $lineNumber: $e');
@@ -60,5 +61,19 @@ class ParticipantCSVParser implements CSVParser<List<Member>> {
       }
     }
     throw FormatException('No valid date format found for $date');
+  }
+
+  Gender _parseGender(String value) {
+    value = value.toLowerCase().trim();
+    switch (value) {
+      case 'male':
+        return Gender.male;
+      case 'female':
+        return Gender.female;
+      case 'non-binary':
+        return Gender.nonBinary;
+      default:
+        return Gender.none;
+    }
   }
 }

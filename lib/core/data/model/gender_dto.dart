@@ -1,4 +1,4 @@
-enum Gender {
+enum GenderDto {
   none,
   male,
   female,
