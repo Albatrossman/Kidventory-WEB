@@ -12,7 +12,7 @@ class ParticipantDto {
   final String firstName;
   @JsonKey(name: 'lastNam')
   final String lastName;
-  @JsonKey(name: 'atendance', fromJson: EnumSerializer.attendanceFromJson)
+  @JsonKey(name: 'attendance', fromJson: EnumSerializer.attendanceFromJson)
   final AttendanceDto attendance;
   @JsonKey(name: 'role', fromJson: EnumSerializer.roleFromJson)
   final RoleDto role;

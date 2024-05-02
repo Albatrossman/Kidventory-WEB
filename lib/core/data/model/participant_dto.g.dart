@@ -12,7 +12,7 @@ ParticipantDto _$ParticipantDtoFromJson(Map<String, dynamic> json) =>
       firstName: json['firstName'] as String,
       lastName: json['lastNam'] as String,
       memberId: json['memberId'] as String,
-      attendance: EnumSerializer.attendanceFromJson(json['atendance'] as int),
+      attendance: EnumSerializer.attendanceFromJson(json['attendance'] as int),
       role: EnumSerializer.roleFromJson(json['role'] as int),
     );
 
@@ -22,7 +22,7 @@ Map<String, dynamic> _$ParticipantDtoToJson(ParticipantDto instance) =>
       'avatarUrl': instance.avatarUrl,
       'firstName': instance.firstName,
       'lastNam': instance.lastName,
-      'atendance': _$AttendanceDtoEnumMap[instance.attendance]!,
+      'attendance': _$AttendanceDtoEnumMap[instance.attendance]!,
       'role': _$RoleDtoEnumMap[instance.role]!,
     };
 

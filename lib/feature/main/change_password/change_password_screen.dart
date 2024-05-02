@@ -190,7 +190,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
     setState(() {
       newPasswordsMatch = (_newPasswordConfirmationController.text ==
           _newPasswordController.text);
-      passwordStrong = _newPasswordController.text.isStrongForPassowrd();
+      passwordStrong = _newPasswordController.text.isStrongForPassword();
     });
     if (newPasswordsMatch && passwordStrong) {
       _viewModel

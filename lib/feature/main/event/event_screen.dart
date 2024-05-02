@@ -2,8 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
+import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
@@ -22,36 +25,19 @@ class EventScreen extends StatefulWidget {
   }
 }
 
-class _EventScreenState extends State<EventScreen>
-    with MessageMixin, NavigationMixin {
+class _EventScreenState extends State<EventScreen> with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
 
   bool isLoading = false;
-  List<String> members = [
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-    "test",
-  ];
 
   @override
   void initState() {
     super.initState();
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
     _viewModel.refresh(widget.id).then(
-          (value) => {},
-          onError: (error) => snackbar(
-              (error as DioException).message ?? "Something went wrong"),
-        );
+      (value) => {},
+      onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+    );
   }
 
   @override
@@ -81,7 +67,11 @@ class _EventScreenState extends State<EventScreen>
                 _viewModel.state.event?.id ?? "",
                 _viewModel.state.event?.nearestSession.id ?? "",
               ),
-              membersList(context),
+              Consumer<EventScreenViewModel>(
+                builder: (_, model, __) {
+                  return membersList(context, model.state.participantsByRole ?? {});
+                },
+              ),
             ],
           ),
         ),
@@ -185,14 +175,17 @@ class _EventScreenState extends State<EventScreen>
               children: [
                 Text(
                   DateTime.now().formatDate(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                 ),
                 const Spacer(),
                 Text(
                   "11:00 AM - 12:30 PM",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                 ),
               ],
             ),
@@ -214,14 +207,12 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget attendanceButton(
-      BuildContext context, String eventId, String sessionId) {
+  Widget attendanceButton(BuildContext context, String eventId, String sessionId) {
     return SizedBox(
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
       child: FilledButton(
-        onPressed: () =>
-            pushSheet(AttendanceScreen(eventId: eventId, sessionId: sessionId)),
+        onPressed: () => pushSheet(AttendanceScreen(eventId: eventId, sessionId: sessionId)),
         style: ButtonStyle(
             backgroundColor: MaterialStateColor.resolveWith(
                 (states) => Theme.of(context).colorScheme.primaryContainer)),
@@ -235,33 +226,38 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget membersList(BuildContext context) {
-    return Column(
-      children: [
-        participantsSection(context),
-      ],
-    );
+  Widget membersList(BuildContext context, Map<RoleDto, List<ParticipantDto>> participantsByRole) {
+    List<Widget> sections = [];
+    participantsByRole.forEach((role, participants) {
+      sections.add(participantsSection(context, role.name.capitalize(), participants));
+    });
+
+    return Column(children: sections);
   }
 
-  Widget participantsSection(BuildContext context) {
-    if (members.isEmpty) {
+  Widget participantsSection(
+    BuildContext context,
+    String label,
+    List<ParticipantDto> participants,
+  ) {
+    if (participants.isEmpty) {
       return const SizedBox(width: 0);
     } else {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          sectionHeader("Members", context),
+          sectionHeader(label, context),
           Column(
             children: List.generate(
-              members.length,
+              participants.length,
               (index) {
+                ParticipantDto participant = participants[index];
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.only(bottom: 8.0),
                   child: ParticipantRow(
-                    avatarUrl:
-                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadDlQU2JAgnWtWITD4JYn6Gudy8b0LIhL-tohNNsvWw&s',
-                    name: 'Pouya Rezaei',
+                    avatarUrl: participant.avatarUrl,
+                    name: "${participant.firstName} ${participant.lastName}",
                     onClick: () => {},
                   ),
                 );
@@ -274,9 +270,9 @@ class _EventScreenState extends State<EventScreen>
   }
 
   Widget sectionHeader(String title, BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      child: Text("Members"),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      child: Text(title),
     );
   }
 }

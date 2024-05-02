@@ -7,13 +7,13 @@ part 'event_list_dto.g.dart';
 class EventListDto {
   final List<EventDto> items;
   final int currentPage;
-  final int pagesCount;
+  final int pageCount;
   final int totalCount;
 
   EventListDto({
     required this.items,
     required this.currentPage,
-    required this.pagesCount,
+    required this.pageCount,
     required this.totalCount,
   });
 

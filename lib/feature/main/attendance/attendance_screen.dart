@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/mapper/attendance_mapper.dart';
+import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
+import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/attendance.dart';
 import 'package:kidventory_flutter/core/ui/component/attendance_row.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
@@ -22,7 +25,6 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
-  Attendance _attendance = Attendance.unspecified;
 
   @override
   void initState() {
@@ -128,7 +130,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                           ),
                           const Expanded(child: SizedBox()),
                           CupertinoButton(
-                            onPressed: () {},
+                            onPressed: () => _viewModel.editAllAttendances(AttendanceDto.late),
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Text(
                               'Late',
@@ -142,7 +144,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                             ),
                           ),
                           CupertinoButton(
-                            onPressed: () {},
+                            onPressed: () => _viewModel.editAllAttendances(AttendanceDto.absent),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               'Absent',
@@ -156,7 +158,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                             ),
                           ),
                           CupertinoButton(
-                            onPressed: () {},
+                            onPressed: () => _viewModel.editAllAttendances(AttendanceDto.present),
                             padding: const EdgeInsets.only(right: 16),
                             child: Text(
                               'Present',
@@ -186,7 +188,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                         .surfaceVariant
                         .withAlpha(48),
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: _participantsList(context),
+                    child: Consumer<EventScreenViewModel>(builder: (context, model, child) {
+                      return _participantsList(context, model.state.updatedAttendances);
+                    }),
                   ),
                 ),
               ),
@@ -197,19 +201,18 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
     );
   }
 
-  Widget _participantsList(BuildContext context) {
+  Widget _participantsList(BuildContext context, List<ParticipantDto> participants) {
     return ListView.builder(
-      itemCount: 20,
+      itemCount: participants.length,
       itemBuilder: (context, index) {
+        ParticipantDto participant = participants[index];
         return Column(
           children: [
             AttendanceRow(
-              name: 'Participant $index',
-              attendance: _attendance,
+              name: "${participant.firstName} ${participant.lastName}",
+              attendance: participant.attendance.toDomain(),
               onAttendanceChanged: (Attendance newAttendance) {
-                setState(() {
-                  _attendance = newAttendance;
-                });
+                _viewModel.editAttendance(participant, newAttendance.toData());
               },
             ),
             const Divider(),
