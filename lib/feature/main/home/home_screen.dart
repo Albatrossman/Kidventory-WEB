@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void didPopNext() {
-    // _viewModel.updateContent();
+    _viewModel.updateContent();
     super.didPopNext();
   }
 
