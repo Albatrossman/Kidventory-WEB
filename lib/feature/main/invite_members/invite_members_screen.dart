@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,9 @@ import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
 import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.dart';
+import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/roster/roster_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:share_plus/share_plus.dart';
@@ -271,7 +275,27 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
       width: 800,
       height: 40,
       child: OutlinedButton(
-          onPressed: () => {pushSheet(const AddMembersScreen())},
+          onPressed: () => {
+            pushSheet(
+                Consumer<EditEventScreenViewModel>(
+                    builder: (_, model, __) {
+                      return AddMembersScreen(
+                        filesAndParticipants: model.state.filesAndParticipants,
+                        onDownloadTemplateClick: () => {},
+                        onImportCSVClick: () async {
+                          File? file = await csvPicker();
+
+                          if (file != null) {
+                            _viewModel.importCSV(file);
+                          }
+                        },
+                        onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
+                        onCSVFileClick: (file) => pushSheet(RosterScreen(members: model.state.filesAndParticipants[file] ?? List.empty())),
+                      );
+                    }
+                ),
+            )
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

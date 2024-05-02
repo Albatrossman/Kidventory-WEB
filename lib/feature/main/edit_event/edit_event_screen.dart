@@ -19,6 +19,7 @@ import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_vie
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/online_location/online_location_screen.dart';
 import 'package:kidventory_flutter/feature/main/repeat/repeat_screen.dart';
+import 'package:kidventory_flutter/feature/main/roster/roster_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
@@ -248,7 +249,25 @@ class _EditEventScreenState extends State<EditEventScreen>
                     size: 20.0,
                   ),
                   label: 'Add members',
-                  onTap: () => pushSheet(const AddMembersScreen()),
+                  onTap: () => pushSheet(
+                      Consumer<EditEventScreenViewModel>(
+                        builder: (_, model, __) {
+                          return AddMembersScreen(
+                            filesAndParticipants: model.state.filesAndParticipants,
+                            onDownloadTemplateClick: () => {},
+                            onImportCSVClick: () async {
+                              File? file = await csvPicker();
+
+                              if (file != null) {
+                                _viewModel.importCSV(file);
+                              }
+                            },
+                            onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
+                            onCSVFileClick: (file) => pushSheet(RosterScreen(members: model.state.filesAndParticipants[file] ?? List.empty())),
+                          );
+                        }
+                      ),
+                  ),
                   trailing: Icon(
                     size: 20,
                     CupertinoIcons.chevron_up,
@@ -321,11 +340,11 @@ class _EditEventScreenState extends State<EditEventScreen>
       controller: _btnController,
       onPressed: () => _viewModel
           .createEvent(_nameController.text)
-          .whenComplete(() => _btnController.reset())
-          .then(
-            (value) => replace(const EventScreen(id: "")),
-            onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
-          ),
+          .whenComplete(() => _btnController.reset()),
+          // .then(
+          //   (value) => replace(const EventScreen(id: "")),
+          //   onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+          // ),
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(

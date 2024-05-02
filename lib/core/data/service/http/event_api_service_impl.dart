@@ -38,7 +38,7 @@ class EventApiServiceImpl extends EventApiService {
 
   @override
   Future<void> addMembers(String eventId, AddMemberDto body) async {
-    await client.dio.post('events/$eventId/members');
+    await client.dio.post('events/$eventId/members', data: body);
   }
 
   @override

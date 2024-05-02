@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/mapper/member_mapper.dart';
 import 'package:kidventory_flutter/core/data/mapper/online_location_mapper.dart';
 import 'package:kidventory_flutter/core/data/mapper/repeat_mapper.dart';
+import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
@@ -30,7 +33,7 @@ class EditEventScreenViewModel extends ChangeNotifier {
 
   Future<void> createEvent(String name) async {
     try {
-      CreateEventDto event = CreateEventDto(
+      CreateEventDto createEvent = CreateEventDto(
         imageFile: null,
         name: name,
         description: state.description,
@@ -40,13 +43,20 @@ class EditEventScreenViewModel extends ChangeNotifier {
         color: state.color,
       );
 
-      await _eventApiService.createEvent(event);
+      EventDto event = await _eventApiService.createEvent(createEvent);
+      await _addMembers(event.id);
     } catch (exception) {
       rethrow;
     }
   }
 
-  Future<void> addMembers() async {}
+  Future<void> _addMembers(String eventId) async {
+    List<Member> allMembers = state.filesAndParticipants.values.expand((list) => list).toList();
+    await _eventApiService.addMembers(
+      eventId,
+      AddMemberDto(participants: allMembers.map((member) => member.toData()).toList()),
+    );
+  }
 
   void editRepeat(
     int period,

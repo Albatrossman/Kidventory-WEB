@@ -5,12 +5,10 @@ part 'add_member_dto.g.dart';
 
 @JsonSerializable()
 class AddMemberDto {
-  final String eventId;
   final List<MemberDto> participants;
 
 
   AddMemberDto({
-    required this.eventId,
     required this.participants,
   });
 

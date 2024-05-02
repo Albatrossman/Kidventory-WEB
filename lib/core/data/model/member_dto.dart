@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/role.dart';
 
 part 'member_dto.g.dart';
@@ -11,7 +12,7 @@ class MemberDto {
   int age;
   String gender;
   String address;
-  Role role;
+  RoleDto role;
   String? primaryGuardian;
   List<String> phone;
 

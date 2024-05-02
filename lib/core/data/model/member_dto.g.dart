@@ -13,7 +13,7 @@ MemberDto _$MemberDtoFromJson(Map<String, dynamic> json) => MemberDto(
       age: json['age'] as int,
       gender: json['gender'] as String,
       address: json['address'] as String,
-      role: $enumDecode(_$RoleEnumMap, json['role']),
+      role: $enumDecode(_$RoleDtoEnumMap, json['role']),
       primaryGuardian: json['primaryGuardian'] as String?,
       phone: (json['phone'] as List<dynamic>).map((e) => e as String).toList(),
     );
@@ -25,13 +25,13 @@ Map<String, dynamic> _$MemberDtoToJson(MemberDto instance) => <String, dynamic>{
       'age': instance.age,
       'gender': instance.gender,
       'address': instance.address,
-      'role': _$RoleEnumMap[instance.role]!,
+      'role': _$RoleDtoEnumMap[instance.role]!,
       'primaryGuardian': instance.primaryGuardian,
       'phone': instance.phone,
     };
 
-const _$RoleEnumMap = {
-  Role.owner: 'owner',
-  Role.teacher: 'teacher',
-  Role.participant: 'participant',
+const _$RoleDtoEnumMap = {
+  RoleDto.owner: 'owner',
+  RoleDto.teacher: 'teacher',
+  RoleDto.participant: 'participant',
 };
