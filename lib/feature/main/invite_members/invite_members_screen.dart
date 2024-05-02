@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
@@ -26,17 +28,24 @@ class InviteMembersScreen extends StatefulWidget {
   }
 }
 
-class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageMixin, NavigationMixin, PickerMixin {
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+class _InviteMembersScreenState extends State<InviteMembersScreen>
+    with MessageMixin, NavigationMixin, PickerMixin {
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
   late final EventScreenViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
+    _isPrivate = _viewModel.state.event?.inviteLink?.isPrivate ?? true;
+    _expirationDate = _viewModel.state.event?.inviteLink?.expiryDate ??
+        DateTime.now().add(const Duration(days: 1));
+    _canExpire = _viewModel.state.event?.inviteLink?.expiryDate != null;
   }
 
-  final MaterialStateProperty<Icon?> _thumbIcon = MaterialStateProperty.resolveWith<Icon?>(
+  final MaterialStateProperty<Icon?> _thumbIcon =
+      MaterialStateProperty.resolveWith<Icon?>(
     (Set<MaterialState> states) {
       if (states.contains(MaterialState.selected)) {
         return const Icon(Icons.check);
@@ -50,6 +59,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
   bool _isPrivate = false;
   bool _canExpire = false;
   DateTime _expirationDate = DateTime.now().add(const Duration(days: 1));
+  bool _updating = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +68,12 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
         title: const Text("Add members"),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          onPressed: () => {},
-          child: const Text("Confirm"),
+          onPressed: () => {_updateSettings()},
+          child: _updating
+              ? const CupertinoActivityIndicator(
+                  animating: true,
+                )
+              : const Text("Confirm"),
         ),
       ),
       body: Center(
@@ -100,7 +114,8 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+          border:
+              Border.all(color: Theme.of(context).colorScheme.outlineVariant),
           borderRadius: BorderRadius.circular(8),
         ),
         alignment: Alignment.centerLeft,
@@ -132,11 +147,15 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
                     child: FilledButton(
                       style: ButtonStyle(
                           backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Theme.of(context).colorScheme.primaryContainer)),
+                              (states) => Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer)),
                       child: Text(
                         "Copy",
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
                             ),
                       ),
                       onPressed: () => {
@@ -154,11 +173,15 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
                     child: FilledButton(
                       style: ButtonStyle(
                           backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Theme.of(context).colorScheme.primaryContainer)),
+                              (states) => Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer)),
                       child: Text(
                         "Share",
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
                             ),
                       ),
                       onPressed: () => {
@@ -232,7 +255,10 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
                         onPressed: _showDatePicker,
                         child: Text(
                           _expirationDate.formatDate(),
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                         ),
@@ -276,26 +302,26 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
       height: 40,
       child: OutlinedButton(
           onPressed: () => {
-            pushSheet(
-                Consumer<EditEventScreenViewModel>(
-                    builder: (_, model, __) {
-                      return AddMembersScreen(
-                        filesAndParticipants: model.state.filesAndParticipants,
-                        onDownloadTemplateClick: () => {},
-                        onImportCSVClick: () async {
-                          File? file = await csvPicker();
+                pushSheet(
+                  Consumer<EditEventScreenViewModel>(builder: (_, model, __) {
+                    return AddMembersScreen(
+                      filesAndParticipants: model.state.filesAndParticipants,
+                      onDownloadTemplateClick: () => {},
+                      onImportCSVClick: () async {
+                        File? file = await csvPicker();
 
-                          if (file != null) {
-                            _viewModel.importCSV(file);
-                          }
-                        },
-                        onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
-                        onCSVFileClick: (file) => pushSheet(RosterScreen(members: model.state.filesAndParticipants[file] ?? List.empty())),
-                      );
-                    }
-                ),
-            )
-          },
+                        if (file != null) {
+                          _viewModel.importCSV(file);
+                        }
+                      },
+                      onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
+                      onCSVFileClick: (file) => pushSheet(RosterScreen(
+                          members: model.state.filesAndParticipants[file] ??
+                              List.empty())),
+                    );
+                  }),
+                )
+              },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -326,4 +352,27 @@ class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageM
     );
   }
 
+  void _updateSettings() {
+    setState(() {
+      _updating = true;
+    });
+    _viewModel
+        .updateInviteLink(
+            _viewModel.state.event?.id ?? "",
+            UpdateInviteLinkDto(
+                isActive:
+                    _expirationDate.isBefore(DateTime.now()) ? false : true,
+                isPrivate: _isPrivate,
+                expirationDate: _canExpire ? _expirationDate : null))
+        .whenComplete(() {
+      setState(() {
+        _updating = false;
+      });
+    }).then(
+      (value) => pop(),
+      onError: (error) => {
+        snackbar((error as DioException).message ?? "Something went wrong"),
+      },
+    );
+  }
 }

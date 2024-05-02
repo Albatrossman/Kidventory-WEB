@@ -7,6 +7,7 @@ import 'package:kidventory_flutter/core/data/model/invited_event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/join_from_invite_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/util/dio_client.dart';
 
@@ -108,6 +109,20 @@ class EventApiServiceImpl extends EventApiService {
       //success
     } else {
       throw Exception('Failed to join');
+    }
+  }
+
+  @override
+  Future<void> updateInviteLink(String eventId, UpdateInviteLinkDto body) async {
+    Response response = await client.dio.put(
+      'events/$eventId/InviteLink',
+      data: body.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      //success
+    } else {
+      throw Exception('Failed to edit invite link');
     }
   }
 }
