@@ -23,6 +23,7 @@ class EventScreenViewModel extends ChangeNotifier {
 
   Future<void> refresh(String id) async {
     try {
+      _update(loading: true);
       EventDto event = await _eventApiService.getEvent(id);
       List<ParticipantDto> participants =
           await _eventApiService.getMembers(id, event.nearestSession.id);
@@ -31,10 +32,12 @@ class EventScreenViewModel extends ChangeNotifier {
         (participant) => participant.role,
       );
       _update(
+          loading: false,
           event: event,
           participants: participants,
           participantsByRole: participantsByRole);
     } catch (e) {
+      _update(loading: false);
       rethrow;
     }
   }
@@ -107,6 +110,14 @@ class EventScreenViewModel extends ChangeNotifier {
     }).toList();
 
     _update(updatedAttendances: updatedList);
+  }
+
+  Future<void> deleteEvent(String id) async {
+    try {
+      final _ = await _eventApiService.deleteEvent(id);
+    } catch (e) {
+      rethrow;
+    } 
   }
 
   void importCSV(File file) {

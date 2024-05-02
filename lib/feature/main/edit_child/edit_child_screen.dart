@@ -330,31 +330,6 @@ class _EditChildScreenState extends State<EditChildScreen>
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-                  color: CupertinoColors.separator.resolveFrom(context),
-                  width: 0.0))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CupertinoButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          CupertinoButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Done'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _onSave(BuildContext context, ChildInfo info) async {
     setState(() {
       validFirstname = _firstnameController.text.isNotEmpty;

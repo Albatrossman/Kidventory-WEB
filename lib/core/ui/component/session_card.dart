@@ -45,27 +45,27 @@ class SessionCard extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(
-                        width: 56.0,
-                        height: 56.0,
-                        child: AppCard(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(4.0),
-                            child: SizedBox.fromSize(
-                              child: CachedNetworkImage(
-                                imageUrl: session.imageUrl ?? "",
-                                placeholder: (context, url) => Icon(
-                                    CupertinoIcons.photo,
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                                errorWidget: (context, url, error) => Icon(
+                      width: 56.0,
+                      height: 56.0,
+                      child: AppCard(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4.0),
+                          child: SizedBox.fromSize(
+                            child: CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: session.imageUrl ?? "",
+                              placeholder: (context, url) => Icon(
                                   CupertinoIcons.photo,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+                                  color: Theme.of(context).colorScheme.primary),
+                              errorWidget: (context, url, error) => Icon(
+                                CupertinoIcons.photo,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ),
                         ),
                       ),
+                    ),
                     const SizedBox(width: 8.0),
                     Expanded(
                       child: Column(
@@ -81,13 +81,16 @@ class SessionCard extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    DateFormat.jm().format(session.startDateTime),
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    DateFormat.jm()
+                                        .format(session.startDateTime),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                   const Text(" - "),
                                   Text(
                                     DateFormat.jm().format(session.endDateTime),
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ],
                               ),

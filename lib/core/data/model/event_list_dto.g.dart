@@ -11,7 +11,7 @@ EventListDto _$EventListDtoFromJson(Map<String, dynamic> json) => EventListDto(
           .map((e) => EventDto.fromJson(e as Map<String, dynamic>))
           .toList(),
       currentPage: json['currentPage'] as int,
-      pageCount: json['pageCount'] as int,
+      pagesCount: json['pagesCount'] as int,
       totalCount: json['totalCount'] as int,
     );
 
@@ -19,6 +19,6 @@ Map<String, dynamic> _$EventListDtoToJson(EventListDto instance) =>
     <String, dynamic>{
       'items': instance.items,
       'currentPage': instance.currentPage,
-      'pageCount': instance.pageCount,
+      'pagesCount': instance.pagesCount,
       'totalCount': instance.totalCount,
     };

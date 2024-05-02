@@ -11,6 +11,7 @@ import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dar
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
+import 'package:kidventory_flutter/main.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,12 +42,20 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override
   void didPopNext() {
+    // _viewModel.updateContent();
     super.didPopNext();
   }
 
@@ -171,7 +180,9 @@ class _HomeScreenState extends State<HomeScreen>
                       color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Center(child: CircularProgressIndicator(),),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   );
                 } else {
                   if (model.state.upcomingSessions.isEmpty) {

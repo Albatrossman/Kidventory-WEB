@@ -3,6 +3,7 @@ import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen_state.dart';
+import 'package:kidventory_flutter/main.dart';
 
 class HomeScreenViewModel extends ChangeNotifier {
   final UserApiService _userApiService;
@@ -15,14 +16,16 @@ class HomeScreenViewModel extends ChangeNotifier {
   HomeScreenState get state => _state;
 
   void updateContent() {
-    getUpcomingSessions();
-    getProfile();
+
+      getUpcomingSessions();
+      getProfile();
   }
 
   void getUpcomingSessions() async {
     _update(loading: true);
     try {
-      List<SessionDto> sessions = await _userApiService.getUpcomingSessions(DateTime.now(), 3);
+      List<SessionDto> sessions =
+          await _userApiService.getUpcomingSessions(DateTime.now(), 3);
       _update(upcomingSessions: sessions, loading: false);
     } catch (e) {
       _update(loading: false);
@@ -33,6 +36,7 @@ class HomeScreenViewModel extends ChangeNotifier {
     _update(loading: true);
     try {
       ProfileDto profile = await _userApiService.getProfile("me");
+      globalUserProfile = profile;
       _update(profile: profile, loading: false);
     } catch (e) {
       _update(loading: false);

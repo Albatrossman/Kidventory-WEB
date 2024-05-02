@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
@@ -39,6 +40,7 @@ void main() async {
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 String? inviteLinkReferenceId;
+ProfileDto? globalUserProfile;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

@@ -38,8 +38,8 @@ class _EventsScreenState extends State<EventsScreen>
     _viewModel = EventsScreenViewModel(getIt<UserApiService>());
     super.initState();
     _viewModel.getEvents().onError((error, stackTrace) {
-          snackbar((error as DioException).message ?? "Something went wrong");
-        });
+      snackbar((error as DioException).message ?? "Something went wrong");
+    });
   }
 
   @override
@@ -69,6 +69,7 @@ class _EventsScreenState extends State<EventsScreen>
           centerTitle: true,
         ),
         body: SafeArea(
+          bottom: false,
           child: Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Column(
@@ -123,7 +124,7 @@ class _EventsScreenState extends State<EventsScreen>
             child: SizedBox(
               width: 800,
               child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 itemCount: events.length,

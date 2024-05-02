@@ -55,6 +55,7 @@ class EventCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4.0),
                             child: SizedBox.fromSize(
                               child: CachedNetworkImage(
+                                fit: BoxFit.cover,
                                 imageUrl: imageUrl ?? "",
                                 placeholder: (context, url) => Icon(
                                     CupertinoIcons.photo,
