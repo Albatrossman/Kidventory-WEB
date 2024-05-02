@@ -19,6 +19,7 @@ class EventScreenViewModel extends ChangeNotifier {
   EventScreenViewModel(this._eventApiService);
 
   EventScreenState _state = EventScreenState();
+
   EventScreenState get state => _state;
 
   Future<void> refresh(String id) async {
@@ -42,8 +43,7 @@ class EventScreenViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateInviteLink(
-      String eventId, UpdateInviteLinkDto request) async {
+  Future<void> updateInviteLink(String eventId, UpdateInviteLinkDto request) async {
     try {
       await _eventApiService.updateInviteLink(eventId, request);
     } catch (e) {
@@ -52,13 +52,16 @@ class EventScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> getMembers(String eventId, String sessionId) async {
-    List<ParticipantDto> participants =
-        await _eventApiService.getMembers(eventId, sessionId);
+    List<ParticipantDto> participants = await _eventApiService.getMembers(eventId, sessionId);
     Map<RoleDto, List<ParticipantDto>> participantsByRole = groupBy(
       participants,
       (participant) => participant.role,
     );
-    _update(participants: participants, participantsByRole: participantsByRole);
+    _update(
+      participants: participants,
+      participantsByRole: participantsByRole,
+      updatedAttendances: participants.where((participant) => participant.role == RoleDto.participant).toList(),
+    );
   }
 
   Future<void> updateAttendances(String eventId, String sessionId) async {
@@ -76,12 +79,9 @@ class EventScreenViewModel extends ChangeNotifier {
     );
   }
 
-  Future<void> editAttendance(
-      ParticipantDto participant, AttendanceDto attendance) async {
-    List<ParticipantDto> updatedList =
-        List<ParticipantDto>.from(state.updatedAttendances);
-    int index =
-        updatedList.indexWhere((p) => p.memberId == participant.memberId);
+  Future<void> editAttendance(ParticipantDto participant, AttendanceDto attendance) async {
+    List<ParticipantDto> updatedList = List<ParticipantDto>.from(state.updatedAttendances);
+    int index = updatedList.indexWhere((p) => p.memberId == participant.memberId);
 
     if (index != -1) {
       updatedList[index] = ParticipantDto(
@@ -98,7 +98,8 @@ class EventScreenViewModel extends ChangeNotifier {
   }
 
   void editAllAttendances(AttendanceDto attendance) {
-    List<ParticipantDto> updatedList = state.participants.map((participant) {
+    List<ParticipantDto> updatedList = state.updatedAttendances.map((participant) {
+
       return ParticipantDto(
         memberId: participant.memberId,
         firstName: participant.firstName,
@@ -117,7 +118,7 @@ class EventScreenViewModel extends ChangeNotifier {
       final _ = await _eventApiService.deleteEvent(id);
     } catch (e) {
       rethrow;
-    } 
+    }
   }
 
   void importCSV(File file) {
