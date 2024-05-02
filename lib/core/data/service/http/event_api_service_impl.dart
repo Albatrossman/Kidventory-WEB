@@ -78,11 +78,6 @@ class EventApiServiceImpl extends EventApiService {
   @override
   Future<EventDto> getEventFromReference(String id) async {
     Response response = await client.dio.get('inviteLink/$id');
-
-    if (response.statusCode == 200) {
-      return EventDto.fromJson(response.data);
-    } else {
-      throw Exception('Could not find an event associated with the link');
-    }
+    return EventDto.fromJson(response.data);
   }
 }

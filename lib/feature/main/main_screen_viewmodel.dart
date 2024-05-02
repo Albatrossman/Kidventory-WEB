@@ -15,7 +15,7 @@ class MainScreenViewModel extends ChangeNotifier {
   Future<void> getEventFrom(String id) async {
     _update(loading: true);
     try {
-      _eventApiService.getEventFromReference(id);
+      await _eventApiService.getEventFromReference(id);
     } catch (exception) {
       _update(message: "Invite does not exist");
       rethrow;

@@ -65,28 +65,33 @@ class _MainScreenState extends State<MainScreen>
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<MainScreenViewModel>.value(
-        value: _viewModel,
-        child: Stack(
-          children: [
-            showNavigationDrawer
-                ? buildDrawerScaffold(context)
-                : buildBottomBarScaffold(),
-                if (_viewModel.state.loading)
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300.withAlpha(200),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            alignment: Alignment.center,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          ],
-        ));
+      value: _viewModel,
+      child: Consumer<MainScreenViewModel>(
+        builder: (context, model, child) {
+          return Stack(
+            children: [
+              showNavigationDrawer
+                  ? buildDrawerScaffold(context)
+                  : buildBottomBarScaffold(),
+              if (_viewModel.state.loading)
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300.withAlpha(200),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
   }
 
   void _openDrawer() {

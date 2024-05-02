@@ -25,10 +25,9 @@ abstract class EventApiService {
 
   Future<List<DateTime>> getSessions(String eventId);
 
-<<<<<<< HEAD
+
   Future<EventDto> getEventFromReference(String id);
-=======
+
   Future<void> updateAttendance(String eventId, String sessionId, UpdateAttendanceDto attendances);
->>>>>>> wip-backend-intergration
 
 }
