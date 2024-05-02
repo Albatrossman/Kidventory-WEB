@@ -13,8 +13,6 @@ class EventSessionDto {
   final DateTime endDateTime;
   @JsonKey(fromJson: EnumSerializer.timeModeFromJson, toJson: EnumSerializer.toJson)
   final TimeMode timeMode;
-  @JsonKey(fromJson: EnumSerializer.eventColorFromJson, toJson: EnumSerializer.toJson)
-  final EventColor color;
 
   EventSessionDto({
     required this.id,
@@ -22,7 +20,6 @@ class EventSessionDto {
     required this.startDateTime,
     required this.endDateTime,
     required this.timeMode,
-    required this.color,
   });
 
   factory EventSessionDto.fromJson(Map<String, dynamic> json) => _$EventSessionDtoFromJson(json);

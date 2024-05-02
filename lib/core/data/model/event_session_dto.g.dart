@@ -13,7 +13,6 @@ EventSessionDto _$EventSessionDtoFromJson(Map<String, dynamic> json) =>
       startDateTime: DateTime.parse(json['startDateTime'] as String),
       endDateTime: DateTime.parse(json['endDateTime'] as String),
       timeMode: EnumSerializer.timeModeFromJson(json['timeMode'] as int),
-      color: EnumSerializer.eventColorFromJson(json['color'] as int),
     );
 
 Map<String, dynamic> _$EventSessionDtoToJson(EventSessionDto instance) =>
@@ -23,5 +22,4 @@ Map<String, dynamic> _$EventSessionDtoToJson(EventSessionDto instance) =>
       'startDateTime': instance.startDateTime.toIso8601String(),
       'endDateTime': instance.endDateTime.toIso8601String(),
       'timeMode': EnumSerializer.toJson(instance.timeMode),
-      'color': EnumSerializer.toJson(instance.color),
     };

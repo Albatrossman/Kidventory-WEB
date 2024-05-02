@@ -1,3 +1,4 @@
+import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
@@ -26,7 +27,7 @@ abstract class EventApiService {
 
   Future<void> changeMemberRole(String eventId, ChangeMembersRoleDto membersRole);
 
-  Future<List<DateTime>> getSessions(String eventId);
+  Future<List<EventSessionDto>> getSessions(String eventId);
 
   Future<InvitedEventDto> getEventFromReference(String id);
 

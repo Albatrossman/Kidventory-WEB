@@ -10,6 +10,8 @@ extension DataExtension on AttendanceDto {
         return Attendance.late;
       case AttendanceDto.absent:
         return Attendance.absent;
+      case AttendanceDto.present:
+        return Attendance.present;
       default:
         return Attendance.unspecified;
     }
@@ -25,6 +27,8 @@ extension DomainExtension on Attendance {
         return AttendanceDto.late;
       case Attendance.absent:
         return AttendanceDto.absent;
+      case Attendance.present:
+        return AttendanceDto.present;
       default:
         return AttendanceDto.unspecified;
     }

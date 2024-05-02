@@ -12,10 +12,7 @@ import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dar
 import 'package:provider/provider.dart';
 
 class AttendanceScreen extends StatefulWidget {
-  const AttendanceScreen({super.key, required this.eventId, required this.sessionId});
-
-  final String eventId;
-  final String sessionId;
+  const AttendanceScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -25,22 +22,41 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
+  bool _updating = false;
 
   @override
   void initState() {
     super.initState();
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
-    _viewModel.getMembers(widget.eventId, widget.sessionId);
+    _viewModel.getMembers();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const SheetHeader(
-        title: Expanded(
+      appBar: SheetHeader(
+        title: const Expanded(
           child: Text("Attendance"),
         ),
-        trailing: Text("Confirm"),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            setState(() {
+              _updating = true;
+            });
+            _viewModel.updateAttendances().whenComplete(() {
+              setState(() {
+                _updating = false;
+              });
+              pop();
+            });
+          },
+          child: _updating
+              ? const CupertinoActivityIndicator(
+                  animating: true,
+                )
+              : const Text("Confirm"),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -58,8 +74,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                     children: [
                       Text(
                         'Current session:',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.outline),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: Theme.of(context).colorScheme.outline),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -67,10 +85,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
-                            ?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimaryContainer),
+                            ?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -105,13 +120,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
               ),
               const SizedBox(height: 16),
               ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(8.0)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
                 child: Container(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .surfaceVariant
-                      .withAlpha(48),
+                  color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(48),
                   child: Column(
                     children: [
                       const SizedBox(height: 8),
@@ -123,10 +134,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                             style: Theme.of(context)
                                 .textTheme
                                 .labelMedium
-                                ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant),
+                                ?.copyWith(color: Theme.of(context).colorScheme.outlineVariant),
                           ),
                           const Expanded(child: SizedBox()),
                           CupertinoButton(
@@ -137,10 +145,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                               style: Theme.of(context)
                                   .textTheme
                                   .labelMedium
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant),
+                                  ?.copyWith(color: Theme.of(context).colorScheme.outlineVariant),
                             ),
                           ),
                           CupertinoButton(
@@ -151,10 +156,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                               style: Theme.of(context)
                                   .textTheme
                                   .labelMedium
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant),
+                                  ?.copyWith(color: Theme.of(context).colorScheme.outlineVariant),
                             ),
                           ),
                           CupertinoButton(
@@ -165,10 +167,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                               style: Theme.of(context)
                                   .textTheme
                                   .labelMedium
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant),
+                                  ?.copyWith(color: Theme.of(context).colorScheme.outlineVariant),
                             ),
                           ),
                         ],
@@ -180,13 +179,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
               ),
               Expanded(
                 child: ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(bottom: Radius.circular(8.0)),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8.0)),
                   child: Container(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .surfaceVariant
-                        .withAlpha(48),
+                    color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(48),
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: Consumer<EventScreenViewModel>(builder: (context, model, child) {
                       return _participantsList(context, model.state.updatedAttendances);

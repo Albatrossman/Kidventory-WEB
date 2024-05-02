@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
+import 'package:kidventory_flutter/core/data/model/session_minimal_dto.dart';
 import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
@@ -47,8 +49,7 @@ class EventApiServiceImpl extends EventApiService {
   @override
   Future<List<ParticipantDto>> getMembers(
       String eventId, String sessionId) async {
-    Response response =
-        await client.dio.get('events/$eventId/sessions/$sessionId/members');
+    Response response = await client.dio.get('events/$eventId/sessions/$sessionId/members');
     var participantsJson = response.data as List;
     return participantsJson
         .map<ParticipantDto>((json) => ParticipantDto.fromJson(json))
@@ -67,15 +68,15 @@ class EventApiServiceImpl extends EventApiService {
   }
 
   @override
-  Future<List<DateTime>> getSessions(String eventId) {
-    throw UnimplementedError();
+  Future<List<EventSessionDto>> getSessions(String eventId) async {
+    Response response = await client.dio.get('event/$eventId/sessions');
+    var sessionsJson = response.data as List;
+    return sessionsJson.map<EventSessionDto>((json) => EventSessionDto.fromJson(json)).toList();
   }
 
   @override
-  Future<void> updateAttendance(
-      String eventId, String sessionId, UpdateAttendanceDto attendances) async {
-    await client.dio
-        .patch('events/$eventId/sessions/$sessionId/members/updateAttendances');
+  Future<void> updateAttendance(String eventId, String sessionId, UpdateAttendanceDto attendances) async {
+    await client.dio.patch('events/$eventId/sessions/$sessionId/members/updateAttendances', data: attendances);
   }
 
   @override

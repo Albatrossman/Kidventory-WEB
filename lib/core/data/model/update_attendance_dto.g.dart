@@ -8,7 +8,7 @@ part of 'update_attendance_dto.dart';
 
 UpdateAttendanceDto _$UpdateAttendanceDtoFromJson(Map<String, dynamic> json) =>
     UpdateAttendanceDto(
-      attendances: (json['memberAttendances'] as List<dynamic>)
+      attendances: (json['membersAttendances'] as List<dynamic>)
           .map((e) => MemberAttendanceDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
@@ -16,5 +16,5 @@ UpdateAttendanceDto _$UpdateAttendanceDtoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$UpdateAttendanceDtoToJson(
         UpdateAttendanceDto instance) =>
     <String, dynamic>{
-      'memberAttendances': instance.attendances,
+      'membersAttendances': instance.attendances,
     };

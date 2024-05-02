@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/member_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
@@ -32,11 +33,15 @@ class EventScreenViewModel extends ChangeNotifier {
         participants,
         (participant) => participant.role,
       );
+      List<EventSessionDto> sessions = await _eventApiService.getSessions(event.id);
       _update(
-          loading: false,
-          event: event,
-          participants: participants,
-          participantsByRole: participantsByRole);
+        loading: false,
+        event: event,
+        participants: participants,
+        participantsByRole: participantsByRole,
+        selectedSession: event.nearestSession,
+        sessions: sessions,
+      );
     } catch (e) {
       _update(loading: false);
       rethrow;
@@ -51,8 +56,11 @@ class EventScreenViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getMembers(String eventId, String sessionId) async {
-    List<ParticipantDto> participants = await _eventApiService.getMembers(eventId, sessionId);
+  Future<void> getMembers() async {
+    List<ParticipantDto> participants = await _eventApiService.getMembers(
+      state.event?.id ?? '',
+      state.selectedSession?.id ?? '',
+    );
     Map<RoleDto, List<ParticipantDto>> participantsByRole = groupBy(
       participants,
       (participant) => participant.role,
@@ -60,14 +68,40 @@ class EventScreenViewModel extends ChangeNotifier {
     _update(
       participants: participants,
       participantsByRole: participantsByRole,
-      updatedAttendances: participants.where((participant) => participant.role == RoleDto.participant).toList(),
+      updatedAttendances:
+          participants.where((participant) => participant.role == RoleDto.participant).toList(),
     );
   }
 
-  Future<void> updateAttendances(String eventId, String sessionId) async {
+  Future<void> getSessions() async {
+    List<EventSessionDto> sessions = await _eventApiService.getSessions(state.event?.id ?? '');
+    _update(sessions: sessions);
+  }
+
+  Future<void> changeSession(EventSessionDto session) async {
+    try {
+      _update(loading: true);
+      List<ParticipantDto> participants =
+          await _eventApiService.getMembers(state.event!.id, session.id);
+      Map<RoleDto, List<ParticipantDto>> participantsByRole =
+          groupBy(participants, (participant) => participant.role);
+
+      _update(
+        participants: participants,
+        participantsByRole: participantsByRole,
+        updatedAttendances:
+            participants.where((participant) => participant.role == RoleDto.participant).toList(),
+        selectedSession: session,
+      );
+    } finally {
+      _update(loading: false);
+    }
+  }
+
+  Future<void> updateAttendances() async {
     await _eventApiService.updateAttendance(
-      eventId,
-      sessionId,
+      state.event?.id ?? '',
+      state.selectedSession?.id ?? '',
       UpdateAttendanceDto(
         attendances: state.updatedAttendances.map((participant) {
           return MemberAttendanceDto(
@@ -84,12 +118,14 @@ class EventScreenViewModel extends ChangeNotifier {
     int index = updatedList.indexWhere((p) => p.memberId == participant.memberId);
 
     if (index != -1) {
+      AttendanceDto currentAttendance = updatedList[index].attendance;
+
       updatedList[index] = ParticipantDto(
         memberId: updatedList[index].memberId,
         firstName: updatedList[index].firstName,
         lastName: updatedList[index].lastName,
         avatarUrl: updatedList[index].avatarUrl,
-        attendance: attendance,
+        attendance: currentAttendance == attendance ? AttendanceDto.unspecified : attendance,
         role: updatedList[index].role,
       );
     }
@@ -98,14 +134,14 @@ class EventScreenViewModel extends ChangeNotifier {
   }
 
   void editAllAttendances(AttendanceDto attendance) {
+    bool allAlreadySet = state.updatedAttendances.every((p) => p.attendance == attendance);
     List<ParticipantDto> updatedList = state.updatedAttendances.map((participant) {
-
       return ParticipantDto(
         memberId: participant.memberId,
         firstName: participant.firstName,
         lastName: participant.lastName,
         avatarUrl: participant.avatarUrl,
-        attendance: attendance,
+        attendance: allAlreadySet ? AttendanceDto.unspecified : attendance,
         role: participant.role,
       );
     }).toList();
@@ -138,6 +174,8 @@ class EventScreenViewModel extends ChangeNotifier {
     List<ParticipantDto>? participants,
     Map<RoleDto, List<ParticipantDto>>? participantsByRole,
     List<ParticipantDto>? updatedAttendances,
+    List<EventSessionDto>? sessions,
+    EventSessionDto? selectedSession,
     List<File>? files,
   }) {
     _state = _state.copy(
@@ -146,6 +184,8 @@ class EventScreenViewModel extends ChangeNotifier {
       participants: participants,
       participantsByRole: participantsByRole,
       updatedAttendances: updatedAttendances,
+      sessions: sessions,
+      selectedSession: selectedSession,
       files: files,
     );
 

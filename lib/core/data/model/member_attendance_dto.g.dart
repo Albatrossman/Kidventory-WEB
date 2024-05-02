@@ -16,7 +16,7 @@ Map<String, dynamic> _$MemberAttendanceDtoToJson(
         MemberAttendanceDto instance) =>
     <String, dynamic>{
       'memberId': instance.memberId,
-      'attendance': _$AttendanceDtoEnumMap[instance.attendance]!,
+      'attendance': EnumSerializer.toJson(instance.attendance),
     };
 
 const _$AttendanceDtoEnumMap = {

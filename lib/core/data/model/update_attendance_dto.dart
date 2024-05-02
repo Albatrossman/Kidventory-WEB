@@ -5,7 +5,7 @@ part 'update_attendance_dto.g.dart';
 
 @JsonSerializable()
 class UpdateAttendanceDto {
-  @JsonKey(name: 'memberAttendances')
+  @JsonKey(name: 'membersAttendances')
   List<MemberAttendanceDto> attendances;
 
   UpdateAttendanceDto({required this.attendances});

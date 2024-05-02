@@ -3,10 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
-import 'package:kidventory_flutter/core/domain/model/role.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
@@ -16,6 +15,7 @@ import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/invite_members/invite_members_screen.dart';
+import 'package:kidventory_flutter/feature/session_picker/session_picker.dart';
 import 'package:provider/provider.dart';
 
 class EventScreen extends StatefulWidget {
@@ -29,18 +29,19 @@ class EventScreen extends StatefulWidget {
   }
 }
 
-class _EventScreenState extends State<EventScreen>
-    with MessageMixin, NavigationMixin {
+class _EventScreenState extends State<EventScreen> with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
 
   bool isLoading = false;
   bool isDeleting = false;
 
-  RoleDto userRole() => _viewModel.state.participants
-      .firstWhere((element) => element.role == RoleDto.owner)
-      .role;
+  RoleDto userRole() =>
+      _viewModel.state.participants.firstWhere((element) => element.role == RoleDto.owner).role;
+
   bool canDelete() => userRole() == RoleDto.owner;
+
   bool canTakeAttendance() => userRole() == RoleDto.owner;
+
   bool canInviteMembers() => userRole() == RoleDto.owner || userRole() == RoleDto.teacher;
 
   @override
@@ -49,8 +50,7 @@ class _EventScreenState extends State<EventScreen>
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
     _viewModel.refresh(widget.id).then(
           (value) => {},
-          onError: (error) => snackbar(
-              (error as DioException).message ?? "Something went wrong"),
+          onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
         );
   }
 
@@ -90,8 +90,7 @@ class _EventScreenState extends State<EventScreen>
                                 _viewModel.state.event?.id ?? "",
                                 _viewModel.state.event?.nearestSession.id ?? "",
                               ),
-                            membersList(
-                                context, model.state.participantsByRole ?? {})
+                            membersList(context, model.state.participantsByRole ?? {})
                           ],
                         ),
                       ),
@@ -175,8 +174,8 @@ class _EventScreenState extends State<EventScreen>
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: _viewModel.state.event?.imageUrl ?? "",
-                  placeholder: (context, url) => Icon(CupertinoIcons.photo,
-                      color: Theme.of(context).colorScheme.primary),
+                  placeholder: (context, url) =>
+                      Icon(CupertinoIcons.photo, color: Theme.of(context).colorScheme.primary),
                   errorWidget: (context, url, error) => Icon(
                     CupertinoIcons.photo,
                     color: Theme.of(context).colorScheme.primary,
@@ -214,7 +213,6 @@ class _EventScreenState extends State<EventScreen>
 
   Widget sessionOption(BuildContext context) {
     return Container(
-      // width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 0),
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
@@ -225,26 +223,43 @@ class _EventScreenState extends State<EventScreen>
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Text(
-                  DateTime.now().formatDate(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
-                ),
-                const Spacer(),
-                Text(
-                  "11:00 AM - 12:30 PM",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            child: Consumer<EventScreenViewModel>(
+              builder: (context, model, child) {
+                return Row(
+                  children: [
+                    Text(
+                      model.state.selectedSession?.startDateTime.formatDate() ?? DateTime.now().formatDate(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                    ),
+                    const Spacer(),
+                    Text(
+                      "${DateFormat.jm().format(model.state.selectedSession?.startDateTime ?? DateTime.now())} - ${DateFormat.jm().format(model.state.selectedSession?.endDateTime ?? DateTime.now())}",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onBackground,
                       ),
-                ),
-              ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           const Divider(height: 4),
           CupertinoButton(
-            onPressed: () => {},
+            onPressed: () => {
+              pushSheet(
+                Consumer<EventScreenViewModel>(builder: (context, model, child) {
+                  return SessionPicker(
+                    sessions: model.state.sessions,
+                    onSessionPicked: (session) {
+                      _viewModel.changeSession(session).whenComplete(() => pop());
+                    },
+                  );
+                }),
+              )
+            },
             padding: const EdgeInsets.all(16),
             child: Text(
               'Change Session',
@@ -259,14 +274,12 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget attendanceButton(
-      BuildContext context, String eventId, String sessionId) {
+  Widget attendanceButton(BuildContext context, String eventId, String sessionId) {
     return SizedBox(
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
       child: FilledButton(
-        onPressed: () =>
-            pushSheet(AttendanceScreen(eventId: eventId, sessionId: sessionId)),
+        onPressed: () => pushSheet(const AttendanceScreen()),
         style: ButtonStyle(
             backgroundColor: MaterialStateColor.resolveWith(
                 (states) => Theme.of(context).colorScheme.primaryContainer)),
@@ -280,12 +293,10 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget membersList(BuildContext context,
-      Map<RoleDto, List<ParticipantDto>> participantsByRole) {
+  Widget membersList(BuildContext context, Map<RoleDto, List<ParticipantDto>> participantsByRole) {
     List<Widget> sections = [];
     participantsByRole.forEach((role, participants) {
-      sections.add(
-          participantsSection(context, role.name.capitalize(), participants));
+      sections.add(participantsSection(context, role.name.capitalize(), participants));
     });
 
     return Column(children: sections);
