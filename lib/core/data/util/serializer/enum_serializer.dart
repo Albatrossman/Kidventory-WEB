@@ -14,7 +14,7 @@ class EnumSerializer{
     RepeatEnd: RepeatEnd.values,
   };
 
-  static int toJson(dynamic value) => value.index;
+  static int? toJson(dynamic value) => value?.index;
 
   static T fromJson<T extends Enum>(int index) {
     var values = _enumValues[T] as List<T>;
