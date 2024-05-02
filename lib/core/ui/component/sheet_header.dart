@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 
 class SheetHeader extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
@@ -30,9 +29,10 @@ class SheetHeader extends StatelessWidget implements PreferredSizeWidget {
             child: title,
           ),
           leading: leading ??
-              Clickable(
-                onPressed: () => Navigator.of(context).pop(),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
                 child: const Icon(CupertinoIcons.xmark_circle),
+                onPressed: () => Navigator.of(context).pop(),
               ),
           actions: [
             trailing ?? const SizedBox.shrink(),

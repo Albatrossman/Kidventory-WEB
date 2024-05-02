@@ -25,7 +25,7 @@ class EventDto {
   final OnlineLocationDto? onlineLocation;
   @JsonKey(name: 'nearestSession')
   final EventSessionDto nearestSession;
-  final InviteLinkDto inviteLink;
+  final InviteLinkDto? inviteLink;
 
   EventDto({
     required this.id,
@@ -37,7 +37,7 @@ class EventDto {
     required this.color,
     required this.onlineLocation,
     required this.nearestSession,
-    required this.inviteLink
+    this.inviteLink
   });
 
   factory EventDto.fromJson(Map<String, dynamic> json) => _$EventDtoFromJson(json);

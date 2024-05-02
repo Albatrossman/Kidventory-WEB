@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
-import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';

@@ -20,8 +20,9 @@ EventDto _$EventDtoFromJson(Map<String, dynamic> json) => EventDto(
               json['onlineLocation'] as Map<String, dynamic>),
       nearestSession: EventSessionDto.fromJson(
           json['nearestSession'] as Map<String, dynamic>),
-      inviteLink:
-          InviteLinkDto.fromJson(json['inviteLink'] as Map<String, dynamic>),
+      inviteLink: json['inviteLink'] == null
+          ? null
+          : InviteLinkDto.fromJson(json['inviteLink'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$EventDtoToJson(EventDto instance) => <String, dynamic>{

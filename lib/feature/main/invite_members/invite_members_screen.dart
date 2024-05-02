@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
-import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
@@ -13,7 +12,6 @@ import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.d
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 class InviteMembersScreen extends StatefulWidget {
@@ -27,8 +25,6 @@ class InviteMembersScreen extends StatefulWidget {
 
 class _InviteMembersScreenState extends State<InviteMembersScreen>
     with MessageMixin, NavigationMixin, PickerMixin {
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
   late final EventScreenViewModel _viewModel;
 
   @override
@@ -48,7 +44,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
   );
 
   late final String _inviteLink =
-      "https://kidventory.baseballforce.com/invite?id=${_viewModel.state.event?.inviteLink.referenceId ?? ""}";
+      "http://kid.softballforce.com/invite?id=${_viewModel.state.event?.inviteLink?.referenceId ?? ""}";
   bool _isPrivate = false;
   bool _canExpire = false;
   DateTime _expirationDate = DateTime.now().add(const Duration(days: 1));
@@ -317,31 +313,6 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
           _expirationDate = date;
         })
       },
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-                  color: CupertinoColors.separator.resolveFrom(context),
-                  width: 0.0))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CupertinoButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          CupertinoButton(
-            child: const Text('Done'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
     );
   }
 }

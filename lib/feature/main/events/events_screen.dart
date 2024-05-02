@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +37,9 @@ class _EventsScreenState extends State<EventsScreen>
   void initState() {
     _viewModel = EventsScreenViewModel(getIt<UserApiService>());
     super.initState();
+    _viewModel.getEvents().onError((error, stackTrace) {
+          snackbar((error as DioException).message ?? "Something went wrong");
+        });
   }
 
   @override

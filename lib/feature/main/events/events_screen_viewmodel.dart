@@ -8,19 +8,20 @@ class EventsScreenViewModel extends ChangeNotifier {
   final UserApiService _userApiService;
 
   EventsScreenViewModel(this._userApiService) {
-    getEvents();
+    // getEvents();
   }
 
   EventsScreenState _state = EventsScreenState();
   EventsScreenState get state => _state;
 
-  void getEvents() async {
+  Future<void> getEvents() async {
     _update(loading: true);
     try {
       EventListDto events = await _userApiService.getEvents(100, 0);
       _update(events: events.items, loading: false);
     } catch (e) {
       _update(loading: false);
+      rethrow;
     }
   }
 
