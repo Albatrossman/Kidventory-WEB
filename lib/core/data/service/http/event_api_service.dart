@@ -2,6 +2,8 @@ import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/invited_event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/join_from_invite_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 
@@ -25,8 +27,11 @@ abstract class EventApiService {
 
   Future<List<DateTime>> getSessions(String eventId);
 
+  Future<InvitedEventDto> getEventFromReference(String id);
+  
+  Future<void> joinPublicEvent(String id, JoinFromInvitetDto body);
 
-  Future<EventDto> getEventFromReference(String id);
+  Future<void> joinPrivateEvent(String id, JoinFromInvitetDto body);
 
   Future<void> updateAttendance(String eventId, String sessionId, UpdateAttendanceDto attendances);
 

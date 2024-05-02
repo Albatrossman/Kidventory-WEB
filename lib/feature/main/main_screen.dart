@@ -225,7 +225,9 @@ class _MainScreenState extends State<MainScreen>
       _viewModel.getEventFrom(inviteLinkReferenceId!).whenComplete(() {
         inviteLinkReferenceId = null;
       }).then(
-        (value) => pushSheet(const JoinEventScreen()),
+        (value) => pushSheet(JoinEventScreen(
+          invitedEventDto: value,
+        )),
         onError: (error) => {
           snackbar((error as DioException).message ?? "Something went wrong")
         },

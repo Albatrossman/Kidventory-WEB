@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:kidventory_flutter/core/data/model/invited_event_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/feature/main/main_screen_state.dart';
@@ -12,10 +13,10 @@ class MainScreenViewModel extends ChangeNotifier {
   MainScreenState _state = MainScreenState();
   MainScreenState get state => _state;
 
-  Future<void> getEventFrom(String id) async {
+  Future<InvitedEventDto> getEventFrom(String id) async {
     _update(loading: true);
     try {
-      await _eventApiService.getEventFromReference(id);
+      return await _eventApiService.getEventFromReference(id);
     } catch (exception) {
       _update(message: "Invite does not exist");
       rethrow;

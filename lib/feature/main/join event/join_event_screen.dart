@@ -1,6 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/child_dto.dart';
+import 'package:kidventory_flutter/core/data/model/invited_event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/join_from_invite_dto.dart';
+import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/join_member_card.dart';
@@ -15,7 +20,8 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class JoinEventScreen extends StatefulWidget {
-  const JoinEventScreen({super.key});
+  final InvitedEventDto invitedEventDto;
+  const JoinEventScreen({super.key, required this.invitedEventDto});
 
   @override
   State<StatefulWidget> createState() {
@@ -30,12 +36,14 @@ class _JoinEventScreenState extends State<JoinEventScreen>
       RoundedLoadingButtonController();
 
   List<String> selectedMembers = [];
-  bool isPrivate = false;
+  bool includeMeAsAdult = false;
+  bool isPrivate() => widget.invitedEventDto.isPrivate;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = JoinEventScreenViewModel(getIt<UserApiService>());
+    _viewModel = JoinEventScreenViewModel(
+        getIt<UserApiService>(), getIt<EventApiService>());
   }
 
   @override
@@ -91,13 +99,14 @@ class _JoinEventScreenState extends State<JoinEventScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Event name",
+                  widget.invitedEventDto.eventDto.name,
                   style: Theme.of(context).textTheme.titleMedium,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const Row(
+                Row(
                   children: [
-                    Text("11:00 am - 12:00 pm"),
+                    Text(
+                        "${DateFormat.jm().format(widget.invitedEventDto.eventDto.repeat.startDateTime)} - ${DateFormat.jm().format(widget.invitedEventDto.eventDto.repeat.endDateTime)}"),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -111,11 +120,14 @@ class _JoinEventScreenState extends State<JoinEventScreen>
               ],
             ),
             const Spacer(),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(CupertinoIcons.info_circle, size: 28,),
-              onPressed: () => {},
-            ),
+            // CupertinoButton(
+            //   padding: EdgeInsets.zero,
+            //   child: const Icon(
+            //     CupertinoIcons.info_circle,
+            //     size: 28,
+            //   ),
+            //   onPressed: () => {},
+            // ),
           ],
         ));
   }
@@ -125,8 +137,6 @@ class _JoinEventScreenState extends State<JoinEventScreen>
       builder: (context, model, child) {
         if (model.state.loading) {
           return loadingView(context);
-        } else if (model.state.profile!.children?.isEmpty ?? true) {
-          return emptyView(context);
         } else {
           return scrollableList(context, model);
         }
@@ -140,12 +150,12 @@ class _JoinEventScreenState extends State<JoinEventScreen>
       child: AppButton(
         controller: _loadingButtonController,
         child: Text(
-          isPrivate ? "Request to Join" : "Join",
+          isPrivate() ? "Request to Join" : "Join",
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
         ),
-        onPressed: () => {},
+        onPressed: () => {_onJoin()},
       ),
     );
   }
@@ -165,16 +175,12 @@ class _JoinEventScreenState extends State<JoinEventScreen>
                   onClick: () => {
                     setState(
                       () {
-                        if (selectedMembers.contains(model.state.profile!.id)) {
-                          selectedMembers.remove(model.state.profile!.id);
-                        } else {
-                          selectedMembers.add(model.state.profile!.id);
-                        }
+                        includeMeAsAdult = !includeMeAsAdult;
                       },
                     )
                   },
                   imageUrl: model.state.profile!.avatarUrl,
-                  isSelected: selectedMembers.contains(model.state.profile!.id),
+                  isSelected: includeMeAsAdult,
                 ),
                 Column(
                   children: List.generate(
@@ -225,24 +231,39 @@ class _JoinEventScreenState extends State<JoinEventScreen>
     );
   }
 
-  Widget emptyView(BuildContext context) {
-    return const Expanded(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              CupertinoIcons.doc_text_search,
-              size: 48,
-            ),
-            SizedBox(height: 16),
-            Text(
-              "You don't have anyone to add to this event",
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+  void _onJoin() {
+    final JoinFromInvitetDto request = JoinFromInvitetDto(
+      includeMeAsAdult: includeMeAsAdult,
+      memberIds: selectedMembers,
     );
+    if (isPrivate()) {
+      _viewModel
+          .joinPrivateEvent(
+            widget.invitedEventDto.eventDto.id,
+            request,
+          )
+          .whenComplete(() => _loadingButtonController.reset())
+          .then(
+            (value) => pop(),
+            onError: (error) => {
+              snackbar(
+                  (error as DioException).message ?? "Something went wrong"),
+            },
+          );
+    } else {
+      _viewModel
+          .joinPublicEvent(
+            widget.invitedEventDto.eventDto.id,
+            request,
+          )
+          .whenComplete(() => _loadingButtonController.reset())
+          .then(
+            (value) => pop(),
+            onError: (error) => {
+              snackbar(
+                  (error as DioException).message ?? "Something went wrong"),
+            },
+          );
+    }
   }
 }
