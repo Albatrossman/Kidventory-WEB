@@ -255,7 +255,7 @@ class _SignUpScreenContent extends State<SignUpScreen>
       isValidEmail = _emailController.text.isValidEmail();
       validFirstname = _firstnameController.text.isNotEmpty;
       validLastname = _lastnameController.text.isNotEmpty;
-      passwordStrong = _passwordController.text.isStrongForPassowrd();
+      passwordStrong = _passwordController.text.isStrongForPassword();
     });
 
     if (isValidEmail && passwordStrong && validFirstname && validFirstname) {

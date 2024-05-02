@@ -3,6 +3,7 @@ import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart'
 import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 
 abstract class EventApiService {
 
@@ -24,6 +25,10 @@ abstract class EventApiService {
 
   Future<List<DateTime>> getSessions(String eventId);
 
+<<<<<<< HEAD
   Future<EventDto> getEventFromReference(String id);
+=======
+  Future<void> updateAttendance(String eventId, String sessionId, UpdateAttendanceDto attendances);
+>>>>>>> wip-backend-intergration
 
 }

@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
-
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
 import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
-
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 class InviteMembersScreen extends StatefulWidget {
@@ -23,8 +22,8 @@ class InviteMembersScreen extends StatefulWidget {
   }
 }
 
-class _InviteMembersScreenState extends State<InviteMembersScreen>
-    with MessageMixin, NavigationMixin, PickerMixin {
+class _InviteMembersScreenState extends State<InviteMembersScreen> with MessageMixin, NavigationMixin, PickerMixin {
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   late final EventScreenViewModel _viewModel;
 
   @override
@@ -33,8 +32,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
   }
 
-  final MaterialStateProperty<Icon?> _thumbIcon =
-      MaterialStateProperty.resolveWith<Icon?>(
+  final MaterialStateProperty<Icon?> _thumbIcon = MaterialStateProperty.resolveWith<Icon?>(
     (Set<MaterialState> states) {
       if (states.contains(MaterialState.selected)) {
         return const Icon(Icons.check);
@@ -98,8 +96,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          border:
-              Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
           borderRadius: BorderRadius.circular(8),
         ),
         alignment: Alignment.centerLeft,
@@ -131,15 +128,11 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
                     child: FilledButton(
                       style: ButtonStyle(
                           backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer)),
+                              (states) => Theme.of(context).colorScheme.primaryContainer)),
                       child: Text(
                         "Copy",
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
                             ),
                       ),
                       onPressed: () => {
@@ -157,15 +150,11 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
                     child: FilledButton(
                       style: ButtonStyle(
                           backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer)),
+                              (states) => Theme.of(context).colorScheme.primaryContainer)),
                       child: Text(
                         "Share",
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
                             ),
                       ),
                       onPressed: () => {
@@ -239,10 +228,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
                         onPressed: _showDatePicker,
                         child: Text(
                           _expirationDate.formatDate(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                         ),
@@ -315,4 +301,5 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
       },
     );
   }
+
 }

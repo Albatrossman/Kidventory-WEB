@@ -18,8 +18,13 @@ extension StringExtension on String {
     return contains(RegExp(r'[0-9]'));
   }
 
-  bool isStrongForPassowrd() {
+  bool isStrongForPassword() {
     return hasUppercase() && hasSpecialChar() && hasNumeric() && length > 6;
+  }
+
+  String capitalize() {
+    if (isEmpty) return this;
+    return this[0].toUpperCase() + substring(1).toLowerCase();
   }
 
 }

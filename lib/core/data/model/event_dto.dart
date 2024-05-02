@@ -15,7 +15,7 @@ class EventDto {
   final String? imageUrl;
   @JsonKey(name: 'title')
   final String name;
-  @JsonKey(name: 'descrption')
+  @JsonKey(name: 'description')
   final String? description;
   final RepeatDto repeat;
   @JsonKey(fromJson: EnumSerializer.timeModeFromJson, toJson: EnumSerializer.toJson)

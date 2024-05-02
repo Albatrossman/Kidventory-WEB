@@ -4,6 +4,7 @@ import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart'
 import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/util/dio_client.dart';
 
@@ -65,6 +66,13 @@ class EventApiServiceImpl extends EventApiService {
   @override
   Future<List<DateTime>> getSessions(String eventId) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateAttendance(
+      String eventId, String sessionId, UpdateAttendanceDto attendances) async {
+    await client.dio
+        .patch('events/$eventId/sessions/$sessionId/members/updateAttendances');
   }
 
   @override
