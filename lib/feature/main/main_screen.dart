@@ -1,8 +1,18 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
+import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/calendar/calendar_screen.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen.dart';
+import 'package:kidventory_flutter/feature/main/join%20event/join_event_screen.dart';
+import 'package:kidventory_flutter/feature/main/main_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/profile/profile_screen.dart';
+import 'package:kidventory_flutter/main.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,8 +23,10 @@ class MainScreen extends StatefulWidget {
   }
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen>
+    with MessageMixin, NavigationMixin, RouteAware, WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  late final MainScreenViewModel _viewModel;
   bool isLoading = false;
 
   int _currentIndex = 0;
@@ -22,10 +34,59 @@ class _MainScreenState extends State<MainScreen> {
   late bool showFullDrawer = false;
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    _viewModel = MainScreenViewModel(
+        getIt<EventApiService>(), getIt<TokenPreferencesManager>());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkInviteLink();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void didPush() {
+    _checkInviteLink();
+    super.didPush();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return showNavigationDrawer
-        ? buildDrawerScaffold(context)
-        : buildBottomBarScaffold();
+    return ChangeNotifierProvider<MainScreenViewModel>.value(
+        value: _viewModel,
+        child: Stack(
+          children: [
+            showNavigationDrawer
+                ? buildDrawerScaffold(context)
+                : buildBottomBarScaffold(),
+                if (_viewModel.state.loading)
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300.withAlpha(200),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            alignment: Alignment.center,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          ],
+        ));
   }
 
   void _openDrawer() {
@@ -141,8 +202,7 @@ class _MainScreenState extends State<MainScreen> {
         alignment: showFullDrawer ? Alignment.centerLeft : Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         icon: Icon(
-            showFullDrawer ? CupertinoIcons.xmark : CupertinoIcons.list_bullet
-            ),
+            showFullDrawer ? CupertinoIcons.xmark : CupertinoIcons.list_bullet),
       ),
     );
   }
@@ -150,8 +210,22 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
     showNavigationDrawer = MediaQuery.of(context).size.width >= 450;
     showFullDrawer = MediaQuery.of(context).size.width >= 650;
+  }
+
+  void _checkInviteLink() {
+    if (inviteLinkReferenceId != null && !_viewModel.state.loading) {
+      _viewModel.getEventFrom(inviteLinkReferenceId!).whenComplete(() {
+        inviteLinkReferenceId = null;
+      }).then(
+        (value) => pushSheet(const JoinEventScreen()),
+        onError: (error) => {
+          snackbar((error as DioException).message ?? "Something went wrong")
+        },
+      );
+    }
   }
 }
 

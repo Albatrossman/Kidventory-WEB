@@ -38,6 +38,7 @@ void main() async {
 }
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+String? inviteLinkReferenceId;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -96,7 +97,8 @@ class _AppScreenState extends State<AppScreen> with NavigationMixin {
 
   void openAppLink(Uri uri) {
     String? id = uri.queryParameters['id'];
-    pushSheet(const JoinEventScreen());
+    inviteLinkReferenceId = id;
+    // pushSheet(const JoinEventScreen());
   }
 
   @override

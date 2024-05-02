@@ -8,7 +8,6 @@ import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart
 import 'package:kidventory_flutter/core/data/util/dio_client.dart';
 
 class EventApiServiceImpl extends EventApiService {
-
   final DioClient client;
 
   EventApiServiceImpl(this.client);
@@ -42,14 +41,19 @@ class EventApiServiceImpl extends EventApiService {
   }
 
   @override
-  Future<List<ParticipantDto>> getMembers(String eventId, String sessionId) async {
-    Response response = await client.dio.get('events/$eventId/sessions/$sessionId/members');
+  Future<List<ParticipantDto>> getMembers(
+      String eventId, String sessionId) async {
+    Response response =
+        await client.dio.get('events/$eventId/sessions/$sessionId/members');
     var participantsJson = response.data as List;
-    return participantsJson.map<ParticipantDto>((json) => ParticipantDto.fromJson(json)).toList();
+    return participantsJson
+        .map<ParticipantDto>((json) => ParticipantDto.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<void> changeMemberRole(String eventId, ChangeMembersRoleDto membersRole) {
+  Future<void> changeMemberRole(
+      String eventId, ChangeMembersRoleDto membersRole) {
     throw UnimplementedError();
   }
 
@@ -63,4 +67,14 @@ class EventApiServiceImpl extends EventApiService {
     throw UnimplementedError();
   }
 
+  @override
+  Future<EventDto> getEventFromReference(String id) async {
+    Response response = await client.dio.get('inviteLink/$id');
+
+    if (response.statusCode == 200) {
+      return EventDto.fromJson(response.data);
+    } else {
+      throw Exception('Could not find an event associated with the link');
+    }
+  }
 }

@@ -24,4 +24,6 @@ abstract class EventApiService {
 
   Future<List<DateTime>> getSessions(String eventId);
 
+  Future<EventDto> getEventFromReference(String id);
+
 }
