@@ -21,7 +21,7 @@ class CSVCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
-      onPressed: () => onClick,
+      onPressed: () => onClick(),
       padding: EdgeInsets.zero,
       child: Container(
         decoration: BoxDecoration(

@@ -106,9 +106,9 @@ class _AddMembersScreenState extends State<AddMembersScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(CupertinoIcons.add_circled),
-          SizedBox(width: 8.0),
           Text('Import CSV'),
+          SizedBox(width: 8.0),
+          Icon(CupertinoIcons.add_circled),
         ],
       ),
     );

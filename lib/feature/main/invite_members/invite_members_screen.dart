@@ -296,7 +296,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
                     ),
               ),
               const SizedBox(width: 8),
-              const Icon(CupertinoIcons.plus),
+              const Icon(CupertinoIcons.add_circled),
             ],
           )),
     );
