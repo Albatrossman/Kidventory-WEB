@@ -1,8 +1,14 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
+import 'package:kidventory_flutter/feature/main/calendar/calendar_screen_viewmodel.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../../core/ui/component/session_card.dart';
@@ -18,7 +24,10 @@ class CalendarScreen extends StatefulWidget {
   }
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
+class _CalendarScreenState extends State<CalendarScreen>
+    with NavigationMixin, MessageMixin {
+  late final CalendarScreenViewModel _viewModel;
+
   List<Appointment> _appointments = [];
   DateTime? _fetchedStartDate;
   DateTime? _fetchedEndDate;
@@ -26,9 +35,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
+    _viewModel = CalendarScreenViewModel(getIt<UserApiService>());
     // Initial fetch for the current month; adjust based on your needs.
     DateTime start = DateTime.now().firstDayOfMonth;
     fetchAndUpdateSessions(start, start.plusMonths(1));
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
   }
 
   void fetchAndUpdateSessions(DateTime start, DateTime end) {
@@ -42,21 +58,30 @@ class _CalendarScreenState extends State<CalendarScreen> {
     _fetchedStartDate = start;
     _fetchedEndDate = end;
 
-    fetchSessions(start, end).then((sessions) {
-      setState(() {
-        _appointments = sessions.map<Appointment>((session) {
-          return Appointment(
-            startTime: session.startDateTime,
-            endTime: session.endDateTime,
-            subject: session.title,
-            color: Colors
-                .blue, // Convert session.color to a Flutter Color if necessary
-          );
-        }).toList();
-      });
-    }).catchError((error) {
-      // Handle any errors here
-    });
+    _viewModel
+        .getUpcomingSessionsBetweenDates(start, end)
+        .whenComplete(() => {})
+        .then(
+          (value) => {
+            setState(() {
+              _appointments =
+                  _viewModel.state.upcomingSessions.map<Appointment>(
+                (session) {
+                  return Appointment(
+                    startTime: session.startDateTime,
+                    endTime: session.endDateTime,
+                    subject: session.title,
+                    color: Colors
+                        .blue, // Convert session.color to a Flutter Color if necessary
+                  );
+                },
+              ).toList();
+            })
+          },
+          onError: (error) => {
+            snackbar((error as DioException).message ?? "Something went wrong"),
+          },
+        );
   }
 
   @override
@@ -89,31 +114,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ],
       ),
     );
-  }
-}
-
-Future<List<Session>> fetchSessions(DateTime start, DateTime end) async {
-  String startDate = start.toUtc().toIso8601String();
-  String endDate = end.toUtc().toIso8601String();
-
-  final response = await http.get(
-    Uri.parse(
-            'https://kidventory.aftersearch.com/api/parent/getUserEventsSessionBetweenDays')
-        .replace(queryParameters: {'startDate': startDate, 'endDate': endDate}),
-    headers: {
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGNmNWYwYjZkNjY5M2NiMmE1Y2QxZjQiLCJpc1N1YnNjcmliZSI6IkZhbHNlIiwic3ViIjoiYWJiYXNiYXZhcnNhZEBnbWFpbC5jb20iLCJ0eXBlIjoiVXNlciIsInJvbGVzIjoiIiwibmJmIjoxNzEyNjI3MzE3LCJleHAiOjE3MTM0OTEzMTcsImlhdCI6MTcxMjYyNzMxNywiaXNzIjoiaHR0cDovL2tpZHZudG9yeWlkZW50aXR5LmFmdGVyc2VhcmNoLmNvbSIsImF1ZCI6IkIwYjVlOGR5eXBKQWQ1WThCYUg4RVpsSVZqWjEvR3NlVzdzR0NkQ0hoSk09In0.YFz-RSvue-846k1mIFzt-n92Vp1wK5q8xi6nR8BXL2E',
-      'Content-Type': 'application/json',
-    },
-  );
-
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> jsonResponse = json.decode(response.body);
-    final List<dynamic> results =
-        jsonResponse['result']; // Accessing the 'result' field
-    return results.map((data) => Session.fromJson(data)).toList();
-  } else {
-    throw Exception('Failed to load sessions from API');
   }
 }
 

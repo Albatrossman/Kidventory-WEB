@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:kidventory_flutter/core/data/model/child_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_list_dto.dart';
+import 'package:kidventory_flutter/core/data/model/paginated_session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_profile_dto.dart';
@@ -20,6 +21,15 @@ class UserApiServiceImpl extends UserApiService {
     return response.data
         .map<SessionDto>((json) => SessionDto.fromJson(json))
         .toList();
+  }
+
+  @override
+  Future<PaginatedSessionDto> getUpcomingSessionsBetweenDates(
+      DateTime startDate, DateTime endDate) async {
+    Response response = await client.dio.get(
+        'users/me/getUserEventsSessionsBetweenDates?startDate=${'${startDate.toUtc().toIso8601String().split('.')[0]}Z'}&endDate=${'${endDate.toUtc().toIso8601String().split('.')[0]}Z'}');
+    return PaginatedSessionDto.fromJson(response.data);
+        
   }
 
   @override
