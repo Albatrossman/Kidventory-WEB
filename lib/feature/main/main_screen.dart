@@ -7,6 +7,7 @@ import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/calendar/calendar_screen.dart';
+import 'package:kidventory_flutter/feature/main/calendar/mit_calendar_screen.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen.dart';
 import 'package:kidventory_flutter/feature/main/join%20event/join_event_screen.dart';
 import 'package:kidventory_flutter/feature/main/main_screen_viewmodel.dart';
@@ -108,7 +109,7 @@ class _MainScreenState extends State<MainScreen>
           onCreateEventClick: () => {},
         );
       case 1:
-        return const CalendarScreen();
+        return const MitCalendarScreen();
       case 2:
         return const ProfileScreen();
       default:

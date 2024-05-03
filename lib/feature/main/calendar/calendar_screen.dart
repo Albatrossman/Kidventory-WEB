@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
@@ -11,7 +8,6 @@ import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/calendar/calendar_screen_viewmodel.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../../../core/ui/component/session_card.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({
