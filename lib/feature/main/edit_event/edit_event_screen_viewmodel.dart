@@ -31,7 +31,7 @@ class EditEventScreenViewModel extends ChangeNotifier {
 
   EditEventScreenState get state => _state;
 
-  Future<void> createEvent(String name) async {
+  Future<String> createEvent(String name) async {
     try {
       CreateEventDto createEvent = CreateEventDto(
         imageFile: null,
@@ -45,6 +45,7 @@ class EditEventScreenViewModel extends ChangeNotifier {
 
       EventDto event = await _eventApiService.createEvent(createEvent);
       await _addMembers(event.id);
+      return event.id;
     } catch (exception) {
       rethrow;
     }

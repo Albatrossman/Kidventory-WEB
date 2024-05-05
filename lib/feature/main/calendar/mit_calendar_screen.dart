@@ -82,8 +82,8 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                       title: session.title,
                       titleStyle:
                           Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: eventColor.getReadableTextColor(),
-                          ),
+                                color: eventColor.getReadableTextColor(),
+                              ),
                       date: session.startDateTime,
                       startTime: session.startDateTime,
                       endTime: session.endDateTime,
@@ -142,29 +142,53 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
   }
 
   Widget viewSwitcher(BuildContext context) {
-    return CupertinoSegmentedControl<CalendarViewMode>(
-      // selectedColor: Theme.of(context).colorScheme.primaryContainer,
-      // thumbColor: Theme.of(context).colorScheme.primaryContainer,
-      groupValue: _calendarViewMode,
-      onValueChanged: (CalendarViewMode? value) {
-        setState(() {
-          _calendarViewMode = value ?? CalendarViewMode.day;
-        });
-      },
-      children: const <CalendarViewMode, Widget>{
-        CalendarViewMode.day: Padding(
+    return Row(
+      children: [
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text("Day"),
+          child: CupertinoSlidingSegmentedControl<CalendarViewMode>(
+            // selectedColor: Theme.of(context).colorScheme.primary,
+            // borderColor: Theme.of(context).colorScheme.primary,
+            thumbColor: Theme.of(context).colorScheme.primaryContainer,
+            groupValue: _calendarViewMode,
+            onValueChanged: (CalendarViewMode? value) {
+              setState(() {
+                _calendarViewMode = value ?? CalendarViewMode.day;
+              });
+            },
+            children: const <CalendarViewMode, Widget>{
+              CalendarViewMode.day: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "Day",
+                  // style: Theme.of(context).textTheme.labelLarge?.copyWith(),
+                ),
+              ),
+              CalendarViewMode.week: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    "Week",
+                    // style: Theme.of(context).textTheme.labelLarge?.copyWith(),
+                  )),
+              CalendarViewMode.month: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    "Month",
+                    // style: Theme.of(context).textTheme.labelLarge?.copyWith(),
+                  )),
+            },
+          ),
         ),
-        CalendarViewMode.week: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text("Week"),
-        ),
-        CalendarViewMode.month: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text("Month"),
-        ),
-      },
+        const Spacer(),
+        CupertinoButton(
+          child: Icon(
+            CupertinoIcons.calendar_today,
+            size: 24,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          onPressed: () => {},
+        )
+      ],
     );
   }
 

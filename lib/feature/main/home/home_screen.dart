@@ -43,13 +43,13 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
+    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
   }
 
   @override
   void dispose() {
     _viewModel.dispose();
-    routeObserver.unsubscribe(this);
+    // routeObserver.unsubscribe(this);
     super.dispose();
   }
 

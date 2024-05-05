@@ -340,11 +340,11 @@ class _EditEventScreenState extends State<EditEventScreen>
       controller: _btnController,
       onPressed: () => _viewModel
           .createEvent(_nameController.text)
-          .whenComplete(() => _btnController.reset()),
-          // .then(
-          //   (value) => replace(const EventScreen(id: "")),
-          //   onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
-          // ),
+          .whenComplete(() => _btnController.reset())
+          .then(
+            (value) => replace(EventScreen(id: value)),
+            onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+          ),
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
