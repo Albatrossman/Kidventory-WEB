@@ -88,6 +88,7 @@ class _EditChildScreenState extends State<EditChildScreen>
                             {_selectedImage = image},
                         width: 100,
                         height: 100,
+                        currentImage: widget.childInfo?.image ?? "",
                       ),
                       SizedBox(
                         width: kIsWeb ? 420 : null,

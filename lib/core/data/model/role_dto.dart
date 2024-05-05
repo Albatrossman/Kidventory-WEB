@@ -1,5 +1,8 @@
 enum RoleDto {
   owner,
   teacher,
-  participant;
+  driver,
+  participant,
+  admin,
+  adult;
 }

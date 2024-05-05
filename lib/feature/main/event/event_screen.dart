@@ -5,10 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
+import 'package:kidventory_flutter/core/data/model/pending_member_dto.dart';
+import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
+import 'package:kidventory_flutter/core/ui/component/pending_member_row.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
@@ -29,20 +32,25 @@ class EventScreen extends StatefulWidget {
   }
 }
 
-class _EventScreenState extends State<EventScreen> with MessageMixin, NavigationMixin {
+class _EventScreenState extends State<EventScreen>
+    with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
 
   bool isLoading = false;
   bool isDeleting = false;
 
-  RoleDto userRole() =>
-      _viewModel.state.participants.firstWhere((element) => element.role == RoleDto.owner).role;
+  RoleDto? userRole() => _viewModel.state.participants.isEmpty
+      ? null
+      : _viewModel.state.participants
+          .firstWhere((element) => element.role == RoleDto.owner)
+          .role;
 
   bool canDelete() => userRole() == RoleDto.owner;
 
   bool canTakeAttendance() => userRole() == RoleDto.owner;
 
-  bool canInviteMembers() => userRole() == RoleDto.owner || userRole() == RoleDto.teacher;
+  bool canInviteMembers() =>
+      userRole() == RoleDto.owner || userRole() == RoleDto.teacher;
 
   @override
   void initState() {
@@ -50,7 +58,8 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
     _viewModel.refresh(widget.id).then(
           (value) => {},
-          onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+          onError: (error) => snackbar(
+              (error as DioException).message ?? "Something went wrong"),
         );
   }
 
@@ -90,7 +99,15 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
                                 _viewModel.state.event?.id ?? "",
                                 _viewModel.state.event?.nearestSession.id ?? "",
                               ),
-                            membersList(context, model.state.participantsByRole ?? {})
+                            if (canDelete())
+                              pendingMembersSection(
+                                  context,
+                                  model.state.pendingMembers.isEmpty
+                                      ? []
+                                      : model
+                                          .state.pendingMembers.first.members),
+                            membersList(
+                                context, model.state.participantsByRole ?? {})
                           ],
                         ),
                       ),
@@ -174,8 +191,8 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: _viewModel.state.event?.imageUrl ?? "",
-                  placeholder: (context, url) =>
-                      Icon(CupertinoIcons.photo, color: Theme.of(context).colorScheme.primary),
+                  placeholder: (context, url) => Icon(CupertinoIcons.photo,
+                      color: Theme.of(context).colorScheme.primary),
                   errorWidget: (context, url, error) => Icon(
                     CupertinoIcons.photo,
                     color: Theme.of(context).colorScheme.primary,
@@ -228,18 +245,17 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
                 return Row(
                   children: [
                     Text(
-                      model.state.selectedSession?.startDateTime.formatDate() ?? DateTime.now().formatDate(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                      model.state.selectedSession?.startDateTime.formatDate() ??
+                          DateTime.now().formatDate(),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
                     ),
                     const Spacer(),
                     Text(
                       "${DateFormat.jm().format(model.state.selectedSession?.startDateTime ?? DateTime.now())} - ${DateFormat.jm().format(model.state.selectedSession?.endDateTime ?? DateTime.now())}",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground,
-                      ),
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                     ),
                   ],
                 );
@@ -250,11 +266,14 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
           CupertinoButton(
             onPressed: () => {
               pushSheet(
-                Consumer<EventScreenViewModel>(builder: (context, model, child) {
+                Consumer<EventScreenViewModel>(
+                    builder: (context, model, child) {
                   return SessionPicker(
                     sessions: model.state.sessions,
                     onSessionPicked: (session) {
-                      _viewModel.changeSession(session).whenComplete(() => pop());
+                      _viewModel
+                          .changeSession(session)
+                          .whenComplete(() => pop());
                     },
                   );
                 }),
@@ -274,7 +293,8 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
     );
   }
 
-  Widget attendanceButton(BuildContext context, String eventId, String sessionId) {
+  Widget attendanceButton(
+      BuildContext context, String eventId, String sessionId) {
     return SizedBox(
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
@@ -293,10 +313,12 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
     );
   }
 
-  Widget membersList(BuildContext context, Map<RoleDto, List<ParticipantDto>> participantsByRole) {
+  Widget membersList(BuildContext context,
+      Map<RoleDto, List<ParticipantDto>> participantsByRole) {
     List<Widget> sections = [];
     participantsByRole.forEach((role, participants) {
-      sections.add(participantsSection(context, role.name.capitalize(), participants));
+      sections.add(
+          participantsSection(context, role.name.capitalize(), participants));
     });
 
     return Column(children: sections);
@@ -324,6 +346,39 @@ class _EventScreenState extends State<EventScreen> with MessageMixin, Navigation
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: ParticipantRow(
                     avatarUrl: participant.avatarUrl,
+                    name: "${participant.firstName} ${participant.lastName}",
+                    onClick: () => {},
+                  ),
+                );
+              },
+            ),
+          )
+        ],
+      );
+    }
+  }
+
+  Widget pendingMembersSection(
+    BuildContext context,
+    List<PendingMemberDto> participants,
+  ) {
+    if (participants.isEmpty) {
+      return const SizedBox(width: 0);
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          sectionHeader("Join requests", context),
+          Column(
+            children: List.generate(
+              participants.length,
+              (index) {
+                PendingMemberDto participant = participants[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: PendingMemberRow(
+                    avatarUrl: "",
                     name: "${participant.firstName} ${participant.lastName}",
                     onClick: () => {},
                   ),

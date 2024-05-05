@@ -1,5 +1,8 @@
 enum Role {
   owner,
   teacher,
-  participant;
+  driver,
+  participant,
+  admin,
+  adult;
 }

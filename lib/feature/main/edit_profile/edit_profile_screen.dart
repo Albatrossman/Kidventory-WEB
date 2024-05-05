@@ -78,6 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
                     },
                     width: 100,
                     height: 100,
+                    currentImage: widget.userInfo?.image ?? "",
                   ),
                   SizedBox(
                     width: kIsWeb ? 420 : null,
@@ -96,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
+                        top: 32.0),
                     child: saveButton(context),
                   ),
                 ],

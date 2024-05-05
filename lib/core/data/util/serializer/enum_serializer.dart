@@ -12,6 +12,7 @@ class EnumSerializer{
     EventColor: EventColor.values,
     RepeatUnit: RepeatUnit.values,
     RepeatEnd: RepeatEnd.values,
+    RoleDto: RoleDto.values,
   };
 
   static int? toJson(dynamic value) => value?.index;
@@ -68,7 +69,7 @@ class EnumSerializer{
   }
 
   static RoleDto roleFromJson(int index) {
-    if (index < 0 || index >= EventColor.values.length) {
+    if (index < 0 || index >= RoleDto.values.length) {
       throw ArgumentError('Index out of bounds for RoleDto decoding: $index');
     }
     return RoleDto.values[index];

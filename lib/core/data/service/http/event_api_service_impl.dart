@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
-import 'package:kidventory_flutter/core/data/model/session_minimal_dto.dart';
 import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
@@ -8,6 +7,7 @@ import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/invited_event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/join_from_invite_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
+import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
@@ -54,6 +54,20 @@ class EventApiServiceImpl extends EventApiService {
     return participantsJson
         .map<ParticipantDto>((json) => ParticipantDto.fromJson(json))
         .toList();
+  }
+
+  @override
+  Future<List<PendingMembersDto>> getPendingMembers(String eventId) async {
+    Response response = await client.dio.get('events/$eventId/me//joinRequest/pending');
+    var participantsJson = response.data as List;
+    return participantsJson
+        .map<PendingMembersDto>((json) => PendingMembersDto.fromJson(json))
+        .toList();
+  }
+
+  @override
+  Future<void> updatePendingMembers(String eventId, String requestId) async {
+    throw UnimplementedError();
   }
 
   @override

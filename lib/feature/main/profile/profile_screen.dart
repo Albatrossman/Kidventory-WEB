@@ -36,7 +36,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _viewModel = ProfileScreenViewModel(getIt<UserApiService>(), getIt<TokenPreferencesManager>());
+    _viewModel = ProfileScreenViewModel(
+        getIt<UserApiService>(), getIt<TokenPreferencesManager>());
   }
 
   @override
@@ -217,6 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             child: ClipOval(
               child: SizedBox.fromSize(
                 child: CachedNetworkImage(
+                  fit: BoxFit.cover,
                   imageUrl: _viewModel.state.profile?.avatarUrl ?? "",
                   placeholder: (context, url) => const Icon(
                     CupertinoIcons.person,

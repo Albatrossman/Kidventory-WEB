@@ -76,29 +76,32 @@ class JoinMemberCard extends StatelessWidget {
             width: 1.0),
         borderRadius: BorderRadius.circular(96.0),
       ),
-      child: CircleAvatar(
-        radius: 96.0,
-        backgroundColor: isSelected
-            ? Theme.of(context).colorScheme.secondaryContainer
-            : Theme.of(context).colorScheme.primaryContainer,
-        child: SizedBox.fromSize(
-          child: imageUrl == "plus"
-              ? Icon(
-                  CupertinoIcons.plus,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                )
-              : CachedNetworkImage(
-                  imageUrl: imageUrl ?? "",
-                  placeholder: (context, url) => const Icon(
-                    CupertinoIcons.person,
+      child: ClipOval(
+        child: CircleAvatar(
+          radius: 96.0,
+          backgroundColor: isSelected
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Theme.of(context).colorScheme.primaryContainer,
+          child: SizedBox.fromSize(
+            child: imageUrl == "plus"
+                ? Icon(
+                    CupertinoIcons.plus,
                     size: 20,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  )
+                : CachedNetworkImage(
+                    imageUrl: imageUrl ?? "",
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const Icon(
+                      CupertinoIcons.person,
+                      size: 20,
+                    ),
+                    errorWidget: (context, url, error) => const Icon(
+                      CupertinoIcons.person,
+                      size: 20,
+                    ),
                   ),
-                  errorWidget: (context, url, error) => const Icon(
-                    CupertinoIcons.person,
-                    size: 20,
-                  ),
-                ),
+          ),
         ),
       ),
     );

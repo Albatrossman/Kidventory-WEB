@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -37,8 +38,10 @@ class _EditEventScreenState extends State<EditEventScreen>
   late final EditEventScreenViewModel _viewModel;
 
   final TextEditingController _nameController = TextEditingController();
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
   String selectedOption = 'Does not repeat';
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -66,9 +69,10 @@ class _EditEventScreenState extends State<EditEventScreen>
                 Row(
                   children: [
                     AppImagePicker(
-                      onImageSelected: (File image) => {},
+                      onImageSelected: (File image) => {_selectedImage = image},
                       width: 72,
                       height: 72,
+                      currentImage: "",
                     ),
                     const SizedBox(width: 16.0),
                     Expanded(
@@ -91,20 +95,23 @@ class _EditEventScreenState extends State<EditEventScreen>
                 const SizedBox(height: 32.0),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant),
                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
+                        padding:
+                            const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
                         child: Text(
                           'Occurrence',
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall
-                              ?.copyWith(color: Theme.of(context).colorScheme.outline),
+                              ?.copyWith(
+                                  color: Theme.of(context).colorScheme.outline),
                         ),
                       ),
                       EventOption.withText(
@@ -114,7 +121,8 @@ class _EditEventScreenState extends State<EditEventScreen>
                           size: 20.0,
                         ),
                         label: selectedDate.formatDate(),
-                        onTap: () => datePicker(context, firstDate: DateTime.now().atStartOfDay),
+                        onTap: () => datePicker(context,
+                            firstDate: DateTime.now().atStartOfDay),
                       ),
                       const SizedBox(height: 4.0),
                       const Divider(
@@ -134,7 +142,10 @@ class _EditEventScreenState extends State<EditEventScreen>
                           width: 120,
                           height: 32.0,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                            border: Border.all(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant),
                             borderRadius: BorderRadius.circular(96.0),
                           ),
                           child: Center(child: Text(selectedOption)),
@@ -168,7 +179,8 @@ class _EditEventScreenState extends State<EditEventScreen>
                         child: Consumer<EditEventScreenViewModel>(
                           builder: (_, viewModel, __) {
                             return viewModel.state.allDay
-                                ? const SizedBox(width: double.infinity, height: 0)
+                                ? const SizedBox(
+                                    width: double.infinity, height: 0)
                                 : Column(
                                     children: [
                                       const SizedBox(height: 4.0),
@@ -180,7 +192,9 @@ class _EditEventScreenState extends State<EditEventScreen>
                                       EventOption.withWidget(
                                         leading: Icon(
                                           CupertinoIcons.clock,
-                                          color: Theme.of(context).colorScheme.primary,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                           size: 20.0,
                                         ),
                                         label: Row(
@@ -192,15 +206,23 @@ class _EditEventScreenState extends State<EditEventScreen>
                                                   onPressed: () => {
                                                     timePicker(
                                                       context,
-                                                      onTimeChanged: (time) =>
-                                                          {_viewModel.selectedStartTime(time)},
-                                                      title: const Text('Select Start Time'),
-                                                      initialTime: model.state.startTime,
+                                                      onTimeChanged: (time) => {
+                                                        _viewModel
+                                                            .selectedStartTime(
+                                                                time)
+                                                      },
+                                                      title: const Text(
+                                                          'Select Start Time'),
+                                                      initialTime:
+                                                          model.state.startTime,
                                                     ),
                                                   },
                                                   child: Text(
-                                                    model.state.startTime.formatted,
-                                                    style: Theme.of(context).textTheme.labelMedium,
+                                                    model.state.startTime
+                                                        .formatted,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelMedium,
                                                   ),
                                                 );
                                               },
@@ -215,15 +237,25 @@ class _EditEventScreenState extends State<EditEventScreen>
                                                   onPressed: () => {
                                                     timePicker(context,
                                                         onTimeChanged: (time) =>
-                                                            {_viewModel.selectedEndTime(time)},
-                                                        title: const Text('Select End Time'),
-                                                        initialTime: model.state.endTime,
-                                                        minimumTime: model.state.startTime
+                                                            {
+                                                              _viewModel
+                                                                  .selectedEndTime(
+                                                                      time)
+                                                            },
+                                                        title: const Text(
+                                                            'Select End Time'),
+                                                        initialTime:
+                                                            model.state.endTime,
+                                                        minimumTime: model
+                                                            .state.startTime
                                                             .roundedToNextQuarter()),
                                                   },
                                                   child: Text(
-                                                    model.state.endTime.formatted,
-                                                    style: Theme.of(context).textTheme.labelMedium,
+                                                    model.state.endTime
+                                                        .formatted,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelMedium,
                                                   ),
                                                 );
                                               },
@@ -250,23 +282,23 @@ class _EditEventScreenState extends State<EditEventScreen>
                   ),
                   label: 'Add members',
                   onTap: () => pushSheet(
-                      Consumer<EditEventScreenViewModel>(
-                        builder: (_, model, __) {
-                          return AddMembersScreen(
-                            filesAndParticipants: model.state.filesAndParticipants,
-                            onDownloadTemplateClick: () => {},
-                            onImportCSVClick: () async {
-                              File? file = await csvPicker();
+                    Consumer<EditEventScreenViewModel>(builder: (_, model, __) {
+                      return AddMembersScreen(
+                        filesAndParticipants: model.state.filesAndParticipants,
+                        onDownloadTemplateClick: () => {},
+                        onImportCSVClick: () async {
+                          File? file = await csvPicker();
 
-                              if (file != null) {
-                                _viewModel.importCSV(file);
-                              }
-                            },
-                            onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
-                            onCSVFileClick: (file) => pushSheet(RosterScreen(members: model.state.filesAndParticipants[file] ?? List.empty())),
-                          );
-                        }
-                      ),
+                          if (file != null) {
+                            _viewModel.importCSV(file);
+                          }
+                        },
+                        onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
+                        onCSVFileClick: (file) => pushSheet(RosterScreen(
+                            members: model.state.filesAndParticipants[file] ??
+                                List.empty())),
+                      );
+                    }),
                   ),
                   trailing: Icon(
                     size: 20,
@@ -296,7 +328,10 @@ class _EditEventScreenState extends State<EditEventScreen>
                         width: 20.0,
                         decoration: BoxDecoration(
                             color: model.state.color.value,
-                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                            border: Border.all(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant),
                             shape: BoxShape.circle),
                       );
                     },
@@ -339,11 +374,15 @@ class _EditEventScreenState extends State<EditEventScreen>
     return AppButton(
       controller: _btnController,
       onPressed: () => _viewModel
-          .createEvent(_nameController.text)
+          .createEvent(
+            _nameController.text,
+            base64Encode(_selectedImage!.readAsBytesSync()),
+          )
           .whenComplete(() => _btnController.reset())
           .then(
             (value) => replace(EventScreen(id: value)),
-            onError: (error) => snackbar((error as DioException).message ?? "Something went wrong"),
+            onError: (error) => snackbar(
+                (error as DioException).message ?? "Something went wrong"),
           ),
       child: Text(
         'Save',
@@ -385,7 +424,8 @@ class _EditEventScreenState extends State<EditEventScreen>
         children: [
           Text(option),
           if (selectedOption == option)
-            const Icon(CupertinoIcons.check_mark, color: CupertinoColors.activeBlue),
+            const Icon(CupertinoIcons.check_mark,
+                color: CupertinoColors.activeBlue),
         ],
       ),
       onPressed: () {

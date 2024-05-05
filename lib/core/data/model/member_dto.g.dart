@@ -42,5 +42,8 @@ const _$GenderDtoEnumMap = {
 const _$RoleDtoEnumMap = {
   RoleDto.owner: 'owner',
   RoleDto.teacher: 'teacher',
+  RoleDto.driver: 'driver',
   RoleDto.participant: 'participant',
+  RoleDto.admin: 'admin',
+  RoleDto.adult: 'adult',
 };

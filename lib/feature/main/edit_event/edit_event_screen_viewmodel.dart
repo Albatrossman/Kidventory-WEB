@@ -31,10 +31,10 @@ class EditEventScreenViewModel extends ChangeNotifier {
 
   EditEventScreenState get state => _state;
 
-  Future<String> createEvent(String name) async {
+  Future<String> createEvent(String name, String? imageFile) async {
     try {
       CreateEventDto createEvent = CreateEventDto(
-        imageFile: null,
+        imageFile: imageFile,
         name: name,
         description: state.description,
         repeat: state.repeat.toDto(),

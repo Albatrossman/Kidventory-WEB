@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ParticipantRow extends StatelessWidget {
+class PendingMemberRow extends StatelessWidget {
   final String? avatarUrl;
   final String name;
   final VoidCallback onClick;
   final Widget? trailing;
 
-  const ParticipantRow({
+  const PendingMemberRow({
     super.key,
     required this.avatarUrl,
     required this.name,
@@ -47,7 +47,24 @@ class ParticipantRow extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(name)
+              Text(name),
+              const Spacer(),
+              CupertinoButton(
+                child: const Icon(
+                  CupertinoIcons.xmark_circle,
+                  size: 28,
+                  color: CupertinoColors.systemRed,
+                ),
+                onPressed: () {},
+              ),
+              CupertinoButton(
+                child: const Icon(
+                  CupertinoIcons.check_mark_circled,
+                  size: 28,
+                  color: CupertinoColors.activeGreen,
+                ),
+                onPressed: () {},
+              ),
             ],
           ),
         ),

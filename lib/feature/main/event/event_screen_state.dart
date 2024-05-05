@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
+import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 
 class EventScreenState {
@@ -14,6 +15,7 @@ class EventScreenState {
   final List<EventSessionDto> sessions;
   final EventSessionDto? selectedSession;
   final List<File> files;
+  final List<PendingMembersDto> pendingMembers;
 
   EventScreenState({
     this.loading = false,
@@ -24,7 +26,8 @@ class EventScreenState {
     List<EventSessionDto>? sessions,
     this.selectedSession,
     List<File>? files,
-  }) : participants = participants ?? [], participantsByRole = participantsByRole ?? {}, updatedAttendances = updatedAttendances ?? [], sessions = sessions ?? [], files = files ?? [];
+    List<PendingMembersDto>? pendingMembers
+  }) : participants = participants ?? [], participantsByRole = participantsByRole ?? {}, updatedAttendances = updatedAttendances ?? [], sessions = sessions ?? [], files = files ?? [], pendingMembers = pendingMembers ?? [];
 
   EventScreenState copy({
     bool? loading,
@@ -35,6 +38,7 @@ class EventScreenState {
     List<EventSessionDto>? sessions,
     EventSessionDto? selectedSession,
     List<File>? files,
+    List<PendingMembersDto>? pendingMembers
   }) {
     return EventScreenState(
       loading: loading ?? this.loading,
@@ -45,6 +49,7 @@ class EventScreenState {
       sessions: sessions ?? this.sessions,
       selectedSession: selectedSession ?? this.selectedSession,
       files: files ?? this.files,
+      pendingMembers: pendingMembers ?? this.pendingMembers
     );
   }
 }

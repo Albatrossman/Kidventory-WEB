@@ -114,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: ClipOval(
             child: SizedBox.fromSize(
               child: CachedNetworkImage(
+                fit: BoxFit.cover,
                 imageUrl: _viewModel.state.profile?.avatarUrl ?? "",
                 placeholder: (context, url) => Icon(CupertinoIcons.person,
                     color: Theme.of(context).colorScheme.primary),

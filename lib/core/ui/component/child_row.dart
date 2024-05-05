@@ -41,6 +41,7 @@ class ChildRow extends StatelessWidget {
               radius: 96.0,
               child: SizedBox.fromSize(
                 child: CachedNetworkImage(
+                  fit: BoxFit.cover,
                   imageUrl: info.image,
                   placeholder: (context, url) => const Icon(
                     CupertinoIcons.person,
