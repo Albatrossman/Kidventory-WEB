@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 
 part 'join_from_invite_dto.g.dart';
 

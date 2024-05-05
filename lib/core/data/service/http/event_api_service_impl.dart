@@ -10,6 +10,7 @@ import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/util/dio_client.dart';
 
@@ -49,7 +50,8 @@ class EventApiServiceImpl extends EventApiService {
   @override
   Future<List<ParticipantDto>> getMembers(
       String eventId, String sessionId) async {
-    Response response = await client.dio.get('events/$eventId/sessions/$sessionId/members');
+    Response response =
+        await client.dio.get('events/$eventId/sessions/$sessionId/members');
     var participantsJson = response.data as List;
     return participantsJson
         .map<ParticipantDto>((json) => ParticipantDto.fromJson(json))
@@ -58,7 +60,8 @@ class EventApiServiceImpl extends EventApiService {
 
   @override
   Future<List<PendingMembersDto>> getPendingMembers(String eventId) async {
-    Response response = await client.dio.get('events/$eventId/me//joinRequest/pending');
+    Response response =
+        await client.dio.get('events/$eventId/me//joinRequest/pending');
     var participantsJson = response.data as List;
     return participantsJson
         .map<PendingMembersDto>((json) => PendingMembersDto.fromJson(json))
@@ -66,8 +69,12 @@ class EventApiServiceImpl extends EventApiService {
   }
 
   @override
-  Future<void> updatePendingMembers(String eventId, String requestId) async {
-    throw UnimplementedError();
+  Future<void> updatePendingMembers(
+      String eventId, String requestId, UpdateJoinStatusDto body) async {
+    await client.dio.put(
+      'events/$eventId/me//joinRequests/$requestId',
+      data: body.toJson(),
+    );
   }
 
   @override
@@ -85,12 +92,17 @@ class EventApiServiceImpl extends EventApiService {
   Future<List<EventSessionDto>> getSessions(String eventId) async {
     Response response = await client.dio.get('event/$eventId/sessions');
     var sessionsJson = response.data as List;
-    return sessionsJson.map<EventSessionDto>((json) => EventSessionDto.fromJson(json)).toList();
+    return sessionsJson
+        .map<EventSessionDto>((json) => EventSessionDto.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<void> updateAttendance(String eventId, String sessionId, UpdateAttendanceDto attendances) async {
-    await client.dio.patch('events/$eventId/sessions/$sessionId/members/updateAttendances', data: attendances);
+  Future<void> updateAttendance(
+      String eventId, String sessionId, UpdateAttendanceDto attendances) async {
+    await client.dio.patch(
+        'events/$eventId/sessions/$sessionId/members/updateAttendances',
+        data: attendances);
   }
 
   @override
@@ -128,7 +140,8 @@ class EventApiServiceImpl extends EventApiService {
   }
 
   @override
-  Future<void> updateInviteLink(String eventId, UpdateInviteLinkDto body) async {
+  Future<void> updateInviteLink(
+      String eventId, UpdateInviteLinkDto body) async {
     Response response = await client.dio.put(
       'events/$eventId/InviteLink',
       data: body.toJson(),

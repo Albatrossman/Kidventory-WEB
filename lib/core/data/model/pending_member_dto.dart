@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/data/model/join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
 
@@ -11,7 +12,8 @@ class PendingMemberDto {
 
   @JsonKey(fromJson: EnumSerializer.roleFromJson, toJson: EnumSerializer.toJson)
   final RoleDto role;
-  final int state;
+  @JsonKey(fromJson: EnumSerializer.joinStatusFromJson, toJson: EnumSerializer.toJson)
+  final JoinStatusDto state;
   final String firstName;
   final String lastName;
   final String adultUserId;

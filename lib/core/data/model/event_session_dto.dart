@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
-import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 
 part 'event_session_dto.g.dart';

@@ -17,20 +17,49 @@ final getIt = GetIt.instance;
 
 Future<void> setup() async {
   var storage = const FlutterSecureStorage();
-  var tokenManager = TokenPreferencesManagerImpl(storage: storage);
 
-  getIt.registerSingleton<TokenPreferencesManager>(tokenManager);
+  getIt.registerLazySingleton<TokenPreferencesManager>(
+      () => TokenPreferencesManagerImpl(storage: storage));
 
-  Token? token = await tokenManager.getToken();
+  Token? token = await getIt<TokenPreferencesManager>().getToken();
 
-  getIt.registerSingleton<DioClient>(
-    DioClient(
+  getIt.registerLazySingleton<DioClient>(
+    () => DioClient(
       "https://dev-kidsapi.softballforce.com/v1/",
       token?.accessToken ?? "",
     ),
   );
-  getIt.registerSingleton<AuthApiService>(AuthApiServiceImpl(getIt<DioClient>()));
-  getIt.registerSingleton<UserApiService>(UserApiServiceImpl(getIt<DioClient>()));
-  getIt.registerSingleton<EventApiService>(EventApiServiceImpl(getIt<DioClient>()));
-  getIt.registerSingleton<CSVParser>(ParticipantCSVParser());
+
+  getIt.registerLazySingleton<AuthApiService>(
+      () => AuthApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<UserApiService>(
+      () => UserApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<EventApiService>(
+      () => EventApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
+}
+
+// Method to update singletons
+Future<void> updateSingletons(String accessToken) async {
+  await getIt.reset(dispose: true);
+
+  var storage = const FlutterSecureStorage();
+
+  getIt.registerLazySingleton<TokenPreferencesManager>(
+      () => TokenPreferencesManagerImpl(storage: storage));
+
+  getIt.registerLazySingleton<DioClient>(
+    () => DioClient(
+      "https://dev-kidsapi.softballforce.com/v1/",
+      accessToken,
+    ),
+  );
+
+  getIt.registerLazySingleton<AuthApiService>(
+      () => AuthApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<UserApiService>(
+      () => UserApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<EventApiService>(
+      () => EventApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
 }

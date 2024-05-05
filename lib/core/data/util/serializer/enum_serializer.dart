@@ -1,4 +1,5 @@
 import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
+import 'package:kidventory_flutter/core/data/model/join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
@@ -13,6 +14,7 @@ class EnumSerializer{
     RepeatUnit: RepeatUnit.values,
     RepeatEnd: RepeatEnd.values,
     RoleDto: RoleDto.values,
+    JoinStatusDto: JoinStatusDto.values, //
   };
 
   static int? toJson(dynamic value) => value?.index;
@@ -73,5 +75,12 @@ class EnumSerializer{
       throw ArgumentError('Index out of bounds for RoleDto decoding: $index');
     }
     return RoleDto.values[index];
+  }
+
+  static JoinStatusDto joinStatusFromJson(int index) {
+    if (index < 0 || index >= JoinStatusDto.values.length) {
+      throw ArgumentError('Index out of bounds for RoleDto decoding: $index');
+    }
+    return JoinStatusDto.values[index];
   }
 }

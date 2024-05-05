@@ -12,6 +12,7 @@ import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_state.dart';
 
@@ -86,6 +87,32 @@ class EventScreenViewModel extends ChangeNotifier {
       state.event?.id ?? '',
     );
     _update();
+  }
+
+  Future<void> updatePendingMembers(
+      UpdateJoinStatusDto request, String requestId) async {
+    EventDto? event = state.event;
+    try {
+      await _eventApiService.updatePendingMembers(
+          event?.id ?? "", requestId, request);
+      List<PendingMembersDto> pendingMembers =
+          await _eventApiService.getPendingMembers(
+        state.event?.id ?? '',
+      );
+      List<ParticipantDto> participants = await _eventApiService.getMembers(
+          event?.id ?? "", event?.nearestSession.id ?? "");
+      Map<RoleDto, List<ParticipantDto>> participantsByRole = groupBy(
+        participants,
+        (participant) => participant.role,
+      );
+      _update(
+        participants: participants,
+        participantsByRole: participantsByRole,
+        pendingMembers: pendingMembers,
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> getSessions() async {

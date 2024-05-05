@@ -9,6 +9,7 @@ import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
 
 abstract class EventApiService {
 
@@ -28,7 +29,7 @@ abstract class EventApiService {
 
   Future<List<PendingMembersDto>> getPendingMembers(String eventId);
 
-  Future<void> updatePendingMembers(String eventId, String requestId);
+  Future<void> updatePendingMembers(String eventId, String requestId, UpdateJoinStatusDto body);
 
   Future<void> changeMemberRole(String eventId, ChangeMembersRoleDto membersRole);
 

@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kidventory_flutter/core/data/model/join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/pending_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
+import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
@@ -381,6 +383,24 @@ class _EventScreenState extends State<EventScreen>
                     avatarUrl: "",
                     name: "${participant.firstName} ${participant.lastName}",
                     onClick: () => {},
+                    onAccept: () {
+                      _onUpdatePendingMember(
+                        true,
+                        participant.role,
+                        participant.adultUserId,
+                        participant.memberId,
+                        participant.id,
+                      );
+                    },
+                    onDecline: () {
+                      _onUpdatePendingMember(
+                        false,
+                        participant.role,
+                        participant.adultUserId,
+                        participant.memberId,
+                        participant.id,
+                      );
+                    },
                   ),
                 );
               },
@@ -425,6 +445,30 @@ class _EventScreenState extends State<EventScreen>
     });
     _viewModel.deleteEvent(id).whenComplete(() => isDeleting = true).then(
           (value) => pop(),
+          onError: (error) => {
+            snackbar((error as DioException).message ?? "Something went wrong"),
+          },
+        );
+  }
+
+  void _onUpdatePendingMember(bool accept, RoleDto role, String userId,
+      String memberId, String requestId) async {
+    setState(() {
+      isDeleting = true;
+    });
+    _viewModel
+        .updatePendingMembers(
+          UpdateJoinStatusDto(
+            participantUserId: userId,
+            participantMemberId: memberId,
+            role: role,
+            state: accept ? JoinStatusDto.accepted : JoinStatusDto.declined,
+          ),
+          requestId,
+        )
+        .whenComplete(() => isDeleting = true)
+        .then(
+          (value) => {},
           onError: (error) => {
             snackbar((error as DioException).message ?? "Something went wrong"),
           },

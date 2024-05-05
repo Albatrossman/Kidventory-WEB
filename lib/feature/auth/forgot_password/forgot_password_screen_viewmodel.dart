@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:kidventory_flutter/core/data/mapper/token_mapper.dart';
 import 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/forgot_password/forgot_password_screen_state.dart';
 
 class ForgotPasswordScreenViewModel extends ChangeNotifier {
@@ -18,6 +19,7 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
     try {
       final tokenDto = await _authApiService.signIn(email, password);
       _tokenPreferences.saveToken(tokenDto.toDomain());
+      await updateSingletons(tokenDto.accessToken);
     } catch (exception) {
       _update(message: "Email does not exist");
       rethrow;
@@ -30,7 +32,6 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
     _update(loading: true);
     try {
       final _ = await _authApiService.sendOTP(email);
-      
     } finally {
       _update(loading: false);
     }
@@ -48,8 +49,7 @@ class ForgotPasswordScreenViewModel extends ChangeNotifier {
   Future<void> resetPassword(String email, String code, String password) async {
     _update(loading: true);
     try {
-      final _ =
-          await _authApiService.resetPassword(email, code, password);
+      final _ = await _authApiService.resetPassword(email, code, password);
     } finally {
       _update(loading: false);
     }
