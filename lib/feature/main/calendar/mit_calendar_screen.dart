@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
@@ -9,6 +10,7 @@ import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/calendar/calendar_screen_viewmodel.dart';
+import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:calendar_view/calendar_view.dart';
 
@@ -117,11 +119,26 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
           controller: _calendarController,
           child: switch (_calendarViewMode) {
             CalendarViewMode.day => DayView(
+                onEventTap: (events, date) {
+                  if (events.isNotEmpty) {
+                    final session = events.first.event as SessionDto;
+                    push(EventScreen(id: session.eventId));
+                  }
+                },
                 headerStyle: HeaderStyle(
                   decoration: headerBoxDecoration(context),
                 ),
               ),
             CalendarViewMode.week => WeekView(
+                onEventTap: (events, date) {
+                  if (events.isNotEmpty) {
+                    final session = events.first.event as SessionDto;
+                    push(EventScreen(id: session.eventId));
+                  }
+                },
+                onDateTap: (date) {
+                  
+                },
                 weekNumberBuilder: (firstDayOfWeek) {
                   //this is to remove the confusing week number above the time
                   return null;
@@ -131,6 +148,13 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                 ),
               ),
             CalendarViewMode.month => MonthView(
+                onEventTap: (event, date) {
+                  final session = event.event as SessionDto;
+                    push(EventScreen(id: session.eventId));
+                },
+                onCellTap: (events, date) {
+                  //
+                },
                 headerStyle: HeaderStyle(
                   decoration: headerBoxDecoration(context),
                 ),
@@ -145,7 +169,7 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: CupertinoSlidingSegmentedControl<CalendarViewMode>(
             // selectedColor: Theme.of(context).colorScheme.primary,
             // borderColor: Theme.of(context).colorScheme.primary,
