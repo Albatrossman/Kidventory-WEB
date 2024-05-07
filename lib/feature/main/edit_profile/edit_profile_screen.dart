@@ -31,8 +31,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
 
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
 
   bool validFirstname = true;
   bool validLastname = true;

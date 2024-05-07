@@ -12,8 +12,8 @@ class RepeatDto {
   final int period;
   @JsonKey(fromJson: EnumSerializer.repeatUnitFromJson, toJson: EnumSerializer.toJson)
   final RepeatUnit periodUnit;
-  @JsonKey(name: 'weekDays')
-  final List<String> daysOfWeek;
+  @JsonKey(name: 'weekDays', fromJson: EnumSerializer.weekDaysFromJson, toJson: EnumSerializer.weekDaysToJson)
+  final List<WeekDay> daysOfWeek;
   @JsonKey(fromJson: EnumSerializer.weekDayFromJson, toJson: EnumSerializer.toJson)
   final WeekDay? monthDay;
   final int dayNumberOfMonth;

@@ -2,6 +2,7 @@ import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
+import 'package:kidventory_flutter/core/domain/model/platform.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
@@ -56,6 +57,14 @@ class EnumSerializer{
     return TimeMode.values[index];
   }
 
+  static Platform? platformFromJson(int? index) {
+    if (index == null) return null;
+    if (index < 0 || index >= TimeMode.values.length) {
+      throw ArgumentError('Index out of bounds for Platform decoding: $index');
+    }
+    return Platform.values[index];
+  }
+
   static EventColor eventColorFromJson(int index) {
     if (index < 0 || index >= EventColor.values.length) {
       throw ArgumentError('Index out of bounds for EventColor decoding: $index');
@@ -82,5 +91,13 @@ class EnumSerializer{
       throw ArgumentError('Index out of bounds for RoleDto decoding: $index');
     }
     return JoinStatusDto.values[index];
+  }
+
+  static List<int> weekDaysToJson(List<WeekDay> days) {
+    return days.map((day) => day.index).toList();
+  }
+
+  static List<WeekDay> weekDaysFromJson(List<dynamic> indices) {
+    return indices.map((index) => WeekDay.values[index as int]).toList();
   }
 }

@@ -11,6 +11,8 @@ import 'package:kidventory_flutter/core/data/service/http/user_api_service_impl.
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager_impl.dart';
 import 'package:kidventory_flutter/core/data/util/dio_client.dart';
+import 'package:kidventory_flutter/core/data/util/downloader/default_downloader.dart';
+import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/core/domain/model/token.dart';
 
 final getIt = GetIt.instance;
@@ -37,6 +39,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<EventApiService>(
       () => EventApiServiceImpl(getIt<DioClient>()));
   getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
+  getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));
 }
 
 // Method to update singletons

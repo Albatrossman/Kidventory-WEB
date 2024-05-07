@@ -9,6 +9,7 @@ import 'package:kidventory_flutter/core/data/model/create_event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
+import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 import 'package:kidventory_flutter/core/domain/model/online_location.dart';
@@ -24,20 +25,26 @@ import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_sta
 class EditEventScreenViewModel extends ChangeNotifier {
   final CSVParser _parser;
   final EventApiService _eventApiService;
+  final Downloader downloader;
 
-  EditEventScreenViewModel(this._parser, this._eventApiService);
+  EditEventScreenViewModel(this._parser, this._eventApiService, this.downloader);
 
   EditEventScreenState _state = EditEventScreenState();
-
   EditEventScreenState get state => _state;
 
-  Future<String> createEvent(String name, String? imageFile) async {
+  Future<String> createEvent(String name, String? imageFile, DateTime startDate) async {
     try {
       CreateEventDto createEvent = CreateEventDto(
         imageFile: imageFile,
         name: name,
         description: state.description,
-        repeat: state.repeat.toDto(),
+        repeat: state.repeat.copy(
+          startDatetime: state.repeat.startDatetime.copyWith(
+            year: startDate.year,
+            month: startDate.month,
+            day: startDate.day,
+          ),
+        ).toDto(),
         timeMode: state.allDay ? TimeMode.allDay : TimeMode.halting,
         onlineLocation: state.onlineLocation?.toData(),
         color: state.color,
@@ -64,6 +71,7 @@ class EditEventScreenViewModel extends ChangeNotifier {
     RepeatUnit unit,
     List<WeekDay> daysOfWeek,
     RepeatEnd end,
+    DateTime? endDatetime,
     maxOccurrence,
   ) {
     Repeat repeat = Repeat(
@@ -71,9 +79,9 @@ class EditEventScreenViewModel extends ChangeNotifier {
       unit: unit,
       daysOfWeek: daysOfWeek,
       monthDay: null,
-      monthDate: 1,
-      startDatetime: DateTime.now(),
-      endDatetime: DateTime.now().plusMonths(3).copyWithTime(const TimeOfDay(hour: 10, minute: 51)),
+      monthDate: DateTime.now().day,
+      startDatetime: state.repeat.startDatetime,
+      endDatetime: endDatetime ?? state.repeat.endDatetime,
       endsOnMode: RepeatEnd.onDate,
       maxOccurrence: 1,
     );
@@ -86,11 +94,16 @@ class EditEventScreenViewModel extends ChangeNotifier {
   }
 
   void selectedStartTime(TimeOfDay time) {
-    _update(startTime: time);
+    _update(
+      repeat: state.repeat.copy(startDatetime: state.repeat.startDatetime.copyWithTime(time)),
+      startTime: time,
+    );
   }
 
   void selectedEndTime(TimeOfDay time) {
-    _update(endTime: time);
+    _update(
+        repeat: state.repeat.copy(endDatetime: state.repeat.endDatetime.copyWithTime(time)),
+        endTime: time);
   }
 
   void selectRepeatUnit(RepeatUnit unit) {
@@ -146,6 +159,10 @@ class EditEventScreenViewModel extends ChangeNotifier {
     _update(description: description);
   }
 
+  Future<void> downloadCSVTemplate() async {
+    return await downloader.download("http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
+  }
+
   void _update({
     bool? loading,
     bool? allDay,
@@ -167,8 +184,8 @@ class EditEventScreenViewModel extends ChangeNotifier {
       repeat: repeat,
       selectedRepeatUnit: selectedRepeatUnit,
       selectedRepeatEnd: selectedRepeatEnd,
-      startTime: startTime,
-      endTime: endTime,
+      startTime: startTime ?? state.startTime,
+      endTime: endTime ?? state.endTime,
       filesAndParticipants: filesAndParticipants,
       onlineLocation: onlineLocation,
       color: color,

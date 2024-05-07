@@ -5,10 +5,7 @@ import 'package:kidventory_flutter/core/domain/model/platform.dart';
 extension DataExtension on OnlineLocationDto {
   OnlineLocation toDomain() {
     return OnlineLocation(
-      platform: Platform.values.firstWhere(
-              (e) => e.toString().split('.').last.toLowerCase() == meetingApp?.toLowerCase(),
-          orElse: () => Platform.meet  // Handle case where meetingApp does not match any Platform enum
-      ),
+      platform: meetingApp ?? Platform.meet,
       link: sessionLink ?? "",
       meetingId: meetingId,
       password: password,
@@ -22,7 +19,7 @@ extension DataExtension on OnlineLocationDto {
 extension DomainExtension on OnlineLocation {
   OnlineLocationDto toData() {
     return OnlineLocationDto(
-      meetingApp: platform.toString().split('.').last,
+      meetingApp: platform,
       sessionLink: link,
       meetingId: meetingId ?? '',
       password: password ?? '',

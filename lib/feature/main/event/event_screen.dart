@@ -271,7 +271,9 @@ class _EventScreenState extends State<EventScreen>
                 Consumer<EventScreenViewModel>(
                     builder: (context, model, child) {
                   return SessionPicker(
+                    loading: model.state.loading,
                     sessions: model.state.sessions,
+                    selected: model.state.selectedSession,
                     onSessionPicked: (session) {
                       _viewModel
                           .changeSession(session)

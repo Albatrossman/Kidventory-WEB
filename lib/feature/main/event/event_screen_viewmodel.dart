@@ -14,12 +14,14 @@ import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
+import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_state.dart';
 
 class EventScreenViewModel extends ChangeNotifier {
   final EventApiService _eventApiService;
+  final Downloader downloader;
 
-  EventScreenViewModel(this._eventApiService);
+  EventScreenViewModel(this._eventApiService, this.downloader);
 
   EventScreenState _state = EventScreenState();
 
@@ -217,6 +219,10 @@ class EventScreenViewModel extends ChangeNotifier {
   void removeCSV(File file) {
     List<File> updatedFiles = state.files.where((f) => f != file).toList();
     _update(files: updatedFiles);
+  }
+
+  Future<void> downloadCSVTemplate() async {
+    return await downloader.download("http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
   }
 
   void _update({

@@ -6,12 +6,12 @@ import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
+import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
-import 'package:kidventory_flutter/feature/main/join%20event/join_event_screen.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:kidventory_flutter/main_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -28,10 +28,14 @@ void main() async {
         create: (context) => EditEventScreenViewModel(
           getIt<CSVParser>(),
           getIt<EventApiService>(),
+          getIt<Downloader>(),
         ),
       ),
       ChangeNotifierProvider<EventScreenViewModel>(
-        create: (context) => EventScreenViewModel(getIt<EventApiService>()),
+        create: (context) => EventScreenViewModel(
+          getIt<EventApiService>(),
+          getIt<Downloader>(),
+        ),
       ),
     ],
     child: const MyApp(),
@@ -50,8 +54,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 28, 176, 245)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 28, 176, 245)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -120,8 +123,7 @@ class _AppScreenState extends State<AppScreen> with NavigationMixin {
     return Consumer<MainViewModel>(
       builder: (context, model, child) {
         if (model.isLoading) {
-          return const Center(
-              child: CircularProgressIndicator()); // Show loading indicator
+          return const Center(child: CircularProgressIndicator()); // Show loading indicator
         } else if (model.isAuthenticated) {
           return const MainScreen();
         } else {

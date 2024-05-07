@@ -9,6 +9,7 @@ import 'package:kidventory_flutter/core/ui/component/weekday_picker.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,8 @@ class RepeatScreen extends StatefulWidget {
   }
 }
 
-class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, NavigationMixin {
+class _RepeatScreenState extends State<RepeatScreen>
+    with PickerMixin, MessageMixin, NavigationMixin {
   final FixedExtentScrollController _periodController = FixedExtentScrollController();
   final TextEditingController _occurrenceController = TextEditingController();
   late final EditEventScreenViewModel _viewModel;
@@ -56,7 +58,8 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
               _viewModel.state.selectedRepeatUnit,
               daysOfWeek,
               _selectedRepeatEnd,
-              _occurrenceController.text
+              selectedDate,
+              _occurrenceController.text,
             ),
             pop()
           },
@@ -131,7 +134,7 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
                                   const Text('Repeats on'),
                                   const SizedBox(height: 8.0),
                                   WeekdayPicker(
-                                    initialSelectedDays: [WeekDay.values[DateTime.now().weekday]],
+                                    initialSelectedDays: model.state.repeat.daysOfWeek ?? [WeekDay.now()],
                                     onSelectionChanged: (days) => {daysOfWeek = days},
                                   ),
                                 ],
@@ -153,11 +156,18 @@ class _RepeatScreenState extends State<RepeatScreen> with MessageMixin, Navigati
                             const Text('On'),
                             const SizedBox(width: 8.0),
                             InkWell(
-                              onTap: () => {},
+                              onTap: () => {
+                                datePicker(
+                                  context,
+                                  firstDate: _viewModel.state.repeat.startDatetime,
+                                  initialDateTime: _viewModel.state.repeat.startDatetime
+                                      .add(const Duration(days: 365)),
+                                )
+                              },
                               child: AppCard(
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text(DateTime.now().plusMonths(12).formatDate()),
+                                  child: Text(selectedDate.formatDate()),
                                 ),
                               ),
                             ),

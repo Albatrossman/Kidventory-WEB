@@ -9,7 +9,6 @@ class EditProfileScreenViewModel extends ChangeNotifier {
   EditProfileScreenViewModel(this._userApiService);
 
   EditProfileScreenState _state = EditProfileScreenState();
-
   EditProfileScreenState get state => _state;
 
   Future<void> editUser(

@@ -14,7 +14,8 @@ class Repeat {
   final RepeatEnd endsOnMode;
   final int maxOccurrence;
 
-  bool get isNever => (endsOnMode == RepeatEnd.onDate && startDatetime == endDatetime) ||
+  bool get isNever =>
+      (endsOnMode == RepeatEnd.onDate && startDatetime == endDatetime) ||
       (endsOnMode == RepeatEnd.afterOccurrence && maxOccurrence == 1);
 
   Repeat({
@@ -40,6 +41,23 @@ class Repeat {
       endsOnMode: RepeatEnd.onDate,
       endDatetime: DateTime.now().add(const Duration(days: 365, hours: 1)),
       maxOccurrence: 1,
+    );
+  }
+
+  Repeat copy({
+    DateTime? startDatetime,
+    DateTime? endDatetime,
+  }) {
+    return Repeat(
+      period: period,
+      unit: unit,
+      daysOfWeek: daysOfWeek,
+      monthDay: monthDay,
+      monthDate: monthDate,
+      startDatetime: startDatetime ?? this.startDatetime,
+      endDatetime: endDatetime ?? this.endDatetime,
+      endsOnMode: endsOnMode,
+      maxOccurrence: maxOccurrence,
     );
   }
 }

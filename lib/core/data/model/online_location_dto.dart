@@ -1,10 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:kidventory_flutter/core/data/util/serializer/enum_serializer.dart';
+import 'package:kidventory_flutter/core/domain/model/platform.dart';
 
 part 'online_location_dto.g.dart';
 
 @JsonSerializable()
 class OnlineLocationDto {
-  final String? meetingApp;
+  @JsonKey(fromJson: EnumSerializer.platformFromJson, toJson: EnumSerializer.toJson)
+  final Platform? meetingApp;
   final String? sessionLink;
   final String? meetingId;
   final String? password;

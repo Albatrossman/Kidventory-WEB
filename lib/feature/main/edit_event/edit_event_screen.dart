@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
+import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/event_option.dart';
@@ -13,6 +15,7 @@ import 'package:kidventory_flutter/core/ui/util/extension/date_time_extension.da
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.dart';
 import 'package:kidventory_flutter/feature/main/color/color_screen.dart';
 import 'package:kidventory_flutter/feature/main/description/description_screen.dart';
@@ -38,8 +41,7 @@ class _EditEventScreenState extends State<EditEventScreen>
   late final EditEventScreenViewModel _viewModel;
 
   final TextEditingController _nameController = TextEditingController();
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   String selectedOption = 'Does not repeat';
   File? _selectedImage;
 
@@ -47,6 +49,7 @@ class _EditEventScreenState extends State<EditEventScreen>
   void initState() {
     super.initState();
     _viewModel = Provider.of<EditEventScreenViewModel>(context, listen: false);
+    _nameController.text = _viewModel.state.name ?? '';
   }
 
   @override
@@ -95,23 +98,20 @@ class _EditEventScreenState extends State<EditEventScreen>
                 const SizedBox(height: 32.0),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant),
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
+                        padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
                         child: Text(
                           'Occurrence',
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall
-                              ?.copyWith(
-                                  color: Theme.of(context).colorScheme.outline),
+                              ?.copyWith(color: Theme.of(context).colorScheme.outline),
                         ),
                       ),
                       EventOption.withText(
@@ -121,8 +121,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                           size: 20.0,
                         ),
                         label: selectedDate.formatDate(),
-                        onTap: () => datePicker(context,
-                            firstDate: DateTime.now().atStartOfDay),
+                        onTap: () => datePicker(context, firstDate: DateTime.now().atStartOfDay),
                       ),
                       const SizedBox(height: 4.0),
                       const Divider(
@@ -142,10 +141,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                           width: 120,
                           height: 32.0,
                           decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant),
+                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
                             borderRadius: BorderRadius.circular(96.0),
                           ),
                           child: Center(child: Text(selectedOption)),
@@ -179,8 +175,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                         child: Consumer<EditEventScreenViewModel>(
                           builder: (_, viewModel, __) {
                             return viewModel.state.allDay
-                                ? const SizedBox(
-                                    width: double.infinity, height: 0)
+                                ? const SizedBox(width: double.infinity, height: 0)
                                 : Column(
                                     children: [
                                       const SizedBox(height: 4.0),
@@ -192,9 +187,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                                       EventOption.withWidget(
                                         leading: Icon(
                                           CupertinoIcons.clock,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color: Theme.of(context).colorScheme.primary,
                                           size: 20.0,
                                         ),
                                         label: Row(
@@ -206,23 +199,15 @@ class _EditEventScreenState extends State<EditEventScreen>
                                                   onPressed: () => {
                                                     timePicker(
                                                       context,
-                                                      onTimeChanged: (time) => {
-                                                        _viewModel
-                                                            .selectedStartTime(
-                                                                time)
-                                                      },
-                                                      title: const Text(
-                                                          'Select Start Time'),
-                                                      initialTime:
-                                                          model.state.startTime,
+                                                      onTimeChanged: (time) =>
+                                                          {_viewModel.selectedStartTime(time)},
+                                                      title: const Text('Select Start Time'),
+                                                      initialTime: model.state.startTime,
                                                     ),
                                                   },
                                                   child: Text(
-                                                    model.state.startTime
-                                                        .formatted,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .labelMedium,
+                                                    model.state.startTime.formatted,
+                                                    style: Theme.of(context).textTheme.labelMedium,
                                                   ),
                                                 );
                                               },
@@ -237,25 +222,15 @@ class _EditEventScreenState extends State<EditEventScreen>
                                                   onPressed: () => {
                                                     timePicker(context,
                                                         onTimeChanged: (time) =>
-                                                            {
-                                                              _viewModel
-                                                                  .selectedEndTime(
-                                                                      time)
-                                                            },
-                                                        title: const Text(
-                                                            'Select End Time'),
-                                                        initialTime:
-                                                            model.state.endTime,
-                                                        minimumTime: model
-                                                            .state.startTime
+                                                            {_viewModel.selectedEndTime(time)},
+                                                        title: const Text('Select End Time'),
+                                                        initialTime: model.state.endTime,
+                                                        minimumTime: model.state.startTime
                                                             .roundedToNextQuarter()),
                                                   },
                                                   child: Text(
-                                                    model.state.endTime
-                                                        .formatted,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .labelMedium,
+                                                    model.state.endTime.formatted,
+                                                    style: Theme.of(context).textTheme.labelMedium,
                                                   ),
                                                 );
                                               },
@@ -285,7 +260,9 @@ class _EditEventScreenState extends State<EditEventScreen>
                     Consumer<EditEventScreenViewModel>(builder: (_, model, __) {
                       return AddMembersScreen(
                         filesAndParticipants: model.state.filesAndParticipants,
-                        onDownloadTemplateClick: () => {},
+                        onDownloadTemplateClick: () async {
+                          await _viewModel.downloadCSVTemplate();
+                        },
                         onImportCSVClick: () async {
                           File? file = await csvPicker();
 
@@ -295,8 +272,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                         },
                         onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
                         onCSVFileClick: (file) => pushSheet(RosterScreen(
-                            members: model.state.filesAndParticipants[file] ??
-                                List.empty())),
+                            members: model.state.filesAndParticipants[file] ?? List.empty())),
                       );
                     }),
                   ),
@@ -328,10 +304,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                         width: 20.0,
                         decoration: BoxDecoration(
                             color: model.state.color.value,
-                            border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant),
+                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
                             shape: BoxShape.circle),
                       );
                     },
@@ -376,14 +349,21 @@ class _EditEventScreenState extends State<EditEventScreen>
       onPressed: () => _viewModel
           .createEvent(
             _nameController.text,
-            base64Encode(_selectedImage!.readAsBytesSync()),
+            _selectedImage != null ? base64Encode(_selectedImage!.readAsBytesSync()) : null,
+            selectedDate,
           )
           .whenComplete(() => _btnController.reset())
           .then(
-            (value) => replace(EventScreen(id: value)),
-            onError: (error) => snackbar(
-                (error as DioException).message ?? "Something went wrong"),
-          ),
+        (value) => replace(EventScreen(id: value)),
+        onError: (error) {
+          String message = 'Something went wrong';
+          if (error is DioException) {
+            message = error.message ?? message;
+          }
+
+          snackbar(message);
+        },
+      ),
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -400,10 +380,10 @@ class _EditEventScreenState extends State<EditEventScreen>
         return CupertinoActionSheet(
           title: const Text("Repeat Options"),
           actions: <Widget>[
-            _buildActionSheetOption("Does not repeat"),
-            _buildActionSheetOption("Every day"),
-            _buildActionSheetOption("Every week"),
-            _buildActionSheetOption("Every month"),
+            _buildActionSheetOption("Does not repeat", unit: RepeatUnit.day),
+            _buildActionSheetOption("Every day", unit: RepeatUnit.day),
+            _buildActionSheetOption("Every week", unit: RepeatUnit.week),
+            _buildActionSheetOption("Every month", unit: RepeatUnit.month),
             _buildActionSheetOption("Custom", isCustom: true),
           ],
           cancelButton: CupertinoActionSheetAction(
@@ -417,20 +397,69 @@ class _EditEventScreenState extends State<EditEventScreen>
     );
   }
 
-  Widget _buildActionSheetOption(String option, {bool isCustom = false}) {
+  Widget _buildActionSheetOption(String option, {bool isCustom = false, RepeatUnit? unit}) {
     return CupertinoActionSheetAction(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(option),
           if (selectedOption == option)
-            const Icon(CupertinoIcons.check_mark,
-                color: CupertinoColors.activeBlue),
+            const Icon(CupertinoIcons.check_mark, color: CupertinoColors.activeBlue),
         ],
       ),
       onPressed: () {
         setState(() {
+          DateTime now = DateTime.now();
+          int? maxOccurrence;
+          DateTime? endDateTime;
+          int? period;
+          RepeatEnd? endsOnMode;
+          List<WeekDay>? daysOfWeek;
+
+          if (option == "Does not repeat") {
+            period = 1;
+            endsOnMode = RepeatEnd.afterOccurrence;
+            maxOccurrence = 1;
+            endDateTime = null;
+          } else if (option == "Every day") {
+            period = 1;
+            unit = RepeatUnit.day;
+            endsOnMode = RepeatEnd.onDate;
+            endDateTime = _viewModel.state.repeat.endDatetime.copyWith(
+              year: now.year + 1,
+              month: now.month,
+              day: now.day,
+            );
+          } else if (option == "Every week") {
+            period = 1;
+            unit = RepeatUnit.week;
+            endsOnMode = RepeatEnd.onDate;
+            endDateTime = _viewModel.state.repeat.endDatetime.copyWith(
+              year: now.year + 1,
+              month: now.month,
+              day: now.day,
+            );
+            daysOfWeek = [WeekDay.now()];
+          } else if (option == "Every month") {
+            period = 1;
+            unit = RepeatUnit.month;
+            endsOnMode = RepeatEnd.onDate;
+            endDateTime = _viewModel.state.repeat.endDatetime.copyWith(
+              year: now.year + 1,
+              month: now.month,
+              day: now.day,
+            );
+          }
+
           selectedOption = option;
+          _viewModel.editRepeat(
+            period ?? _viewModel.state.repeat.period,
+            unit ?? _viewModel.state.repeat.unit,
+            daysOfWeek ?? _viewModel.state.repeat.daysOfWeek ?? [],
+            endsOnMode ?? _viewModel.state.repeat.endsOnMode,
+            endDateTime ?? _viewModel.state.repeat.endDatetime,
+            maxOccurrence ?? _viewModel.state.repeat.maxOccurrence,
+          );
         });
         Navigator.pop(context);
         if (isCustom) {

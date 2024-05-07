@@ -8,7 +8,7 @@ extension DataExtension on RepeatDto {
     return Repeat(
       period: period,
       unit: periodUnit,
-      daysOfWeek: daysOfWeek.map((day) => WeekDay.values.firstWhere((e) => e.toString() == 'WeekDay.$day')).toList(),
+      daysOfWeek: daysOfWeek,
       monthDay: monthDay,
       monthDate: dayNumberOfMonth == 0 ? null : dayNumberOfMonth,
       startDatetime: startDateTime,
@@ -24,7 +24,7 @@ extension DomainExtension on Repeat {
     return RepeatDto(
       period: period,
       periodUnit: unit,
-      daysOfWeek: daysOfWeek?.map((day) => day.toString().split('.').last).toList() ?? [],
+      daysOfWeek: daysOfWeek ?? [],
       monthDay: monthDay,
       dayNumberOfMonth: monthDate ?? 0,
       startDateTime: startDatetime,

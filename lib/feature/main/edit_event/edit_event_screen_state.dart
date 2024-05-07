@@ -40,7 +40,9 @@ class EditEventScreenState {
     this.description = '',
   })  : repeat = repeat ?? Repeat.defaultRepeat(),
         startTime = startTime ?? TimeOfDay.now().roundedToNextQuarter(),
-        endTime = endTime ?? startTime?.roundedToNextQuarter().replacing(hour: (startTime.hour) % 24) ?? TimeOfDay.now().roundedToNextQuarter().replacing(hour: (TimeOfDay.now().hour + 1) % 24),
+        endTime = endTime ??
+            startTime?.roundedToNextQuarter().replacing(hour: (startTime.hour) % 24) ??
+            TimeOfDay.now().roundedToNextQuarter().replacing(hour: (TimeOfDay.now().hour + 1) % 24),
         filesAndParticipants = filesAndParticipants ?? {};
 
   EditEventScreenState copy({
@@ -63,8 +65,9 @@ class EditEventScreenState {
       name: name ?? this.name,
       allDay: allDay ?? this.allDay,
       message: message ?? this.message,
-      startTime: startTime,
-      endTime: endTime,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      repeat: repeat ?? this.repeat,
       selectedRepeatUnit: selectedRepeatUnit ?? this.selectedRepeatUnit,
       selectedRepeatEnd: selectedRepeatEnd ?? this.selectedRepeatEnd,
       filesAndParticipants: filesAndParticipants ?? this.filesAndParticipants,

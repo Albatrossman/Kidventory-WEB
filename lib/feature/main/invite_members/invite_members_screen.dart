@@ -306,7 +306,9 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
                   Consumer<EditEventScreenViewModel>(builder: (_, model, __) {
                     return AddMembersScreen(
                       filesAndParticipants: model.state.filesAndParticipants,
-                      onDownloadTemplateClick: () => {},
+                      onDownloadTemplateClick: () async {
+                        await _viewModel.downloadCSVTemplate();
+                      },
                       onImportCSVClick: () async {
                         File? file = await csvPicker();
 

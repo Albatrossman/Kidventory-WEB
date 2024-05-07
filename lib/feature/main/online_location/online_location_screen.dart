@@ -67,7 +67,8 @@ class _OnlineLocationScreenState extends State<OnlineLocationScreen>
               _commentController.text,
               _phoneController.text,
               _pinController.text,
-            )
+            ),
+            pop()
           },
           child: const Text('Done'),
         ),

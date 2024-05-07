@@ -8,7 +8,7 @@ part of 'online_location_dto.dart';
 
 OnlineLocationDto _$OnlineLocationDtoFromJson(Map<String, dynamic> json) =>
     OnlineLocationDto(
-      meetingApp: json['meetingApp'] as String?,
+      meetingApp: EnumSerializer.platformFromJson(json['meetingApp'] as int?),
       sessionLink: json['sessionLink'] as String?,
       meetingId: json['meetingId'] as String?,
       password: json['password'] as String?,
@@ -19,7 +19,7 @@ OnlineLocationDto _$OnlineLocationDtoFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$OnlineLocationDtoToJson(OnlineLocationDto instance) =>
     <String, dynamic>{
-      'meetingApp': instance.meetingApp,
+      'meetingApp': EnumSerializer.toJson(instance.meetingApp),
       'sessionLink': instance.sessionLink,
       'meetingId': instance.meetingId,
       'password': instance.password,

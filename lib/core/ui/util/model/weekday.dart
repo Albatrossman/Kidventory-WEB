@@ -9,4 +9,11 @@ enum WeekDay {
 
   const WeekDay(this.label);
   final String label;
+
+  static WeekDay now() {
+    DateTime today = DateTime.now();
+    int weekdayIndex = today.weekday;
+    WeekDay todayWeekDay = WeekDay.values[(weekdayIndex % 7)];
+    return todayWeekDay;
+  }
 }

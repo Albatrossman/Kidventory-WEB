@@ -163,6 +163,7 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['csv'],
+        withData: true
       );
 
       if (result != null) {
@@ -170,7 +171,6 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
 
         if (platformFile.path != null) {
           File file = File(platformFile.path!);
-          print('CSV file path: ${file.path}');
           return file;
         }
       } else {
