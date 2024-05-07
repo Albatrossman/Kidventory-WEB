@@ -133,7 +133,7 @@ class _EventsScreenState extends State<EventsScreen>
                   return EventCard(
                     name: event.name,
                     time:
-                        "${DateFormat.jm().format(event.repeat.startDateTime)} - ${DateFormat.jm().format(event.repeat.endDateTime)}",
+                        "${DateFormat.jm().format(event.repeat.startDateTime.toLocal())} - ${DateFormat.jm().format(event.repeat.endDateTime.toLocal())}",
                     onClick: () => {push(EventScreen(id: event.id))},
                     imageUrl: event.imageUrl,
                   );

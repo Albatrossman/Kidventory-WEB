@@ -65,4 +65,5 @@ Future<void> updateSingletons(String accessToken) async {
   getIt.registerLazySingleton<EventApiService>(
       () => EventApiServiceImpl(getIt<DioClient>()));
   getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
+  getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));
 }

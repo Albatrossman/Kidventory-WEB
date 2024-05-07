@@ -82,7 +82,7 @@ class EditEventScreenViewModel extends ChangeNotifier {
       monthDate: DateTime.now().day,
       startDatetime: state.repeat.startDatetime,
       endDatetime: endDatetime ?? state.repeat.endDatetime,
-      endsOnMode: RepeatEnd.onDate,
+      endsOnMode: end,
       maxOccurrence: 1,
     );
 

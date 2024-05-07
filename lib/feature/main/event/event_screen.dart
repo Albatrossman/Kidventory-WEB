@@ -254,7 +254,7 @@ class _EventScreenState extends State<EventScreen>
                     ),
                     const Spacer(),
                     Text(
-                      "${DateFormat.jm().format(model.state.selectedSession?.startDateTime ?? DateTime.now())} - ${DateFormat.jm().format(model.state.selectedSession?.endDateTime ?? DateTime.now())}",
+                      "${DateFormat.jm().format(model.state.selectedSession?.startDateTime.toLocal() ?? DateTime.now())} - ${DateFormat.jm().format(model.state.selectedSession?.endDateTime.toLocal() ?? DateTime.now())}",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.onBackground,
                           ),
@@ -310,8 +310,8 @@ class _EventScreenState extends State<EventScreen>
         child: Text(
           'Take Attendance',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
         ),
       ),
     );

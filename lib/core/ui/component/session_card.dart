@@ -81,14 +81,13 @@ class SessionCard extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    DateFormat.jm()
-                                        .format(session.startDateTime),
+                                    DateFormat.jm().format(session.startDateTime.toLocal()),
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                   ),
                                   const Text(" - "),
                                   Text(
-                                    DateFormat.jm().format(session.endDateTime),
+                                    DateFormat.jm().format(session.endDateTime.toLocal()),
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                   ),

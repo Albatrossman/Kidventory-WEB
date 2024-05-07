@@ -9,7 +9,7 @@ extension DateTimeFormatting on DateTime {
     if (this == today) {
       return "Today";
     } else {
-      return DateFormat.yMMMMd().format(this);
+      return DateFormat.yMMMMd().format(toLocal());
     }
   }
 

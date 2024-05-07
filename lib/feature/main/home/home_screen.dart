@@ -11,7 +11,6 @@ import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dar
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
-import 'package:kidventory_flutter/main.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -170,9 +169,7 @@ class _HomeScreenState extends State<HomeScreen>
           builder: (_, model, __) {
             return Column(
               children: List.generate(
-                  model.state.upcomingSessions.isEmpty
-                      ? 1
-                      : model.state.upcomingSessions.length, (index) {
+                  model.state.upcomingSessions.isEmpty ? 1 : model.state.upcomingSessions.length, (index) {
                 if (model.state.loading) {
                   return Container(
                     width: double.infinity,

@@ -367,8 +367,8 @@ class _EditEventScreenState extends State<EditEventScreen>
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
     );
   }

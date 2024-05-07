@@ -14,9 +14,7 @@ class Repeat {
   final RepeatEnd endsOnMode;
   final int maxOccurrence;
 
-  bool get isNever =>
-      (endsOnMode == RepeatEnd.onDate && startDatetime == endDatetime) ||
-      (endsOnMode == RepeatEnd.afterOccurrence && maxOccurrence == 1);
+  bool get isNever => (endsOnMode == RepeatEnd.onDate && startDatetime == endDatetime) || (endsOnMode == RepeatEnd.afterOccurrence && maxOccurrence == 1);
 
   Repeat({
     required this.period,
@@ -38,7 +36,7 @@ class Repeat {
       monthDay: null,
       monthDate: null,
       startDatetime: DateTime.now(),
-      endsOnMode: RepeatEnd.onDate,
+      endsOnMode: RepeatEnd.afterOccurrence,
       endDatetime: DateTime.now().add(const Duration(days: 365, hours: 1)),
       maxOccurrence: 1,
     );
