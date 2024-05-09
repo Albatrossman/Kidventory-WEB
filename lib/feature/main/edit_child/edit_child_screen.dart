@@ -51,8 +51,7 @@ class _EditChildScreenState extends State<EditChildScreen>
     _lastnameController.text = widget.childInfo?.lastName ?? "";
     _relation = widget.childInfo?.relation ?? "None";
     _selectedDate = widget.childInfo?.birthday ?? DateTime.now().atStartOfDay;
-    _viewModel = EditChildScreenViewModel(
-        getIt<UserApiService>());
+    _viewModel = EditChildScreenViewModel(getIt<UserApiService>());
 
     super.initState();
   }
@@ -62,102 +61,105 @@ class _EditChildScreenState extends State<EditChildScreen>
     return ChangeNotifierProvider<EditChildScreenViewModel>.value(
       value: _viewModel,
       child: Stack(
-      children: [
-        Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () => pop(),
-              icon: const Icon(CupertinoIcons.arrow_left),
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                onPressed: () => pop(),
+                icon: const Icon(CupertinoIcons.arrow_left),
+              ),
+              title:
+                  Text(widget.childInfo == null ? "Add Child" : 'Edit Child'),
+              centerTitle: true,
             ),
-            title: Text(widget.childInfo == null ? "Add Child" : 'Edit Child'),
-            centerTitle: true,
-          ),
-          body: Center(
-            heightFactor: kIsWeb ? null : 1.0,
-            child: SingleChildScrollView(
-              clipBehavior: Clip.none,
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 16.0),
-                      AppImagePicker(
-                        onImageSelected: (File image) =>
-                            {_selectedImage = image},
-                        width: 100,
-                        height: 100,
-                        currentImage: widget.childInfo?.image ?? "",
-                      ),
-                      SizedBox(
-                        width: kIsWeb ? 420 : null,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 32.0),
-                              child: firstNameField(context),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: lastNameField(context),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant,
+            body: Center(
+              heightFactor: kIsWeb ? null : 1.0,
+              child: SingleChildScrollView(
+                clipBehavior: Clip.none,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16.0),
+                        AppImagePicker(
+                          onImageSelected: (File image) =>
+                              {_selectedImage = image},
+                          width: 100,
+                          height: 100,
+                          currentImage: widget.childInfo?.image ?? "",
+                        ),
+                        SizedBox(
+                          width: kIsWeb ? 420 : null,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 32.0),
+                                child: firstNameField(context),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: lastNameField(context),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant,
+                                    ),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(12.0)),
                                   ),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(12.0)),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: Column(
-                                  children: [
-                                    birthdayOption(context),
-                                    const Divider(height: 1.0, indent: 16.0),
-                                    relationOption(context),
-                                  ],
+                                  clipBehavior: Clip.antiAlias,
+                                  child: Column(
+                                    children: [
+                                      birthdayOption(context),
+                                      const Divider(height: 1.0, indent: 16.0),
+                                      relationOption(context),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
-                        child: saveButton(context),
-                      ),
-                      const SizedBox(height: 16),
-                      if (widget.childInfo != null) deleteButton(context)
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 32.0, bottom: kIsWeb ? 72.0 : 0.0),
+                          child: saveButton(context),
+                        ),
+                        const SizedBox(height: 16),
+                        if (widget.childInfo != null) deleteButton(context)
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        if (isDeleting)
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300.withAlpha(200),
-              borderRadius: BorderRadius.circular(8),
+          if (isDeleting)
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300.withAlpha(200),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              alignment: Alignment.center,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-            alignment: Alignment.center,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-      ],
-    ),);
+        ],
+      ),
+    );
   }
 
   Widget firstNameField(BuildContext context) {
@@ -260,7 +262,11 @@ class _EditChildScreenState extends State<EditChildScreen>
       firstDate: DateTime(1900),
       lastDate: DateTime.now().add(const Duration(minutes: 1)),
       initialDateTime: _selectedDate,
-      onSelectedDate: (date) => {_selectedDate = date.atStartOfDay},
+      onSelectedDate: (date) => {
+        setState(() {
+          _selectedDate = date.atStartOfDay;
+        })
+      },
     );
   }
 
@@ -353,7 +359,8 @@ class _EditChildScreenState extends State<EditChildScreen>
           .then(
             (value) => pop(),
             onError: (error) => {
-              snackbar((error as DioException).message ?? "Something went wrong"),
+              snackbar(
+                  (error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {
@@ -383,7 +390,8 @@ class _EditChildScreenState extends State<EditChildScreen>
           .then(
             (value) => pop(),
             onError: (error) => {
-              snackbar((error as DioException).message ?? "Something went wrong"),
+              snackbar(
+                  (error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {

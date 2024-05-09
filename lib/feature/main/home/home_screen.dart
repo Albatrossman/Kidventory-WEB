@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
@@ -145,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen>
                 ],
               ),
               Text(
-                DateTime.now().formatDate(),
+                DateFormat.yMMMMd().format(DateTime.now().toLocal()),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],

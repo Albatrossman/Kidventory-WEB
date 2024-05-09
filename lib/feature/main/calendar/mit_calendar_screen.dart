@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
@@ -37,7 +38,10 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
   final EventController _calendarController = EventController();
 
   CalendarViewMode _calendarViewMode = CalendarViewMode.day;
-  List<Appointment> _appointments = [];
+  GlobalKey<DayViewState> dayViewKey = GlobalKey<DayViewState>();
+  GlobalKey<WeekViewState> weekViewKey = GlobalKey<WeekViewState>();
+  GlobalKey<MonthViewState> monthViewKey = GlobalKey<MonthViewState>();
+
   DateTime? _fetchedStartDate;
   DateTime? _fetchedEndDate;
 
@@ -88,7 +92,8 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                                 color: eventColor.getReadableTextColor(),
                               ),
                       date: session.startDateTime.toLocal(),
-                      startTime: isAllDay ? null : session.startDateTime.toLocal(),
+                      startTime:
+                          isAllDay ? null : session.startDateTime.toLocal(),
                       endTime: isAllDay ? null : session.endDateTime.toLocal(),
                       event: session,
                       color: eventColor.value,
@@ -109,59 +114,91 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Column(
-      children: [
-        viewSwitcher(context),
-        const SizedBox(
-          height: 16,
-        ),
-        Expanded(
+      child: Column(
+        children: [
+          viewSwitcher(context),
+          const SizedBox(
+            height: 16,
+          ),
+          Expanded(
             child: CalendarControllerProvider(
-          controller: _calendarController,
-          child: switch (_calendarViewMode) {
-            CalendarViewMode.day => DayView(
-                onEventTap: (events, date) {
-                  if (events.isNotEmpty) {
-                    final session = events.first.event as SessionDto;
-                    push(EventScreen(id: session.eventId));
-                  }
-                },
-                headerStyle: HeaderStyle(
-                  decoration: headerBoxDecoration(context),
-                ),
-              ),
-            CalendarViewMode.week => WeekView(
-                onEventTap: (events, date) {
-                  if (events.isNotEmpty) {
-                    final session = events.first.event as SessionDto;
-                    push(EventScreen(id: session.eventId));
-                  }
-                },
-                onDateTap: (date) {},
-                weekNumberBuilder: (firstDayOfWeek) {
-                  //this is to remove the confusing week number above the time
-                  return null;
-                },
-                headerStyle: HeaderStyle(
-                  decoration: headerBoxDecoration(context),
-                ),
-              ),
-            CalendarViewMode.month => MonthView(
-                onEventTap: (event, date) {
-                  final session = event.event as SessionDto;
-                  push(EventScreen(id: session.eventId));
-                },
-                onCellTap: (events, date) {
-                  //
-                },
-                headerStyle: HeaderStyle(
-                  decoration: headerBoxDecoration(context),
-                ),
-              ),
-          },
-        )),
-      ],
-    ));
+              controller: _calendarController,
+              child: switch (_calendarViewMode) {
+                CalendarViewMode.day => DayView(
+                    key: dayViewKey,
+                    onEventTap: (events, date) {
+                      if (events.isNotEmpty) {
+                        final session = events.first.event as SessionDto;
+                        push(EventScreen(id: session.eventId));
+                      }
+                    },
+                    headerStyle: HeaderStyle(
+                      decoration: headerBoxDecoration(context),
+                    ),
+                    dateStringBuilder: (date, {secondaryDate}) {
+                      return date.formatDate();
+                    },
+                    startDuration: Duration(hours: TimeOfDay.now().hour),
+                    heightPerMinute: 1,
+                    onPageChange: (date, page) {
+                      //TODO: - Pouya add fetch
+                    },
+                  ),
+                CalendarViewMode.week => WeekView(
+                    key: weekViewKey,
+                    onEventTap: (events, date) {
+                      if (events.isNotEmpty) {
+                        final session = events.first.event as SessionDto;
+                        push(EventScreen(id: session.eventId));
+                      }
+                    },
+                    onDateTap: (date) {
+                      
+                    },
+                    weekNumberBuilder: (firstDayOfWeek) {
+                      //this is to remove the confusing week number above the time
+                      return null;
+                    },
+                    headerStyle: HeaderStyle(
+                      decoration: headerBoxDecoration(context),
+                    ),
+                    headerStringBuilder: (date, {secondaryDate}) {
+                      return "${date.formatDate(useShortFormat: true)} to ${secondaryDate?.formatDate(useShortFormat: true)}";
+                    },
+                    onPageChange: (date, page) {
+                      //TODO: - Pouya add fetch
+                    },
+                  ),
+                CalendarViewMode.month => MonthView(
+                    key: monthViewKey,
+                    onEventTap: (event, date) {
+                      final session = event.event as SessionDto;
+                      push(EventScreen(id: session.eventId));
+                    },
+                    onCellTap: (events, date) {
+                      setState(() {
+                        _calendarViewMode = CalendarViewMode.day;
+                      });
+                      Future.delayed(const Duration(milliseconds: 50), () {
+                        dayViewKey.currentState?.jumpToDate(date);
+                      });
+                    },
+                    headerStyle: HeaderStyle(
+                      decoration: headerBoxDecoration(context),
+                    ),
+                    headerStringBuilder: (date, {secondaryDate}) {
+                      return DateFormat.yMMMMd().format(date.toLocal());
+                    },
+                    onPageChange: (date, page) {
+                      //TODO: - Pouya add fetch
+                    },
+                  ),
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget viewSwitcher(BuildContext context) {
@@ -209,7 +246,14 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
             size: 24,
             color: Theme.of(context).colorScheme.primary,
           ),
-          onPressed: () => {},
+          onPressed: () => {
+            if (_calendarViewMode == CalendarViewMode.day)
+              dayViewKey.currentState?.animateToDate(DateTime.now()),
+            if (_calendarViewMode == CalendarViewMode.week)
+              weekViewKey.currentState?.animateToWeek(DateTime.now()),
+            if (_calendarViewMode == CalendarViewMode.month)
+              monthViewKey.currentState?.animateToMonth(DateTime.now())
+          },
         )
       ],
     );

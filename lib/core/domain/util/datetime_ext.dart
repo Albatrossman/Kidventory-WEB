@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dart';
 
 extension DateTimeFormatting on DateTime {
-  String formatDate() {
+  String formatDate({bool useShortFormat = false}) {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
 
-    if (this == today) {
+    if (isSameDay(today)) {
       return "Today";
     } else {
-      return DateFormat.yMMMMd().format(toLocal());
+      if (useShortFormat) {
+        return DateFormat.yMMMd().format(toLocal());
+      } else {
+        return DateFormat.yMMMMd().format(toLocal());
+      }
     }
   }
 
