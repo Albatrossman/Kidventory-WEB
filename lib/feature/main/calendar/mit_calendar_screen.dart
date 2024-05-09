@@ -79,6 +79,7 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                     final EventColor eventColor = EventColor.values.firstWhere(
                       (e) => e.name == session.color.toLowerCase(),
                     );
+                    final bool isAllDay = session.timeMode == 'AllDay';
 
                     final event = CalendarEventData(
                       title: session.title,
@@ -86,9 +87,9 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                           Theme.of(context).textTheme.labelSmall?.copyWith(
                                 color: eventColor.getReadableTextColor(),
                               ),
-                      date: session.startDateTime,
-                      startTime: session.startDateTime,
-                      endTime: session.endDateTime,
+                      date: session.startDateTime.toLocal(),
+                      startTime: isAllDay ? null : session.startDateTime.toLocal(),
+                      endTime: isAllDay ? null : session.endDateTime.toLocal(),
                       event: session,
                       color: eventColor.value,
                     );
@@ -136,9 +137,7 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                     push(EventScreen(id: session.eventId));
                   }
                 },
-                onDateTap: (date) {
-                  
-                },
+                onDateTap: (date) {},
                 weekNumberBuilder: (firstDayOfWeek) {
                   //this is to remove the confusing week number above the time
                   return null;
@@ -150,7 +149,7 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
             CalendarViewMode.month => MonthView(
                 onEventTap: (event, date) {
                   final session = event.event as SessionDto;
-                    push(EventScreen(id: session.eventId));
+                  push(EventScreen(id: session.eventId));
                 },
                 onCellTap: (events, date) {
                   //

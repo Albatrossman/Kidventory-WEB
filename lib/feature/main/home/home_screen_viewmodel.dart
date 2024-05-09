@@ -15,10 +15,17 @@ class HomeScreenViewModel extends ChangeNotifier {
   HomeScreenState _state = HomeScreenState();
   HomeScreenState get state => _state;
 
-  void updateContent() {
-
-      getUpcomingSessions();
-      getProfile();
+  void updateContent() async {
+    _update(loading: true);
+    try {
+      List<SessionDto> sessions =
+          await _userApiService.getUpcomingSessions(DateTime.now(), 3);
+      ProfileDto profile = await _userApiService.getProfile("me");
+      globalUserProfile = profile;
+      _update(profile: profile, upcomingSessions: sessions, loading: false);
+    } catch (e) {
+      _update(loading: false);
+    }
   }
 
   void getUpcomingSessions() async {

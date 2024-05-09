@@ -6,7 +6,6 @@ import 'package:kidventory_flutter/core/data/service/preferences/token_preferenc
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
-import 'package:kidventory_flutter/feature/main/calendar/calendar_screen.dart';
 import 'package:kidventory_flutter/feature/main/calendar/mit_calendar_screen.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen.dart';
 import 'package:kidventory_flutter/feature/main/join%20event/join_event_screen.dart';

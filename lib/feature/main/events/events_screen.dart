@@ -38,7 +38,12 @@ class _EventsScreenState extends State<EventsScreen>
     _viewModel = EventsScreenViewModel(getIt<UserApiService>());
     super.initState();
     _viewModel.getEvents().onError((error, stackTrace) {
-      snackbar((error as DioException).message ?? "Something went wrong");
+      String message = 'Something went wrong';
+      if (error is DioException) {
+        message = error.message ?? message;
+      }
+
+      snackbar(message);
     });
   }
 
@@ -110,7 +115,7 @@ class _EventsScreenState extends State<EventsScreen>
     return Consumer<EventsScreenViewModel>(
       builder: (context, model, child) {
         final List<EventDto> events = model.state.events
-            .where((event) => event.name.contains(_searchQuery))
+            .where((event) => event.name.toLowerCase().contains(_searchQuery.toLowerCase()))
             .toList();
         if (model.state.loading) {
           return loadingView(context);

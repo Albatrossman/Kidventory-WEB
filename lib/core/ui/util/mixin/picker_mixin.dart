@@ -12,6 +12,7 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
   TimeOfDay selectedTime = TimeOfDay.now();
 
   late DateTime _unSavedSelectedDate;
+  late TimeOfDay _unSavedSelectedTime;
 
   void datePicker(
     BuildContext context, {
@@ -39,7 +40,7 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
             child: Column(
               children: [
                 // Header with done button
-                _buildHeader(context,
+                _buildHeader(context, null,
                     onDone: () => {
                           if (onSelectedDate != null)
                             {onSelectedDate(_unSavedSelectedDate)}
@@ -69,7 +70,7 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  Widget _buildHeader(BuildContext context,
+  Widget _buildHeader(BuildContext context, String? title,
       {required void Function()? onDone}) {
     return Container(
       decoration: BoxDecoration(
@@ -84,6 +85,12 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
             child: const Text('Cancel'),
             onPressed: () => Navigator.pop(context),
           ),
+          if (title != null)
+            DefaultTextStyle(
+              style:
+                  Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+              child: Text(title),
+            ),
           CupertinoButton(
             child: const Text('Done'),
             onPressed: () {
@@ -100,15 +107,16 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
 
   void timePicker(
     BuildContext context, {
-    required Function(TimeOfDay) onTimeChanged,
-    Widget title = const Text('Pick a time'),
+    required void Function(TimeOfDay) onSelectedTime,
+    String title = "Pick a time",
     TimeOfDay? initialTime,
     TimeOfDay? minimumTime,
     TimeOfDay? maximumTime,
   }) {
     initialTime ??= TimeOfDay.now();
     minimumTime ??= TimeOfDay.now();
-    maximumTime ??= const TimeOfDay(hour: 23, minute: 59);
+    maximumTime ??= const TimeOfDay(hour: 24, minute: 60);
+    _unSavedSelectedTime = initialTime;
 
     if (kIsWeb) {
       showTimePicker(
@@ -117,20 +125,28 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
       );
     } else {
       showCupertinoModalPopup(
-        context: context,
-        builder: (_) => Wrap(
-          children: [
-            Container(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 300,
               color: Theme.of(context).colorScheme.surface,
+              padding: const EdgeInsets.only(top: 6),
               child: Column(
                 children: [
-                  SheetHeader(title: title),
+                  _buildHeader(
+                    context,
+                    title,
+                    onDone: () {
+                      onSelectedTime(_unSavedSelectedTime);
+                    },
+                  ),
+                  // SheetHeader(title: title),
                   SizedBox(
                     height: 200,
                     child: CupertinoDatePicker(
                       mode: CupertinoDatePickerMode.time,
                       onDateTimeChanged: (DateTime newTime) {
-                        onTimeChanged(TimeOfDay.fromDateTime(newTime));
+                        _unSavedSelectedTime = TimeOfDay.fromDateTime(newTime);
                       },
                       initialDateTime: DateTime(
                         selectedDate.year,
@@ -151,20 +167,15 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      );
+            );
+          });
     }
   }
 
   Future<File?> csvPicker() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['csv'],
-        withData: true
-      );
+          type: FileType.custom, allowedExtensions: ['csv'], withData: true);
 
       if (result != null) {
         PlatformFile platformFile = result.files.first;

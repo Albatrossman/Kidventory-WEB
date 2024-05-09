@@ -3,14 +3,12 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/profile_dto.dart';
-import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';
 import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
-import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/main_screen.dart';
 import 'package:kidventory_flutter/main_viewmodel.dart';
@@ -23,19 +21,6 @@ void main() async {
     providers: [
       ChangeNotifierProvider<MainViewModel>(
         create: (context) => MainViewModel(getIt<TokenPreferencesManager>()),
-      ),
-      ChangeNotifierProvider<EditEventScreenViewModel>(
-        create: (context) => EditEventScreenViewModel(
-          getIt<CSVParser>(),
-          getIt<EventApiService>(),
-          getIt<Downloader>(),
-        ),
-      ),
-      ChangeNotifierProvider<EventScreenViewModel>(
-        create: (context) => EventScreenViewModel(
-          getIt<EventApiService>(),
-          getIt<Downloader>(),
-        ),
       ),
     ],
     child: const MyApp(),

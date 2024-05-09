@@ -11,6 +11,7 @@ import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen.dar
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
 import 'package:kidventory_flutter/feature/main/events/events_screen.dart';
 import 'package:kidventory_flutter/feature/main/home/home_screen_viewmodel.dart';
+import 'package:kidventory_flutter/main.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,13 +43,13 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
   }
 
   @override
   void dispose() {
     _viewModel.dispose();
-    // routeObserver.unsubscribe(this);
+    routeObserver.unsubscribe(this);
     super.dispose();
   }
 
@@ -167,44 +168,46 @@ class _HomeScreenState extends State<HomeScreen>
         const SizedBox(height: 16.0),
         Consumer<HomeScreenViewModel>(
           builder: (_, model, __) {
-            return Column(
-              children: List.generate(
-                  model.state.upcomingSessions.isEmpty ? 1 : model.state.upcomingSessions.length, (index) {
-                if (model.state.loading) {
-                  return Container(
-                    width: double.infinity,
-                    height: 166,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                } else {
-                  if (model.state.upcomingSessions.isEmpty) {
-                    return Container(
-                      width: double.infinity,
-                      height: 160,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text("You have no upcoming events"),
-                    );
-                  } else {
+            if (model.state.upcomingSessions.isEmpty) {
+              if (model.state.loading) {
+                return Container(
+                  width: double.infinity,
+                  height: 166,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              } else {
+                return Container(
+                  width: double.infinity,
+                  height: 160,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text("You have no upcoming events"),
+                );
+              }
+            } else {
+              return Column(
+                children: List.generate(
+                  model.state.upcomingSessions.length,
+                  (index) {
                     SessionDto session = model.state.upcomingSessions[index];
                     return SessionCard(
                       session: session,
                       onClick: () => push(EventScreen(id: session.eventId)),
                     );
-                  }
-                }
-              }),
-            );
+                  },
+                ),
+              );
+            }
           },
         ),
       ],

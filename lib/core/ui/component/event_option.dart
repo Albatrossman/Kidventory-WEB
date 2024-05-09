@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 
 class EventOption extends StatelessWidget {
   final Widget? leading;
@@ -46,8 +47,8 @@ class EventOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
+    return Clickable(
+      onPressed: onTap,
       child: SizedBox(
         height: 40.0,
         child: Padding(
@@ -55,7 +56,7 @@ class EventOption extends StatelessWidget {
           child: Row(
             children: [
               if (leading != null) leading! else const SizedBox(width: 20),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Expanded(
                 child: DefaultTextStyle(
                   style: Theme.of(context).textTheme.labelMedium ?? const TextStyle(),

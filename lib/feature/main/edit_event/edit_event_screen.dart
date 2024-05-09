@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
+import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
+import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
 import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
@@ -16,6 +19,7 @@ import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.dart';
 import 'package:kidventory_flutter/feature/main/color/color_screen.dart';
 import 'package:kidventory_flutter/feature/main/description/description_screen.dart';
@@ -41,305 +45,356 @@ class _EditEventScreenState extends State<EditEventScreen>
   late final EditEventScreenViewModel _viewModel;
 
   final TextEditingController _nameController = TextEditingController();
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
-  String selectedOption = 'Does not repeat';
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
+  String selectedOption = 'Never';
   File? _selectedImage;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    _viewModel = Provider.of<EditEventScreenViewModel>(context, listen: false);
-    _nameController.text = _viewModel.state.name ?? '';
+    _viewModel = EditEventScreenViewModel(
+      getIt<CSVParser>(),
+      getIt<EventApiService>(),
+      getIt<Downloader>(),
+    );
+    _nameController.text = _viewModel.state.name;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => pop(),
-          icon: const Icon(CupertinoIcons.back),
+    return ChangeNotifierProvider<EditEventScreenViewModel>.value(
+      value: _viewModel,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => pop(),
+            icon: const Icon(CupertinoIcons.back),
+          ),
+          title: const Text('Create Event'),
+          centerTitle: true,
         ),
-        title: const Text('Create Event'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    AppImagePicker(
-                      onImageSelected: (File image) => {_selectedImage = image},
-                      width: 72,
-                      height: 72,
-                      currentImage: "",
-                    ),
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      child: TextField(
-                        controller: _nameController,
-                        maxLines: 1,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.0),
-                            ),
-                          ),
-                          label: Text("Name"),
-                        ),
-                        keyboardType: TextInputType.name,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32.0),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
-                        child: Text(
-                          'Occurrence',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(color: Theme.of(context).colorScheme.outline),
-                        ),
+                      AppImagePicker(
+                        onImageSelected: (File image) =>
+                            {_selectedImage = image},
+                        width: 72,
+                        height: 72,
+                        currentImage: "",
                       ),
-                      EventOption.withText(
-                        leading: Icon(
-                          CupertinoIcons.calendar,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 20.0,
-                        ),
-                        label: selectedDate.formatDate(),
-                        onTap: () => datePicker(context, firstDate: DateTime.now().atStartOfDay),
-                      ),
-                      const SizedBox(height: 4.0),
-                      const Divider(
-                        height: 1.0,
-                        indent: 28 + 16,
-                      ),
-                      const SizedBox(height: 4.0),
-                      EventOption.withText(
-                        label: 'Repeat',
-                        onTap: () => {showOptions()},
-                        leading: Icon(
-                          CupertinoIcons.repeat,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 20.0,
-                        ),
-                        trailing: Container(
-                          width: 120,
-                          height: 32.0,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                            borderRadius: BorderRadius.circular(96.0),
+                      const SizedBox(width: 16.0),
+                      Expanded(
+                        child: TextField(
+                          controller: _nameController,
+                          maxLines: 1,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8.0),
+                              ),
+                            ),
+                            label: Text("Name"),
                           ),
-                          child: Center(child: Text(selectedOption)),
+                          keyboardType: TextInputType.name,
                         ),
                       ),
-                      const SizedBox(height: 4.0),
-                      const Divider(
-                        height: 1.0,
-                        indent: 28 + 16,
-                      ),
-                      const SizedBox(height: 4.0),
-                      EventOption.withText(
-                        label: 'All day',
-                        leading: Icon(
-                          CupertinoIcons.sun_max,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 20.0,
+                    ],
+                  ),
+                  const SizedBox(height: 32.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 12.0),
+                        EventOption.withText(
+                          leading: Icon(
+                            CupertinoIcons.calendar,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 20.0,
+                          ),
+                          trailing: Text(
+                            _selectedDate.formatDate(),
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                          label: "Start date",
+                          onTap: () => datePicker(
+                            context,
+                            firstDate: DateTime.now().atStartOfDay,
+                            onSelectedDate: (date) {
+                              setState(() {
+                                _selectedDate = date;
+                              });
+                            },
+                          ),
                         ),
-                        onTap: () => {_viewModel.toggleAllDay()},
-                        trailing: Consumer<EditEventScreenViewModel>(
-                          builder: (_, viewModel, __) {
-                            return Switch(
-                              value: _viewModel.state.allDay,
-                              onChanged: (_) => _viewModel.toggleAllDay(),
+                        const SizedBox(height: 4.0),
+                        _buildDivider(context),
+                        const SizedBox(height: 4.0),
+                        EventOption.withText(
+                          label: 'Repeat',
+                          onTap: () => {showOptions()},
+                          leading: Icon(
+                            CupertinoIcons.repeat,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 20.0,
+                          ),
+                          trailing: Container(
+                            width: 120,
+                            height: 32.0,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outlineVariant),
+                              borderRadius: BorderRadius.circular(96.0),
+                            ),
+                            child: Center(child: Text(selectedOption)),
+                          ),
+                        ),
+                        const SizedBox(height: 4.0),
+                        _buildDivider(context),
+                        const SizedBox(height: 4.0),
+                        EventOption.withText(
+                          label: 'All day',
+                          leading: Icon(
+                            CupertinoIcons.sun_max,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 20.0,
+                          ),
+                          onTap: () => {_viewModel.toggleAllDay()},
+                          trailing: Consumer<EditEventScreenViewModel>(
+                            builder: (_, viewModel, __) {
+                              return Switch(
+                                value: _viewModel.state.allDay,
+                                onChanged: (_) => _viewModel.toggleAllDay(),
+                              );
+                            },
+                          ),
+                        ),
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 300),
+                          child: Consumer<EditEventScreenViewModel>(
+                            builder: (_, viewModel, __) {
+                              return viewModel.state.allDay
+                                  ? const SizedBox(
+                                      width: double.infinity, height: 0)
+                                  : _buildStartEndTimePicker(context);
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 12.0),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  EventOption.withText(
+                    leading: Icon(
+                      CupertinoIcons.person_crop_circle_badge_plus,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20.0,
+                    ),
+                    label: 'Add members',
+                    onTap: () => pushSheet(
+                      ChangeNotifierProvider<EditEventScreenViewModel>.value(
+                        value: _viewModel,
+                        child: Consumer<EditEventScreenViewModel>(
+                          builder: (_, model, __) {
+                            return AddMembersScreen(
+                              filesAndParticipants:
+                                  model.state.filesAndParticipants,
+                              onDownloadTemplateClick: () async {
+                                await _viewModel.downloadCSVTemplate();
+                              },
+                              onImportCSVClick: () async {
+                                File? file = await csvPicker();
+
+                                if (file != null) {
+                                  _viewModel.importCSV(file);
+                                }
+                              },
+                              onRemoveCSVClick: (file) =>
+                                  _viewModel.removeCSV(file),
+                              onCSVFileClick: (file) => pushSheet(RosterScreen(
+                                  members:
+                                      model.state.filesAndParticipants[file] ??
+                                          List.empty())),
                             );
                           },
                         ),
                       ),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        child: Consumer<EditEventScreenViewModel>(
-                          builder: (_, viewModel, __) {
-                            return viewModel.state.allDay
-                                ? const SizedBox(width: double.infinity, height: 0)
-                                : Column(
-                                    children: [
-                                      const SizedBox(height: 4.0),
-                                      const Divider(
-                                        height: 1.0,
-                                        indent: 28 + 16,
-                                      ),
-                                      const SizedBox(height: 4.0),
-                                      EventOption.withWidget(
-                                        leading: Icon(
-                                          CupertinoIcons.clock,
-                                          color: Theme.of(context).colorScheme.primary,
-                                          size: 20.0,
-                                        ),
-                                        label: Row(
-                                          children: [
-                                            Consumer<EditEventScreenViewModel>(
-                                              builder: (_, model, __) {
-                                                return CupertinoButton(
-                                                  padding: EdgeInsets.zero,
-                                                  onPressed: () => {
-                                                    timePicker(
-                                                      context,
-                                                      onTimeChanged: (time) =>
-                                                          {_viewModel.selectedStartTime(time)},
-                                                      title: const Text('Select Start Time'),
-                                                      initialTime: model.state.startTime,
-                                                    ),
-                                                  },
-                                                  child: Text(
-                                                    model.state.startTime.formatted,
-                                                    style: Theme.of(context).textTheme.labelMedium,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            const SizedBox(width: 16.0),
-                                            const Text('-'),
-                                            const SizedBox(width: 16.0),
-                                            Consumer<EditEventScreenViewModel>(
-                                              builder: (_, model, __) {
-                                                return CupertinoButton(
-                                                  padding: EdgeInsets.zero,
-                                                  onPressed: () => {
-                                                    timePicker(context,
-                                                        onTimeChanged: (time) =>
-                                                            {_viewModel.selectedEndTime(time)},
-                                                        title: const Text('Select End Time'),
-                                                        initialTime: model.state.endTime,
-                                                        minimumTime: model.state.startTime
-                                                            .roundedToNextQuarter()),
-                                                  },
-                                                  child: Text(
-                                                    model.state.endTime.formatted,
-                                                    style: Theme.of(context).textTheme.labelMedium,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () => {},
-                                      ),
-                                    ],
-                                  );
-                          },
-                        ),
+                    ),
+                    trailing: Icon(
+                      size: 20,
+                      CupertinoIcons.chevron_up,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  EventOption.withText(
+                    leading: Icon(
+                      CupertinoIcons.videocam_circle,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20.0,
+                    ),
+                    label: 'Online location',
+                    onTap: () => pushSheet(
+                      ChangeNotifierProvider<EditEventScreenViewModel>.value(
+                        value: _viewModel,
+                        child: const OnlineLocationScreen(),
                       ),
-                      const SizedBox(height: 12.0),
-                    ],
+                    ),
+                    trailing: Icon(
+                      size: 20,
+                      CupertinoIcons.chevron_up,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                EventOption.withText(
-                  leading: Icon(
-                    CupertinoIcons.person_crop_circle_badge_plus,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 20.0,
+                  const SizedBox(height: 8),
+                  EventOption.withText(
+                    leading: Consumer<EditEventScreenViewModel>(
+                      builder: (_, model, __) {
+                        return Container(
+                          height: 20.0,
+                          width: 20.0,
+                          decoration: BoxDecoration(
+                              color: model.state.color.value,
+                              border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outlineVariant),
+                              shape: BoxShape.circle),
+                        );
+                      },
+                    ),
+                    label: 'Color',
+                    onTap: () => pushSheet(
+                      ChangeNotifierProvider<EditEventScreenViewModel>.value(
+                        value: _viewModel,
+                        child: const ColorScreen(),
+                      ),
+                    ),
+                    trailing: Icon(
+                      size: 20,
+                      CupertinoIcons.chevron_up,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
-                  label: 'Add members',
-                  onTap: () => pushSheet(
-                    Consumer<EditEventScreenViewModel>(builder: (_, model, __) {
-                      return AddMembersScreen(
-                        filesAndParticipants: model.state.filesAndParticipants,
-                        onDownloadTemplateClick: () async {
-                          await _viewModel.downloadCSVTemplate();
-                        },
-                        onImportCSVClick: () async {
-                          File? file = await csvPicker();
-
-                          if (file != null) {
-                            _viewModel.importCSV(file);
-                          }
-                        },
-                        onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
-                        onCSVFileClick: (file) => pushSheet(RosterScreen(
-                            members: model.state.filesAndParticipants[file] ?? List.empty())),
-                      );
-                    }),
+                  const SizedBox(height: 8),
+                  EventOption.withText(
+                    leading: Icon(
+                      CupertinoIcons.pencil_circle,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20.0,
+                    ),
+                    label: 'Description',
+                    onTap: () => pushSheet(
+                        ChangeNotifierProvider<EditEventScreenViewModel>.value(
+                      value: _viewModel,
+                      child: const DescriptionScreen(),
+                    )),
+                    trailing: Icon(
+                      size: 20,
+                      CupertinoIcons.chevron_up,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
-                  trailing: Icon(
-                    size: 20,
-                    CupertinoIcons.chevron_up,
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                  const SizedBox(
+                    height: 32,
                   ),
-                ),
-                EventOption.withText(
-                  leading: Icon(
-                    CupertinoIcons.videocam_circle,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 20.0,
-                  ),
-                  label: 'Online location',
-                  onTap: () => pushSheet(const OnlineLocationScreen()),
-                  trailing: Icon(
-                    size: 20,
-                    CupertinoIcons.chevron_up,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                ),
-                EventOption.withText(
-                  leading: Consumer<EditEventScreenViewModel>(
-                    builder: (_, model, __) {
-                      return Container(
-                        height: 20.0,
-                        width: 20.0,
-                        decoration: BoxDecoration(
-                            color: model.state.color.value,
-                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                            shape: BoxShape.circle),
-                      );
-                    },
-                  ),
-                  label: 'Color',
-                  onTap: () => pushSheet(const ColorScreen()),
-                  trailing: Icon(
-                    size: 20,
-                    CupertinoIcons.chevron_up,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                ),
-                EventOption.withText(
-                  leading: Icon(
-                    CupertinoIcons.pencil_circle,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 20.0,
-                  ),
-                  label: 'Description',
-                  onTap: () => pushSheet(const DescriptionScreen()),
-                  trailing: Icon(
-                    size: 20,
-                    CupertinoIcons.chevron_up,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                ),
-                const SizedBox(
-                  height: 32,
-                ),
-                _buildSaveButton(context),
-              ],
+                  _buildSaveButton(context),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStartEndTimePicker(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 4.0),
+        _buildDivider(context),
+        const SizedBox(height: 8.0),
+        Column(
+          children: [
+            Consumer<EditEventScreenViewModel>(
+              builder: (_, model, __) {
+                return EventOption.withText(
+                  label: "Start time",
+                  leading: Icon(
+                    CupertinoIcons.sunrise,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20.0,
+                  ),
+                  trailing: Text(
+                    model.state.startTime.formatted,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  onTap: () {
+                    timePicker(
+                      context,
+                      onSelectedTime: (time) =>
+                          {_viewModel.selectedStartTime(time)},
+                      title: 'Start Time',
+                      initialTime: model.state.startTime,
+                      minimumTime: _selectedDate.isSameDay(DateTime.now()) ? null : const TimeOfDay(hour: 0, minute: 0)
+                    );
+                  },
+                );
+              },
+            ),
+            Consumer<EditEventScreenViewModel>(
+              builder: (_, model, __) {
+                return EventOption.withText(
+                  label: "End time",
+                  leading: Icon(
+                    CupertinoIcons.sunset,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20.0,
+                  ),
+                  trailing: Text(
+                    model.state.endTime.formatted,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  onTap: () {
+                    timePicker(context,
+                        onSelectedTime: (time) =>
+                            {_viewModel.selectedEndTime(time)},
+                        title: 'End Time',
+                        initialTime: model.state.endTime,
+                        minimumTime: 
+                            model.state.startTime.roundedToNextQuarter());
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider(BuildContext context) {
+    return const Divider(
+      indent: 28 + 16,
     );
   }
 
@@ -349,8 +404,10 @@ class _EditEventScreenState extends State<EditEventScreen>
       onPressed: () => _viewModel
           .createEvent(
             _nameController.text,
-            _selectedImage != null ? base64Encode(_selectedImage!.readAsBytesSync()) : null,
-            selectedDate,
+            _selectedImage != null
+                ? base64Encode(_selectedImage!.readAsBytesSync())
+                : null,
+            _selectedDate,
           )
           .whenComplete(() => _btnController.reset())
           .then(
@@ -367,8 +424,8 @@ class _EditEventScreenState extends State<EditEventScreen>
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
       ),
     );
   }
@@ -380,7 +437,7 @@ class _EditEventScreenState extends State<EditEventScreen>
         return CupertinoActionSheet(
           title: const Text("Repeat Options"),
           actions: <Widget>[
-            _buildActionSheetOption("Does not repeat", unit: RepeatUnit.day),
+            _buildActionSheetOption("Never", unit: RepeatUnit.day),
             _buildActionSheetOption("Every day", unit: RepeatUnit.day),
             _buildActionSheetOption("Every week", unit: RepeatUnit.week),
             _buildActionSheetOption("Every month", unit: RepeatUnit.month),
@@ -397,14 +454,16 @@ class _EditEventScreenState extends State<EditEventScreen>
     );
   }
 
-  Widget _buildActionSheetOption(String option, {bool isCustom = false, RepeatUnit? unit}) {
+  Widget _buildActionSheetOption(String option,
+      {bool isCustom = false, RepeatUnit? unit}) {
     return CupertinoActionSheetAction(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(option),
           if (selectedOption == option)
-            const Icon(CupertinoIcons.check_mark, color: CupertinoColors.activeBlue),
+            const Icon(CupertinoIcons.check_mark,
+                color: CupertinoColors.activeBlue),
         ],
       ),
       onPressed: () {
@@ -416,7 +475,7 @@ class _EditEventScreenState extends State<EditEventScreen>
           RepeatEnd? endsOnMode;
           List<WeekDay>? daysOfWeek;
 
-          if (option == "Does not repeat") {
+          if (option == "Never") {
             period = 1;
             endsOnMode = RepeatEnd.afterOccurrence;
             maxOccurrence = 1;
@@ -463,9 +522,20 @@ class _EditEventScreenState extends State<EditEventScreen>
         });
         Navigator.pop(context);
         if (isCustom) {
-          pushSheet(const RepeatScreen());
+          pushSheet(
+            ChangeNotifierProvider<EditEventScreenViewModel>.value(
+              value: _viewModel,
+              child: const RepeatScreen(),
+            ),
+          );
         }
       },
     );
+  }
+}
+
+extension DateTimeExtension on DateTime {
+  bool isSameDay(DateTime date) {
+    return year == date.year && month == date.month && day == date.day;
   }
 }

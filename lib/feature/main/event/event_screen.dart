@@ -7,9 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/join_status_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/pending_member_dto.dart';
-import 'package:kidventory_flutter/core/data/model/pending_members_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
+import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
+import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
@@ -17,6 +18,7 @@ import 'package:kidventory_flutter/core/ui/component/pending_member_row.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/invite_members/invite_members_screen.dart';
@@ -47,17 +49,25 @@ class _EventScreenState extends State<EventScreen>
           .firstWhere((element) => element.role == RoleDto.owner)
           .role;
 
-  bool canDelete() => userRole() == RoleDto.owner;
+  bool canDelete() => userRole()?.canDeleteEvent ?? false;
 
-  bool canTakeAttendance() => userRole() == RoleDto.owner;
+  bool canTakeAttendance() => userRole()?.canTakeAttendance ?? false;
 
-  bool canInviteMembers() =>
-      userRole() == RoleDto.owner || userRole() == RoleDto.teacher;
+  bool canInviteMembers() => userRole()?.canInviteMembers ?? false;
+
+  bool canViewParticipants() => userRole()?.canViewParticipants ?? false;
+
+  bool canChangeRole() => userRole()?.canChangeRole ?? false;
+
+  bool canRemoveMembers() => userRole()?.canRemoveMembers ?? false;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
+    _viewModel = EventScreenViewModel(
+      getIt<EventApiService>(),
+      getIt<Downloader>(),
+    );
     _viewModel.refresh(widget.id).then(
           (value) => {},
           onError: (error) => snackbar(
@@ -67,71 +77,79 @@ class _EventScreenState extends State<EventScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          appBar: AppBar(
-            leading: backButton(context),
-            actions: [
-              optionsButton(context),
-              const SizedBox(
-                width: 8,
-              )
-            ],
-          ),
-          body: Consumer<EventScreenViewModel>(
-            builder: (_, model, __) {
-              return _viewModel.state.loading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 16),
-                            eventHeader(context),
-                            const SizedBox(height: 16),
-                            sessionOption(context),
-                            const SizedBox(height: 16),
-                            if (canTakeAttendance())
-                              attendanceButton(
-                                context,
-                                _viewModel.state.event?.id ?? "",
-                                _viewModel.state.event?.nearestSession.id ?? "",
-                              ),
-                            if (canDelete())
-                              pendingMembersSection(
+    return ChangeNotifierProvider<EventScreenViewModel>.value(
+      value: _viewModel,
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              leading: backButton(context),
+              actions: [
+                optionsButton(context),
+                const SizedBox(
+                  width: 8,
+                )
+              ],
+            ),
+            body: Consumer<EventScreenViewModel>(
+              builder: (_, model, __) {
+                return _viewModel.state.loading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 16),
+                              eventHeader(context),
+                              const SizedBox(height: 16),
+                              sessionOption(context),
+                              const SizedBox(height: 16),
+                              if (canTakeAttendance())
+                                attendanceButton(
+                                  context,
+                                  _viewModel.state.event?.id ?? "",
+                                  _viewModel.state.event?.nearestSession.id ??
+                                      "",
+                                ),
+                              if (canInviteMembers())
+                                pendingMembersSection(
                                   context,
                                   model.state.pendingMembers.isEmpty
                                       ? []
                                       : model
-                                          .state.pendingMembers.first.members),
-                            membersList(
-                                context, model.state.participantsByRole ?? {})
-                          ],
+                                          .state.pendingMembers.first.members,
+                                  model.state.pendingMembers.isEmpty
+                                      ? ""
+                                      : model.state.pendingMembers.first.id,
+                                ),
+                              membersList(
+                                  context, model.state.participantsByRole ?? {})
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-            },
-          ),
-        ),
-        if (isDeleting)
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300.withAlpha(200),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            alignment: Alignment.center,
-            child: const Center(
-              child: CircularProgressIndicator(),
+                      );
+              },
             ),
           ),
-      ],
+          if (isDeleting)
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300.withAlpha(200),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              alignment: Alignment.center,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -147,7 +165,10 @@ class _EventScreenState extends State<EventScreen>
       onSelected: (String result) {
         switch (result) {
           case 'Invite members':
-            pushSheet(const InviteMembersScreen());
+            pushSheet(ChangeNotifierProvider<EventScreenViewModel>.value(
+              value: _viewModel,
+              child: const InviteMembersScreen(),
+            ));
             break;
           case 'Edit':
             break;
@@ -207,25 +228,32 @@ class _EventScreenState extends State<EventScreen>
         const SizedBox(
           width: 16,
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Consumer<EventScreenViewModel>(builder: (context, model, child) {
-              return Text(
-                model.state.event?.name ?? '',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+        Expanded(
+          child: Consumer<EventScreenViewModel>(
+            builder: (context, model, child) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    model.state.event?.name ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
+                  Text(
+                    model.state.event?.description ?? '',
+                    // 'Event By Baroody Camps',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                  ),
+                ],
               );
-            }),
-            // Text(
-            //   'Event By Baroody Camps',
-            //   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            //         color: Theme.of(context).colorScheme.primary,
-            //       ),
-            // ),
-          ],
-        ),
+            },
+          ),
+        )
       ],
     );
   }
@@ -268,19 +296,23 @@ class _EventScreenState extends State<EventScreen>
           CupertinoButton(
             onPressed: () => {
               pushSheet(
-                Consumer<EventScreenViewModel>(
+                ChangeNotifierProvider<EventScreenViewModel>.value(
+                  value: _viewModel,
+                  child: Consumer<EventScreenViewModel>(
                     builder: (context, model, child) {
-                  return SessionPicker(
-                    loading: model.state.loading,
-                    sessions: model.state.sessions,
-                    selected: model.state.selectedSession,
-                    onSessionPicked: (session) {
-                      _viewModel
-                          .changeSession(session)
-                          .whenComplete(() => pop());
+                      return SessionPicker(
+                        loading: model.state.loading,
+                        sessions: model.state.sessions,
+                        selected: model.state.selectedSession,
+                        onSessionPicked: (session) {
+                          _viewModel
+                              .changeSession(session)
+                              .whenComplete(() => pop());
+                        },
+                      );
                     },
-                  );
-                }),
+                  ),
+                ),
               )
             },
             padding: const EdgeInsets.all(16),
@@ -303,15 +335,20 @@ class _EventScreenState extends State<EventScreen>
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
       child: FilledButton(
-        onPressed: () => pushSheet(const AttendanceScreen()),
+        onPressed: () => pushSheet(
+          ChangeNotifierProvider<EventScreenViewModel>.value(
+            value: _viewModel,
+            child: const AttendanceScreen(),
+          ),
+        ),
         style: ButtonStyle(
             backgroundColor: MaterialStateColor.resolveWith(
                 (states) => Theme.of(context).colorScheme.primaryContainer)),
         child: Text(
           'Take Attendance',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
         ),
       ),
     );
@@ -321,6 +358,7 @@ class _EventScreenState extends State<EventScreen>
       Map<RoleDto, List<ParticipantDto>> participantsByRole) {
     List<Widget> sections = [];
     participantsByRole.forEach((role, participants) {
+      
       sections.add(
           participantsSection(context, role.name.capitalize(), participants));
     });
@@ -336,6 +374,7 @@ class _EventScreenState extends State<EventScreen>
     if (participants.isEmpty) {
       return const SizedBox(width: 0);
     } else {
+      List<ParticipantDto> participantsList = canViewParticipants() ? participants : participants.where((participant) => participant.role == RoleDto.owner).toList();
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -343,9 +382,9 @@ class _EventScreenState extends State<EventScreen>
           sectionHeader(label, context),
           Column(
             children: List.generate(
-              participants.length,
+              participantsList.length,
               (index) {
-                ParticipantDto participant = participants[index];
+                ParticipantDto participant = participantsList[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: ParticipantRow(
@@ -362,10 +401,8 @@ class _EventScreenState extends State<EventScreen>
     }
   }
 
-  Widget pendingMembersSection(
-    BuildContext context,
-    List<PendingMemberDto> participants,
-  ) {
+  Widget pendingMembersSection(BuildContext context,
+      List<PendingMemberDto> participants, String requestId) {
     if (participants.isEmpty) {
       return const SizedBox(width: 0);
     } else {
@@ -391,7 +428,7 @@ class _EventScreenState extends State<EventScreen>
                         participant.role,
                         participant.adultUserId,
                         participant.memberId,
-                        participant.id,
+                        requestId,
                       );
                     },
                     onDecline: () {
@@ -400,7 +437,7 @@ class _EventScreenState extends State<EventScreen>
                         participant.role,
                         participant.adultUserId,
                         participant.memberId,
-                        participant.id,
+                        requestId,
                       );
                     },
                   ),
@@ -460,20 +497,23 @@ class _EventScreenState extends State<EventScreen>
     });
     _viewModel
         .updatePendingMembers(
-          UpdateJoinStatusDto(
-            participantUserId: userId,
-            participantMemberId: memberId,
-            role: role,
-            state: accept ? JoinStatusDto.accepted : JoinStatusDto.declined,
-          ),
-          requestId,
-        )
-        .whenComplete(() => isDeleting = true)
-        .then(
-          (value) => {},
-          onError: (error) => {
-            snackbar((error as DioException).message ?? "Something went wrong"),
-          },
-        );
+      UpdateJoinStatusDto(
+        participantUserId: userId,
+        participantMemberId: memberId,
+        role: role,
+        state: accept ? JoinStatusDto.accepted : JoinStatusDto.declined,
+      ),
+      requestId,
+    )
+        .whenComplete(() {
+      setState(() {
+        isDeleting = false;
+      });
+    }).then(
+      (value) => {},
+      onError: (error) => {
+        snackbar((error as DioException).message ?? "Something went wrong"),
+      },
+    );
   }
 }
