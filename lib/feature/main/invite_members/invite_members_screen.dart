@@ -7,16 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
+import 'package:kidventory_flutter/core/ui/component/csv_card.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
-import 'package:kidventory_flutter/feature/main/add_members/add_members_screen.dart';
-import 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/roster/roster_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 class InviteMembersScreen extends StatefulWidget {
@@ -30,8 +28,6 @@ class InviteMembersScreen extends StatefulWidget {
 
 class _InviteMembersScreenState extends State<InviteMembersScreen>
     with MessageMixin, NavigationMixin, PickerMixin {
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
   late final EventScreenViewModel _viewModel;
 
   @override
@@ -101,8 +97,10 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
                           padding: const EdgeInsets.only(top: 32.0),
                           child: inviteLinkSection(context),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 32),
                         uploadCSVButton(context),
+                        const SizedBox(height: 16),
+                        _csvMemberListBuilder(context),
                       ],
                     ),
                   ),
@@ -306,50 +304,61 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
     return SizedBox(
       width: 800,
       height: 40,
-      child: OutlinedButton(
-          onPressed: () => {
-                pushSheet(
-                  ChangeNotifierProvider<EventScreenViewModel>.value(
-                    value: _viewModel,
-                    child: Consumer<EventScreenViewModel>(
-                      builder: (_, model, __) {
-                        return AddMembersScreen(
-                          filesAndParticipants:
-                              model.state.filesAndParticipants,
-                          onDownloadTemplateClick: () async {
-                            await _viewModel.downloadCSVTemplate();
-                          },
-                          onImportCSVClick: () async {
-                            File? file = await csvPicker();
+      child: Consumer<EventScreenViewModel>(
+        builder: (_, model, __) {
+          return OutlinedButton(
+            onPressed: () async {
+              File? file = await csvPicker();
 
-                            if (file != null) {
-                              _viewModel.importCSV(file);
-                            }
-                          },
-                          onRemoveCSVClick: (file) =>
-                              _viewModel.removeCSV(file),
-                          onCSVFileClick: (file) => pushSheet(RosterScreen(
-                              members: model.state.filesAndParticipants[file] ??
-                                  List.empty())),
-                        );
-                      },
-                    ),
+              if (file != null) {
+                _viewModel.importCSV(file);
+              }
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Upload CSV",
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(CupertinoIcons.add_circled),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _csvMemberListBuilder(BuildContext context) {
+    return Consumer<EventScreenViewModel>(
+      builder: (_, model, __) {
+        return Column(
+          children: List.generate(
+            _viewModel.state.filesAndParticipants.length,
+            (index) {
+              File file =
+                  _viewModel.state.filesAndParticipants.keys.elementAt(index);
+              return Column(
+                children: [
+                  CSVCard(
+                    file: file,
+                    members: _viewModel.state.filesAndParticipants[file]!,
+                    onClick: () => pushSheet(RosterScreen(
+                        members: _viewModel.state.filesAndParticipants[file] ??
+                            List.empty())),
+                    onRemoveClick: () => _viewModel.removeCSV(file),
                   ),
-                )
-              },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Upload CSV",
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(CupertinoIcons.add_circled),
-            ],
-          )),
+                  const SizedBox(height: 8.0),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
