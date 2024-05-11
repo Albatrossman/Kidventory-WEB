@@ -39,9 +39,9 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
     super.initState();
     _viewModel = Provider.of<EventScreenViewModel>(context, listen: false);
     _isPrivate = _viewModel.state.event?.inviteLink?.isPrivate ?? true;
-    _expirationDate = _viewModel.state.event?.inviteLink?.expiryDate ??
+    _expirationDate = _viewModel.state.event?.inviteLink?.expirationDate ??
         DateTime.now().add(const Duration(days: 1));
-    _canExpire = _viewModel.state.event?.inviteLink?.expiryDate != null;
+    _canExpire = _viewModel.state.event?.inviteLink?.expirationDate != null;
   }
 
   final MaterialStateProperty<Icon?> _thumbIcon =
@@ -369,6 +369,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
         .whenComplete(() {
       setState(() {
         _updating = false;
+        _viewModel.refresh(_viewModel.state.event?.id ?? "");
       });
     }).then(
       (value) => pop(),

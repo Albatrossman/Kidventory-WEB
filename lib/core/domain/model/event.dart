@@ -38,7 +38,7 @@ enum PeriodUnit { day, week, monthDay, monthDate }
 
 class InviteLink {
   final String? eventId;
-  final DateTime? expiryDate;
+  final DateTime? expirationDate;
   final String? id;
   final bool isActive;
   final bool isPrivate;
@@ -46,7 +46,7 @@ class InviteLink {
 
   InviteLink({
     this.eventId,
-    this.expiryDate,
+    this.expirationDate,
     this.id,
     required this.isActive,
     required this.isPrivate,

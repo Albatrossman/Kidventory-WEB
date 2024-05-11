@@ -5,7 +5,7 @@ part 'invite_link_dto.g.dart';
 @JsonSerializable()
 class InviteLinkDto {
   final String? eventId;
-  final DateTime? expiryDate;
+  final DateTime? expirationDate;
   final String? id;
   final bool? isActive;
   final bool? isPrivate;
@@ -13,7 +13,7 @@ class InviteLinkDto {
 
   InviteLinkDto({
     this.eventId,
-    this.expiryDate,
+    this.expirationDate,
     this.id,
     this.isActive,
     this.isPrivate,
