@@ -44,6 +44,12 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
     _canExpire = _viewModel.state.event?.inviteLink?.expirationDate != null;
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _viewModel.removeAllCSV();
+  }
+
   final MaterialStateProperty<Icon?> _thumbIcon =
       MaterialStateProperty.resolveWith<Icon?>(
     (Set<MaterialState> states) {
@@ -303,25 +309,32 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
       child: OutlinedButton(
           onPressed: () => {
                 pushSheet(
-                  Consumer<EditEventScreenViewModel>(builder: (_, model, __) {
-                    return AddMembersScreen(
-                      filesAndParticipants: model.state.filesAndParticipants,
-                      onDownloadTemplateClick: () async {
-                        await _viewModel.downloadCSVTemplate();
-                      },
-                      onImportCSVClick: () async {
-                        File? file = await csvPicker();
+                  ChangeNotifierProvider<EventScreenViewModel>.value(
+                    value: _viewModel,
+                    child: Consumer<EventScreenViewModel>(
+                      builder: (_, model, __) {
+                        return AddMembersScreen(
+                          filesAndParticipants:
+                              model.state.filesAndParticipants,
+                          onDownloadTemplateClick: () async {
+                            await _viewModel.downloadCSVTemplate();
+                          },
+                          onImportCSVClick: () async {
+                            File? file = await csvPicker();
 
-                        if (file != null) {
-                          _viewModel.importCSV(file);
-                        }
+                            if (file != null) {
+                              _viewModel.importCSV(file);
+                            }
+                          },
+                          onRemoveCSVClick: (file) =>
+                              _viewModel.removeCSV(file),
+                          onCSVFileClick: (file) => pushSheet(RosterScreen(
+                              members: model.state.filesAndParticipants[file] ??
+                                  List.empty())),
+                        );
                       },
-                      onRemoveCSVClick: (file) => _viewModel.removeCSV(file),
-                      onCSVFileClick: (file) => pushSheet(RosterScreen(
-                          members: model.state.filesAndParticipants[file] ??
-                              List.empty())),
-                    );
-                  }),
+                    ),
+                  ),
                 )
               },
           child: Row(
@@ -354,13 +367,17 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
     );
   }
 
-  void _updateSettings() {
+  void _updateSettings() async {
     setState(() {
       _updating = true;
     });
-    _viewModel
+    String eventId = _viewModel.state.event?.id ?? "";
+    if (_viewModel.state.filesAndParticipants.isNotEmpty) {
+      await _viewModel.addMembers(eventId);
+    }
+    await _viewModel
         .updateInviteLink(
-            _viewModel.state.event?.id ?? "",
+            eventId,
             UpdateInviteLinkDto(
                 isActive:
                     _expirationDate.isBefore(DateTime.now()) ? false : true,
@@ -369,7 +386,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
         .whenComplete(() {
       setState(() {
         _updating = false;
-        _viewModel.refresh(_viewModel.state.event?.id ?? "");
+        _viewModel.refresh(eventId);
       });
     }).then(
       (value) => pop(),

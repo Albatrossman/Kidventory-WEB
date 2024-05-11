@@ -9,6 +9,7 @@ import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
 import 'package:kidventory_flutter/core/data/model/pending_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
+import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
@@ -67,6 +68,7 @@ class _EventScreenState extends State<EventScreen>
     _viewModel = EventScreenViewModel(
       getIt<EventApiService>(),
       getIt<Downloader>(),
+      getIt<CSVParser>(),
     );
     _viewModel.refresh(widget.id).then(
           (value) => {},

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/mapper/member_mapper.dart';
+import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
@@ -13,15 +15,18 @@ import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_invite_link_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_join_status_dto.dart';
+import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
+import 'package:kidventory_flutter/core/domain/model/member.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_state.dart';
 
 class EventScreenViewModel extends ChangeNotifier {
   final EventApiService _eventApiService;
   final Downloader downloader;
+  final CSVParser _parser;
 
-  EventScreenViewModel(this._eventApiService, this.downloader);
+  EventScreenViewModel(this._eventApiService, this.downloader, this._parser);
 
   EventScreenState _state = EventScreenState();
 
@@ -63,6 +68,16 @@ class EventScreenViewModel extends ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> addMembers(String eventId) async {
+    List<Member> allMembers =
+        state.filesAndParticipants.values.expand((list) => list).toList();
+    await _eventApiService.addMembers(
+      eventId,
+      AddMemberDto(
+          participants: allMembers.map((member) => member.toData()).toList()),
+    );
   }
 
   Future<void> getMembers() async {
@@ -211,18 +226,28 @@ class EventScreenViewModel extends ChangeNotifier {
   }
 
   void importCSV(File file) {
-    List<File> files = List<File>.from(state.files);
-    files.add(file);
-    _update(files: files);
+    List<Member> participants = _parser.parse(file.readAsStringSync());
+    Map<File, List<Member>> filesAndParticipants =
+        Map.from(state.filesAndParticipants);
+    filesAndParticipants[file] = participants;
+
+    _update(filesAndParticipants: filesAndParticipants);
   }
 
   void removeCSV(File file) {
-    List<File> updatedFiles = state.files.where((f) => f != file).toList();
-    _update(files: updatedFiles);
+    Map<File, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);
+    filesAndParticipants.remove(file);
+
+    _update(filesAndParticipants: filesAndParticipants);
+  }
+
+  void removeAllCSV() {
+    _update(filesAndParticipants: <File, List<Member>>{});
   }
 
   Future<void> downloadCSVTemplate() async {
-    return await downloader.download("http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
+    return await downloader.download(
+        "http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
   }
 
   void _update({
@@ -230,6 +255,7 @@ class EventScreenViewModel extends ChangeNotifier {
     EventDto? event,
     List<ParticipantDto>? participants,
     Map<RoleDto, List<ParticipantDto>>? participantsByRole,
+    Map<File, List<Member>>? filesAndParticipants,
     List<ParticipantDto>? updatedAttendances,
     List<EventSessionDto>? sessions,
     EventSessionDto? selectedSession,
@@ -241,6 +267,7 @@ class EventScreenViewModel extends ChangeNotifier {
       event: event,
       participants: participants,
       participantsByRole: participantsByRole,
+      filesAndParticipants: filesAndParticipants,
       updatedAttendances: updatedAttendances,
       sessions: sessions,
       selectedSession: selectedSession,
