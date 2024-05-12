@@ -22,7 +22,7 @@ import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/invite_members/invite_members_screen.dart';
-import 'package:kidventory_flutter/feature/session_picker/session_picker.dart';
+import 'package:kidventory_flutter/feature/main/session_picker/session_picker.dart';
 import 'package:provider/provider.dart';
 
 class EventScreen extends StatefulWidget {
@@ -36,8 +36,7 @@ class EventScreen extends StatefulWidget {
   }
 }
 
-class _EventScreenState extends State<EventScreen>
-    with MessageMixin, NavigationMixin {
+class _EventScreenState extends State<EventScreen> with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
 
   bool isLoading = false;
@@ -45,9 +44,7 @@ class _EventScreenState extends State<EventScreen>
 
   RoleDto? userRole() => _viewModel.state.participants.isEmpty
       ? null
-      : _viewModel.state.participants
-          .firstWhere((element) => element.role == RoleDto.owner)
-          .role;
+      : _viewModel.state.participants.firstWhere((element) => element.role == RoleDto.owner).role;
 
   bool canDelete() => userRole()?.canDeleteEvent ?? false;
 
@@ -69,10 +66,16 @@ class _EventScreenState extends State<EventScreen>
       getIt<Downloader>(),
     );
     _viewModel.refresh(widget.id).then(
-          (value) => {},
-          onError: (error) => snackbar(
-              (error as DioException).message ?? "Something went wrong"),
-        );
+      (value) => {},
+      onError: (error) {
+        String message = 'Something went wrong';
+        if (error is DioException) {
+          message = error.message ?? message;
+        }
+
+        snackbar(message);
+      },
+    );
   }
 
   @override
@@ -111,22 +114,19 @@ class _EventScreenState extends State<EventScreen>
                                 attendanceButton(
                                   context,
                                   _viewModel.state.event?.id ?? "",
-                                  _viewModel.state.event?.nearestSession.id ??
-                                      "",
+                                  _viewModel.state.event?.nearestSession.id ?? "",
                                 ),
                               if (canInviteMembers())
                                 pendingMembersSection(
                                   context,
                                   model.state.pendingMembers.isEmpty
                                       ? []
-                                      : model
-                                          .state.pendingMembers.first.members,
+                                      : model.state.pendingMembers.first.members,
                                   model.state.pendingMembers.isEmpty
                                       ? ""
                                       : model.state.pendingMembers.first.id,
                                 ),
-                              membersList(
-                                  context, model.state.participantsByRole ?? {})
+                              membersList(context, model.state.participantsByRole ?? {})
                             ],
                           ),
                         ),
@@ -214,8 +214,8 @@ class _EventScreenState extends State<EventScreen>
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: _viewModel.state.event?.imageUrl ?? "",
-                  placeholder: (context, url) => Icon(CupertinoIcons.photo,
-                      color: Theme.of(context).colorScheme.primary),
+                  placeholder: (context, url) =>
+                      Icon(CupertinoIcons.photo, color: Theme.of(context).colorScheme.primary),
                   errorWidget: (context, url, error) => Icon(
                     CupertinoIcons.photo,
                     color: Theme.of(context).colorScheme.primary,
@@ -277,8 +277,10 @@ class _EventScreenState extends State<EventScreen>
                     Text(
                       model.state.selectedSession?.startDateTime.formatDate() ??
                           DateTime.now().formatDate(),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
                     ),
                     const Spacer(),
                     Text(
@@ -305,9 +307,7 @@ class _EventScreenState extends State<EventScreen>
                         sessions: model.state.sessions,
                         selected: model.state.selectedSession,
                         onSessionPicked: (session) {
-                          _viewModel
-                              .changeSession(session)
-                              .whenComplete(() => pop());
+                          _viewModel.changeSession(session).whenComplete(() => pop());
                         },
                       );
                     },
@@ -329,8 +329,7 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget attendanceButton(
-      BuildContext context, String eventId, String sessionId) {
+  Widget attendanceButton(BuildContext context, String eventId, String sessionId) {
     return SizedBox(
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
@@ -354,13 +353,10 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget membersList(BuildContext context,
-      Map<RoleDto, List<ParticipantDto>> participantsByRole) {
+  Widget membersList(BuildContext context, Map<RoleDto, List<ParticipantDto>> participantsByRole) {
     List<Widget> sections = [];
     participantsByRole.forEach((role, participants) {
-      
-      sections.add(
-          participantsSection(context, role.name.capitalize(), participants));
+      sections.add(participantsSection(context, role.name.capitalize(), participants));
     });
 
     return Column(children: sections);
@@ -374,7 +370,9 @@ class _EventScreenState extends State<EventScreen>
     if (participants.isEmpty) {
       return const SizedBox(width: 0);
     } else {
-      List<ParticipantDto> participantsList = canViewParticipants() ? participants : participants.where((participant) => participant.role == RoleDto.owner).toList();
+      List<ParticipantDto> participantsList = canViewParticipants()
+          ? participants
+          : participants.where((participant) => participant.role == RoleDto.owner).toList();
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,8 +399,8 @@ class _EventScreenState extends State<EventScreen>
     }
   }
 
-  Widget pendingMembersSection(BuildContext context,
-      List<PendingMemberDto> participants, String requestId) {
+  Widget pendingMembersSection(
+      BuildContext context, List<PendingMemberDto> participants, String requestId) {
     if (participants.isEmpty) {
       return const SizedBox(width: 0);
     } else {
@@ -490,8 +488,8 @@ class _EventScreenState extends State<EventScreen>
         );
   }
 
-  void _onUpdatePendingMember(bool accept, RoleDto role, String userId,
-      String memberId, String requestId) async {
+  void _onUpdatePendingMember(
+      bool accept, RoleDto role, String userId, String memberId, String requestId) async {
     setState(() {
       isDeleting = true;
     });

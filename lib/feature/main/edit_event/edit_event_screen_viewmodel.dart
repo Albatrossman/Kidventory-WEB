@@ -30,21 +30,32 @@ class EditEventScreenViewModel extends ChangeNotifier {
   EditEventScreenViewModel(this._parser, this._eventApiService, this.downloader);
 
   EditEventScreenState _state = EditEventScreenState();
+
   EditEventScreenState get state => _state;
 
   Future<String> createEvent(String name, String? imageFile, DateTime startDate) async {
+    DateTime startDateTime = state.repeat.startDatetime.copyWith(
+      year: startDate.year,
+      month: startDate.month,
+      day: startDate.day,
+      hour: state.startTime.hour,
+      minute: state.startTime.minute
+    );
+    DateTime endDateTime = state.repeat.endDatetime.copyWith(
+      hour: state.endTime.hour,
+      minute: state.endTime.minute
+    );
     try {
       CreateEventDto createEvent = CreateEventDto(
         imageFile: imageFile,
         name: name,
         description: state.description,
-        repeat: state.repeat.copy(
-          startDatetime: state.repeat.startDatetime.copyWith(
-            year: startDate.year,
-            month: startDate.month,
-            day: startDate.day,
-          ),
-        ).toDto(),
+        repeat: state.repeat
+            .copy(
+              startDatetime: state.allDay ? startDateTime.atStartOfDay : startDateTime,
+              endDatetime: state.allDay ? endDateTime.atEndOfDay : endDateTime,
+            )
+            .toDto(),
         timeMode: state.allDay ? TimeMode.allDay : TimeMode.halting,
         onlineLocation: state.onlineLocation?.toData(),
         color: state.color,
@@ -102,8 +113,9 @@ class EditEventScreenViewModel extends ChangeNotifier {
 
   void selectedEndTime(TimeOfDay time) {
     _update(
-        repeat: state.repeat.copy(endDatetime: state.repeat.endDatetime.copyWithTime(time)),
-        endTime: time);
+      repeat: state.repeat.copy(endDatetime: state.repeat.endDatetime.copyWithTime(time)),
+      endTime: time,
+    );
   }
 
   void selectRepeatUnit(RepeatUnit unit) {
@@ -160,7 +172,8 @@ class EditEventScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> downloadCSVTemplate() async {
-    return await downloader.download("http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
+    return await downloader.download(
+        "http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
   }
 
   void _update({

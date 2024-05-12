@@ -23,26 +23,32 @@ class RepeatScreen extends StatefulWidget {
   }
 }
 
-class _RepeatScreenState extends State<RepeatScreen>
-    with PickerMixin, MessageMixin, NavigationMixin {
+class _RepeatScreenState extends State<RepeatScreen> with PickerMixin, MessageMixin, NavigationMixin {
   final FixedExtentScrollController _periodController = FixedExtentScrollController();
+  final FixedExtentScrollController _unitController = FixedExtentScrollController();
   final TextEditingController _occurrenceController = TextEditingController();
   late final EditEventScreenViewModel _viewModel;
   RepeatEnd _selectedRepeatEnd = RepeatEnd.onDate;
+  late DateTime _selectedEndDate;
   int period = 1;
   List<WeekDay> daysOfWeek = [];
 
   @override
   void initState() {
     _viewModel = Provider.of<EditEventScreenViewModel>(context, listen: false);
-    _occurrenceController.text = "1";
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // This will check if the controller is attached and if not, will not attempt to jump
-      if (_periodController.hasClients) {
-        _periodController.jumpToItem(_viewModel.state.repeat.period - 1);
-      }
+    setState(() {
+      _occurrenceController.text = "1";
+      _selectedEndDate = _viewModel.state.repeat.startDatetime.add(const Duration(days: 365));
+      _selectedRepeatEnd = _viewModel.state.repeat.endsOnMode;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _viewModel.selectRepeatUnit(_viewModel.state.repeat.unit);
+        if (_periodController.hasClients) {
+          _periodController.jumpToItem(_viewModel.state.repeat.period - 1);
+          _unitController.jumpToItem(_viewModel.state.repeat.unit.index);
+        }
+      });
     });
   }
 
@@ -58,7 +64,7 @@ class _RepeatScreenState extends State<RepeatScreen>
               _viewModel.state.selectedRepeatUnit,
               daysOfWeek,
               _selectedRepeatEnd,
-              selectedDate,
+              _selectedEndDate,
               _occurrenceController.text,
             ),
             pop()
@@ -107,8 +113,8 @@ class _RepeatScreenState extends State<RepeatScreen>
                           height: 100,
                           child: CupertinoPicker(
                             itemExtent: 32,
-                            onSelectedItemChanged: (int index) =>
-                                _viewModel.selectRepeatUnit(RepeatUnit.values.elementAt(index)),
+                            scrollController: _unitController,
+                            onSelectedItemChanged: (int index) => _viewModel.selectRepeatUnit(RepeatUnit.values.elementAt(index)),
                             children: [
                               for (RepeatUnit unit in RepeatUnit.values)
                                 Center(child: Text(unit.label)),
@@ -134,6 +140,7 @@ class _RepeatScreenState extends State<RepeatScreen>
                                   const Text('Repeats on'),
                                   const SizedBox(height: 8.0),
                                   WeekdayPicker(
+                                    key: ValueKey<List<WeekDay>>(model.state.repeat.daysOfWeek ?? [WeekDay.now()]),
                                     initialSelectedDays: model.state.repeat.daysOfWeek ?? [WeekDay.now()],
                                     onSelectionChanged: (days) => {daysOfWeek = days},
                                   ),
@@ -160,14 +167,18 @@ class _RepeatScreenState extends State<RepeatScreen>
                                 datePicker(
                                   context,
                                   firstDate: _viewModel.state.repeat.startDatetime,
-                                  initialDateTime: _viewModel.state.repeat.startDatetime
-                                      .add(const Duration(days: 365)),
+                                  initialDateTime: _selectedEndDate,
+                                  onSelectedDate: (date) {
+                                    setState(() {
+                                      _selectedEndDate = date;
+                                    });
+                                  },
                                 )
                               },
                               child: AppCard(
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text(selectedDate.formatDate()),
+                                  child: Text(_selectedEndDate.formatDate()),
                                 ),
                               ),
                             ),

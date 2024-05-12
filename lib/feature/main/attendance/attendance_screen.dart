@@ -1,4 +1,3 @@
-import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/mapper/attendance_mapper.dart';
@@ -23,8 +22,7 @@ class AttendanceScreen extends StatefulWidget {
   }
 }
 
-class _AttendanceScreenState extends State<AttendanceScreen>
-    with MessageMixin, NavigationMixin {
+class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, NavigationMixin {
   late final EventScreenViewModel _viewModel;
   bool _updating = false;
   bool _loading = false;
@@ -89,26 +87,18 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall
-                                ?.copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.outline),
+                                ?.copyWith(color: Theme.of(context).colorScheme.outline),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _viewModel.state.selectedSession?.startDateTime
-                                    .formatDate() ??
-                                "",
+                            _viewModel.state.selectedSession?.startDateTime.formatDate() ?? "",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
-                                ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer),
+                                ?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
                           ),
                           const SizedBox(height: 16),
-                          Consumer<EventScreenViewModel>(
-                              builder: (_, model, __) {
+                          Consumer<EventScreenViewModel>(builder: (_, model, __) {
                             return Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -122,16 +112,14 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                 Expanded(
                                   child: _buildStat(
                                     context,
-                                    CupertinoIcons
-                                        .person_crop_circle_badge_xmark,
+                                    CupertinoIcons.person_crop_circle_badge_xmark,
                                     '${model.state.participantsByRole?[RoleDto.participant]?.where((element) => element.attendance == AttendanceDto.absent).length ?? 0} Absent',
                                   ),
                                 ),
                                 Expanded(
                                   child: _buildStat(
                                     context,
-                                    CupertinoIcons
-                                        .person_crop_circle_badge_checkmark,
+                                    CupertinoIcons.person_crop_circle_badge_checkmark,
                                     '${model.state.participantsByRole?[RoleDto.participant]?.where((element) => element.attendance == AttendanceDto.present).length ?? 0} Present',
                                   ),
                                 ),
@@ -144,13 +132,9 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                   ),
                   const SizedBox(height: 16),
                   ClipRRect(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(8.0)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
                     child: Container(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surfaceVariant
-                          .withAlpha(48),
+                      color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(48),
                       child: Column(
                         children: [
                           const SizedBox(height: 8),
@@ -162,57 +146,36 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelMedium
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outlineVariant),
+                                    ?.copyWith(color: Theme.of(context).colorScheme.outlineVariant),
                               ),
                               const Expanded(child: SizedBox()),
                               CupertinoButton(
-                                onPressed: () => _viewModel
-                                    .editAllAttendances(AttendanceDto.late),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                onPressed: () => _viewModel.editAllAttendances(AttendanceDto.late),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
                                   'Late',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium
-                                      ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .outlineVariant),
+                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      color: Theme.of(context).colorScheme.outlineVariant),
                                 ),
                               ),
                               CupertinoButton(
-                                onPressed: () => _viewModel
-                                    .editAllAttendances(AttendanceDto.absent),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 12),
+                                onPressed: () =>
+                                    _viewModel.editAllAttendances(AttendanceDto.absent),
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
                                 child: Text(
                                   'Absent',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium
-                                      ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .outlineVariant),
+                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      color: Theme.of(context).colorScheme.outlineVariant),
                                 ),
                               ),
                               CupertinoButton(
-                                onPressed: () => _viewModel
-                                    .editAllAttendances(AttendanceDto.present),
+                                onPressed: () =>
+                                    _viewModel.editAllAttendances(AttendanceDto.present),
                                 padding: const EdgeInsets.only(right: 16),
                                 child: Text(
                                   'Present',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium
-                                      ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .outlineVariant),
+                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      color: Theme.of(context).colorScheme.outlineVariant),
                                 ),
                               ),
                             ],
@@ -224,18 +187,12 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                   ),
                   Expanded(
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(8.0)),
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8.0)),
                       child: Container(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceVariant
-                            .withAlpha(48),
+                        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(48),
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Consumer<EventScreenViewModel>(
-                            builder: (context, model, child) {
-                          return _participantsList(
-                              context, model.state.updatedAttendances);
+                        child: Consumer<EventScreenViewModel>(builder: (context, model, child) {
+                          return _participantsList(context, model.state.updatedAttendances);
                         }),
                       ),
                     ),
@@ -263,8 +220,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     );
   }
 
-  Widget _participantsList(
-      BuildContext context, List<ParticipantDto> participants) {
+  Widget _participantsList(BuildContext context, List<ParticipantDto> participants) {
     return ListView.builder(
       itemCount: participants.length,
       itemBuilder: (context, index) {

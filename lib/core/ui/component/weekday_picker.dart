@@ -21,7 +21,9 @@ class _WeekdayPickerState extends State<WeekdayPicker> {
   @override
   void initState() {
     super.initState();
-    _selectedDays = List.from(widget.initialSelectedDays);
+    setState(() {
+      _selectedDays = List.from(widget.initialSelectedDays);
+    });
   }
 
   @override
