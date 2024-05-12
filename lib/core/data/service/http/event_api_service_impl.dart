@@ -79,13 +79,23 @@ class EventApiServiceImpl extends EventApiService {
 
   @override
   Future<void> changeMemberRole(
-      String eventId, ChangeMembersRoleDto membersRole) {
-    throw UnimplementedError();
+      String eventId, ChangeMembersRoleDto membersRole) async {
+    try {
+      Response _ =
+          await client.dio.patch('events/$eventId/members/changeRole', data: membersRole.toJson());
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
-  Future<void> deleteMember(String eventId, String memberId) {
-    throw UnimplementedError();
+  Future<void> deleteMember(String eventId, String memberId) async {
+    try {
+      Response _ =
+          await client.dio.delete('events/$eventId/members/$memberId');
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override

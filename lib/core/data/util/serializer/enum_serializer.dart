@@ -8,7 +8,7 @@ import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
 
-class EnumSerializer{
+class EnumSerializer {
   static final Map<Type, List<dynamic>> _enumValues = {
     TimeMode: TimeMode.values,
     EventColor: EventColor.values,
@@ -30,7 +30,8 @@ class EnumSerializer{
 
   static RepeatUnit repeatUnitFromJson(int index) {
     if (index < 0 || index >= RepeatUnit.values.length) {
-      throw ArgumentError('Index out of bounds for RepeatUnit decoding: $index');
+      throw ArgumentError(
+          'Index out of bounds for RepeatUnit decoding: $index');
     }
     return RepeatUnit.values[index];
   }
@@ -67,16 +68,26 @@ class EnumSerializer{
 
   static EventColor eventColorFromJson(int index) {
     if (index < 0 || index >= EventColor.values.length) {
-      throw ArgumentError('Index out of bounds for EventColor decoding: $index');
+      throw ArgumentError(
+          'Index out of bounds for EventColor decoding: $index');
     }
     return EventColor.values[index];
   }
 
   static AttendanceDto attendanceFromJson(int index) {
     if (index < 0 || index >= AttendanceDto.values.length) {
-      throw ArgumentError('Index out of bounds for AttendanceDto decoding: $index');
+      throw ArgumentError(
+          'Index out of bounds for AttendanceDto decoding: $index');
     }
     return AttendanceDto.values[index];
+  }
+
+  static RoleDto? optionalRoleFromJson(int? index) {
+    if (index == null) return null;
+    if (index < 0 || index >= RoleDto.values.length) {
+      throw ArgumentError('Index out of bounds for RoleDto decoding: $index');
+    }
+    return RoleDto.values[index];
   }
 
   static RoleDto roleFromJson(int index) {

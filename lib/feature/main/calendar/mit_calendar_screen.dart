@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
@@ -129,7 +130,10 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                     onEventTap: (events, date) {
                       if (events.isNotEmpty) {
                         final session = events.first.event as SessionDto;
-                        push(EventScreen(id: session.eventId));
+                        push(EventScreen(
+                          id: session.eventId,
+                          role: session.role ?? RoleDto.participant,
+                        ));
                       }
                     },
                     headerStyle: HeaderStyle(
@@ -149,12 +153,13 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                     onEventTap: (events, date) {
                       if (events.isNotEmpty) {
                         final session = events.first.event as SessionDto;
-                        push(EventScreen(id: session.eventId));
+                        push(EventScreen(
+                          id: session.eventId,
+                          role: session.role ?? RoleDto.participant,
+                        ));
                       }
                     },
-                    onDateTap: (date) {
-                      
-                    },
+                    onDateTap: (date) {},
                     weekNumberBuilder: (firstDayOfWeek) {
                       //this is to remove the confusing week number above the time
                       return null;
@@ -173,7 +178,10 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                     key: monthViewKey,
                     onEventTap: (event, date) {
                       final session = event.event as SessionDto;
-                      push(EventScreen(id: session.eventId));
+                      push(EventScreen(
+                        id: session.eventId,
+                        role: session.role ?? RoleDto.participant,
+                      ));
                     },
                     onCellTap: (events, date) {
                       setState(() {

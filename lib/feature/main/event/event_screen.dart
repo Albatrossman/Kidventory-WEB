@@ -16,9 +16,11 @@ import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
 import 'package:kidventory_flutter/core/ui/component/participant_row.dart';
 import 'package:kidventory_flutter/core/ui/component/pending_member_row.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 import 'package:kidventory_flutter/core/ui/util/extension/string_extension.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
+import 'package:kidventory_flutter/core/ui/util/mixin/picker_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/attendance/attendance_screen.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen_viewmodel.dart';
@@ -27,9 +29,10 @@ import 'package:kidventory_flutter/feature/session_picker/session_picker.dart';
 import 'package:provider/provider.dart';
 
 class EventScreen extends StatefulWidget {
-  const EventScreen({super.key, required this.id});
+  const EventScreen({super.key, required this.id, required this.role});
 
   final String id;
+  final RoleDto role;
 
   @override
   State<StatefulWidget> createState() {
@@ -38,17 +41,17 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen>
-    with MessageMixin, NavigationMixin {
+    with MessageMixin, NavigationMixin, PickerMixin {
   late final EventScreenViewModel _viewModel;
 
   bool isLoading = false;
   bool isDeleting = false;
 
-  RoleDto? userRole() => _viewModel.state.participants.isEmpty
-      ? null
-      : _viewModel.state.participants
-          .firstWhere((element) => element.role == RoleDto.owner)
-          .role;
+  RoleDto? userRole() => widget.role;
+  // ? null
+  // : _viewModel.state.participants
+  //     .firstWhere((element) => element.role == RoleDto.owner)
+  //     .role;
 
   bool canDelete() => userRole()?.canDeleteEvent ?? false;
 
@@ -360,7 +363,6 @@ class _EventScreenState extends State<EventScreen>
       Map<RoleDto, List<ParticipantDto>> participantsByRole) {
     List<Widget> sections = [];
     participantsByRole.forEach((role, participants) {
-      
       sections.add(
           participantsSection(context, role.name.capitalize(), participants));
     });
@@ -376,7 +378,11 @@ class _EventScreenState extends State<EventScreen>
     if (participants.isEmpty) {
       return const SizedBox(width: 0);
     } else {
-      List<ParticipantDto> participantsList = canViewParticipants() ? participants : participants.where((participant) => participant.role == RoleDto.owner).toList();
+      List<ParticipantDto> participantsList = canViewParticipants()
+          ? participants
+          : participants
+              .where((participant) => participant.role == RoleDto.owner)
+              .toList();
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,7 +398,7 @@ class _EventScreenState extends State<EventScreen>
                   child: ParticipantRow(
                     avatarUrl: participant.avatarUrl,
                     name: "${participant.firstName} ${participant.lastName}",
-                    onClick: () => {},
+                    onClick: () => {_onMemberClick(context, participant)},
                   ),
                 );
               },
@@ -479,6 +485,26 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
+  void removeMemberConfirmationDialog(String id) {
+    dialog(
+      const Text("Remove Member"),
+      const Text(
+          "They will be permanently removed from the current and all future sessions"),
+      [
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: () => {Navigator.pop(context)},
+          child: const Text("Cancel"),
+        ),
+        CupertinoDialogAction(
+          isDestructiveAction: true,
+          onPressed: () => {Navigator.pop(context), _onDeleteUser(id)},
+          child: const Text("Remove"),
+        ),
+      ],
+    );
+  }
+
   void _onDelete(BuildContext context, String id) async {
     pop();
     setState(() {
@@ -490,6 +516,169 @@ class _EventScreenState extends State<EventScreen>
             snackbar((error as DioException).message ?? "Something went wrong"),
           },
         );
+  }
+
+  void _onMemberClick(BuildContext context, ParticipantDto participant) {
+    pushSmallSheet(
+      ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+          child: Container(
+            height:
+                (!participant.isSameAsUser() && widget.role == RoleDto.owner ||
+                        widget.role == RoleDto.admin)
+                    ? 350
+                    : 200,
+            padding: const EdgeInsets.only(top: 6),
+            color: CupertinoColors.systemBackground.resolveFrom(context),
+            child: Column(
+              children: [
+                // Header with done button
+                const SheetHeader(
+                  title: SizedBox(),
+                ),
+                // Date picker
+                _memberOptionsBuilder(context, participant),
+
+                const SizedBox(
+                  height: 16,
+                )
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget _memberOptionsBuilder(
+    BuildContext context,
+    ParticipantDto participant,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: Colors.grey[200],
+                child: ClipOval(
+                  child: SizedBox.fromSize(
+                    child: CachedNetworkImage(
+                      imageUrl: participant.avatarUrl ?? "",
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const Icon(
+                        CupertinoIcons.person,
+                        size: 32,
+                      ),
+                      errorWidget: (context, url, error) => const Icon(
+                        CupertinoIcons.person,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${participant.firstName} ${participant.lastName}",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
+                  Text(
+                    participant.role.name.capitalize(),
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (!participant.isSameAsUser() && widget.role == RoleDto.owner ||
+              widget.role == RoleDto.admin)
+            SizedBox(
+              width: kIsWeb ? 350 : 600,
+              child: OutlinedButton(
+                onPressed: () {
+                  rolePicker(
+                    context,
+                    participant.role,
+                    (role) {
+                      _onChangeUserRole(participant.memberId, role);
+                    },
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        32.0), // specify the corner radius
+                  ),
+                  side:
+                      BorderSide(color: Theme.of(context).colorScheme.primary),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Change role",
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                    const Icon(CupertinoIcons.chevron_right)
+                  ],
+                ),
+              ),
+            ),
+          const SizedBox(height: 8),
+          if (!participant.isSameAsUser() && widget.role == RoleDto.owner ||
+              widget.role == RoleDto.admin)
+            SizedBox(
+              width: kIsWeb ? 350 : 600,
+              child: OutlinedButton(
+                onPressed: () {
+                  removeMemberConfirmationDialog(participant.memberId);
+                },
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        32.0), // specify the corner radius
+                  ),
+                  side: BorderSide(color: Theme.of(context).colorScheme.error),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Remove member",
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                    ),
+                    Icon(
+                      CupertinoIcons.trash,
+                      color: Theme.of(context).colorScheme.error,
+                    )
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   void _onUpdatePendingMember(bool accept, RoleDto role, String userId,
@@ -508,6 +697,40 @@ class _EventScreenState extends State<EventScreen>
       requestId,
     )
         .whenComplete(() {
+      setState(() {
+        isDeleting = false;
+      });
+    }).then(
+      (value) => {},
+      onError: (error) => {
+        snackbar((error as DioException).message ?? "Something went wrong"),
+      },
+    );
+  }
+
+  void _onChangeUserRole(String memberId, RoleDto newRole) async {
+    pop();
+    setState(() {
+      isDeleting = true;
+    });
+    _viewModel.changeMemberRole(memberId, newRole).whenComplete(() {
+      setState(() {
+        isDeleting = false;
+      });
+    }).then(
+      (value) => {},
+      onError: (error) => {
+        snackbar((error as DioException).message ?? "Something went wrong"),
+      },
+    );
+  }
+
+  void _onDeleteUser(String memberId) async {
+    pop();
+    setState(() {
+      isDeleting = true;
+    });
+    _viewModel.deleteMember(memberId).whenComplete(() {
       setState(() {
         isDeleting = false;
       });

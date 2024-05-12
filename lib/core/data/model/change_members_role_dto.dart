@@ -16,7 +16,7 @@ class ChangeMembersRoleDto {
 @JsonSerializable()
 class MemberRoleDto {
   final String memberId;
-  final String role;
+  final int role;
 
   MemberRoleDto({required this.memberId, required this.role});
 

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/ui/component/event_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/message_mixin.dart';
@@ -139,7 +140,7 @@ class _EventsScreenState extends State<EventsScreen>
                     name: event.name,
                     time:
                         "${DateFormat.jm().format(event.repeat.startDateTime.toLocal())} - ${DateFormat.jm().format(event.repeat.endDateTime.toLocal())}",
-                    onClick: () => {push(EventScreen(id: event.id))},
+                    onClick: () => {push(EventScreen(id: event.id, role: RoleDto.owner,))},
                     imageUrl: event.imageUrl,
                   );
                 },

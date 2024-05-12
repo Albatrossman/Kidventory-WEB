@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/mapper/member_mapper.dart';
 import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
+import 'package:kidventory_flutter/core/data/model/change_members_role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
 import 'package:kidventory_flutter/core/data/model/event_session_dto.dart';
 import 'package:kidventory_flutter/core/data/model/member_attendance_dto.dart';
@@ -199,6 +200,44 @@ class EventScreenViewModel extends ChangeNotifier {
     _update(updatedAttendances: updatedList);
   }
 
+  Future<void> changeMemberRole(String id, RoleDto newRole) async {
+    EventDto? event = state.event;
+    try {
+      final _ = await _eventApiService.changeMemberRole(event?.id ?? "", ChangeMembersRoleDto(memberRoles: [MemberRoleDto(memberId: id, role: newRole.index)]));
+      List<ParticipantDto> participants = await _eventApiService.getMembers(
+          event?.id ?? "", event?.nearestSession.id ?? "");
+      Map<RoleDto, List<ParticipantDto>> participantsByRole = groupBy(
+        participants,
+        (participant) => participant.role,
+      );
+      _update(
+        participants: participants,
+        participantsByRole: participantsByRole,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteMember(String id) async {
+    EventDto? event = state.event;
+    try {
+      final _ = await _eventApiService.deleteMember(_state.event?.id ?? "", id);
+      List<ParticipantDto> participants = await _eventApiService.getMembers(
+          event?.id ?? "", event?.nearestSession.id ?? "");
+      Map<RoleDto, List<ParticipantDto>> participantsByRole = groupBy(
+        participants,
+        (participant) => participant.role,
+      );
+      _update(
+        participants: participants,
+        participantsByRole: participantsByRole,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   void editAllAttendances(AttendanceDto attendance) {
     bool allAlreadySet =
         state.updatedAttendances.every((p) => p.attendance == attendance);
@@ -235,7 +274,8 @@ class EventScreenViewModel extends ChangeNotifier {
   }
 
   void removeCSV(File file) {
-    Map<File, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);
+    Map<File, List<Member>> filesAndParticipants =
+        Map.from(state.filesAndParticipants);
     filesAndParticipants.remove(file);
 
     _update(filesAndParticipants: filesAndParticipants);
