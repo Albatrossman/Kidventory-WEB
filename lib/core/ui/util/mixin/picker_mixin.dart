@@ -4,8 +4,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
-import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
+import 'package:kidventory_flutter/core/ui/component/multi_select_card.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 mixin PickerMixin<T extends StatefulWidget> on State<T> {
   DateTime selectedDate = DateTime.now();
@@ -33,29 +35,89 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
       showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return Container(
-            height: 300,
+          return ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+            ),
+            child: Container(
+              height: 300,
+              padding: const EdgeInsets.only(top: 6),
+              color: CupertinoColors.systemBackground.resolveFrom(context),
+              child: Column(
+                children: [
+                  // Header with done button
+                  _buildHeader(context, null,
+                      onDone: () => {
+                            if (onSelectedDate != null)
+                              {onSelectedDate(_unSavedSelectedDate)}
+                          }),
+                  // Date picker
+                  Expanded(
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.date,
+                      initialDateTime: initialDateTime ?? DateTime.now(),
+                      minimumDate: firstDate?.atStartOfDay ?? DateTime(1900),
+                      maximumDate: lastDate ?? DateTime(2100),
+                      onDateTimeChanged: (DateTime date) {
+                        setState(() {
+                          _unSavedSelectedDate = date;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  RoleDto? selectedRole = null;
+
+  void rolePicker(
+    BuildContext context,
+    RoleDto initialSelectedRole,
+    final void Function(RoleDto) onSelectedRole,
+  ) async {
+    selectedRole = initialSelectedRole;
+
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+          child: Container(
             padding: const EdgeInsets.only(top: 6),
             color: CupertinoColors.systemBackground.resolveFrom(context),
             child: Column(
               children: [
                 // Header with done button
-                _buildHeader(context, null,
-                    onDone: () => {
-                          if (onSelectedDate != null)
-                            {onSelectedDate(_unSavedSelectedDate)}
-                        }),
+                _buildHeader(context, "Select Role", onDone: null),
                 // Date picker
                 Expanded(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: initialDateTime ?? DateTime.now(),
-                    minimumDate: firstDate?.atStartOfDay ?? DateTime(1900),
-                    maximumDate: lastDate ?? DateTime(2100),
-                    onDateTimeChanged: (DateTime date) {
-                      setState(() {
-                        _unSavedSelectedDate = date;
-                      });
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: RoleDto.values.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      RoleDto role = RoleDto.values[index];
+                      bool isSelected = selectedRole == role;
+                      return MultiSelectCard(
+                        name: role.toString().split('.').last,
+                        isSelected: isSelected,
+                        onClick: () {
+                          onSelectedRole(selectedRole!);
+                          Navigator.pop(context);
+                        },
+                      );
                     },
                   ),
                 ),
@@ -64,10 +126,10 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
                 )
               ],
             ),
-          );
-        },
-      );
-    }
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildHeader(BuildContext context, String? title,
@@ -81,9 +143,13 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CupertinoButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.pop(context),
+          SizedBox(
+            width: 90,
+            child: CupertinoButton(
+              // padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
           if (title != null)
             DefaultTextStyle(
@@ -91,15 +157,19 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
                   Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
               child: Text(title),
             ),
-          CupertinoButton(
-            child: const Text('Done'),
-            onPressed: () {
-              if (onDone != null) {
-                onDone(); // Call the callback
-              }
-              Navigator.pop(context);
-            },
-          ),
+          if (onDone != null)
+            SizedBox(
+              width: 90,
+              child: CupertinoButton(
+                child: const Text('Done'),
+                onPressed: () {
+                  onDone(); // Call the callback
+                  Navigator.pop(context);
+                },
+              ),
+            )
+          else
+            const SizedBox(width: 90)
         ],
       ),
     );
@@ -125,9 +195,14 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
       );
     } else {
       showCupertinoModalPopup(
-          context: context,
-          builder: (BuildContext context) {
-            return Container(
+        context: context,
+        builder: (BuildContext context) {
+          return ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+            ),
+            child: Container(
               height: 300,
               color: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.only(top: 6),
@@ -167,8 +242,10 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
                   ),
                 ],
               ),
-            );
-          });
+            ),
+          );
+        },
+      );
     }
   }
 

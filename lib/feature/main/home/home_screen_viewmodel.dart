@@ -16,6 +16,7 @@ class HomeScreenViewModel extends ChangeNotifier {
   HomeScreenState get state => _state;
 
   void updateContent() async {
+    if (_state.loading) return;
     _update(loading: true);
     try {
       List<SessionDto> sessions = await _userApiService.getUpcomingSessions(DateTime.now(), 3);

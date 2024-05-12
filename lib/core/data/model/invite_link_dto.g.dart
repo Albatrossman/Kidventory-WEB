@@ -9,9 +9,9 @@ part of 'invite_link_dto.dart';
 InviteLinkDto _$InviteLinkDtoFromJson(Map<String, dynamic> json) =>
     InviteLinkDto(
       eventId: json['eventId'] as String?,
-      expiryDate: json['expiryDate'] == null
+      expirationDate: json['expirationDate'] == null
           ? null
-          : DateTime.parse(json['expiryDate'] as String),
+          : DateTime.parse(json['expirationDate'] as String),
       id: json['id'] as String?,
       isActive: json['isActive'] as bool?,
       isPrivate: json['isPrivate'] as bool?,
@@ -21,7 +21,7 @@ InviteLinkDto _$InviteLinkDtoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$InviteLinkDtoToJson(InviteLinkDto instance) =>
     <String, dynamic>{
       'eventId': instance.eventId,
-      'expiryDate': instance.expiryDate?.toIso8601String(),
+      'expirationDate': instance.expirationDate?.toIso8601String(),
       'id': instance.id,
       'isActive': instance.isActive,
       'isPrivate': instance.isPrivate,

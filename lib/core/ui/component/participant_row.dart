@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 
 class ParticipantRow extends StatelessWidget {
   final String? avatarUrl;
@@ -18,7 +19,8 @@ class ParticipantRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return Clickable(
+      onPressed: onClick,
       child: SizedBox(
         width: double.infinity,
         height: 48,

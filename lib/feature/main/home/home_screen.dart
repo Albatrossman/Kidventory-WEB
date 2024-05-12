@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
@@ -202,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen>
                     SessionDto session = model.state.upcomingSessions[index];
                     return SessionCard(
                       session: session,
-                      onClick: () => push(EventScreen(id: session.eventId)),
+                      onClick: () => push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant)),
                     );
                   },
                 ),

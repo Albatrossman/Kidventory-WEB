@@ -23,7 +23,7 @@ Map<String, dynamic> _$ChangeMembersRoleDtoToJson(
 MemberRoleDto _$MemberRoleDtoFromJson(Map<String, dynamic> json) =>
     MemberRoleDto(
       memberId: json['memberId'] as String,
-      role: json['role'] as String,
+      role: json['role'] as int,
     );
 
 Map<String, dynamic> _$MemberRoleDtoToJson(MemberRoleDto instance) =>

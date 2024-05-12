@@ -15,6 +15,7 @@ SessionDto _$SessionDtoFromJson(Map<String, dynamic> json) => SessionDto(
       color: json['color'] as String,
       startDateTime: DateTime.parse(json['startDateTime'] as String),
       endDateTime: DateTime.parse(json['endDateTime'] as String),
+      role: EnumSerializer.optionalRoleFromJson(json['role'] as int?),
     );
 
 Map<String, dynamic> _$SessionDtoToJson(SessionDto instance) =>
@@ -27,4 +28,5 @@ Map<String, dynamic> _$SessionDtoToJson(SessionDto instance) =>
       'color': instance.color,
       'startDateTime': instance.startDateTime.toIso8601String(),
       'endDateTime': instance.endDateTime.toIso8601String(),
+      'role': EnumSerializer.toJson(instance.role),
     };

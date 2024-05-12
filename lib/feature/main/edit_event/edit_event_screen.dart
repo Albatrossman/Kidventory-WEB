@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
 import 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';
@@ -411,7 +412,7 @@ class _EditEventScreenState extends State<EditEventScreen>
           )
           .whenComplete(() => _btnController.reset())
           .then(
-        (value) => replace(EventScreen(id: value)),
+        (value) => replace(EventScreen(id: value, role: RoleDto.owner,)),
         onError: (error) {
           String message = 'Something went wrong';
           if (error is DioException) {
