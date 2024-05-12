@@ -132,7 +132,7 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
                         onEventTap: (events, date) {
                           if (events.isNotEmpty) {
                             final session = events.first.event as SessionDto;
-                            push(EventScreen(id: session.eventId));
+                            push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant,));
                           }
                         },
                         headerStyle: HeaderStyle(
@@ -155,7 +155,7 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
                         onEventTap: (events, date) {
                           if (events.isNotEmpty) {
                             final session = events.first.event as SessionDto;
-                            push(EventScreen(id: session.eventId));
+                            push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant));
                           }
                         },
                         onDateTap: (date) {},
@@ -178,7 +178,7 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
                         key: monthViewKey,
                         onEventTap: (event, date) {
                           final session = event.event as SessionDto;
-                          push(EventScreen(id: session.eventId));
+                          push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant));
                         },
                         onCellTap: (events, date) {
                           setState(() {
