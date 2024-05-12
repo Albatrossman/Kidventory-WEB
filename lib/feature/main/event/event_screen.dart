@@ -47,11 +47,11 @@ class _EventScreenState extends State<EventScreen>
   bool isLoading = false;
   bool isDeleting = false;
 
-  RoleDto? userRole() => widget.role;
-  // ? null
-  // : _viewModel.state.participants
-  //     .firstWhere((element) => element.role == RoleDto.owner)
-  //     .role;
+  RoleDto? userRole() => _viewModel.state.participants.isEmpty
+  ? null
+  : _viewModel.state.participants
+      .firstWhere((element) => element.isSameAsUser())
+      .role;
 
   bool canDelete() => userRole()?.canDeleteEvent ?? false;
 
