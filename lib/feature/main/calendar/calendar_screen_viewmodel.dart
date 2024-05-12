@@ -11,12 +11,11 @@ class CalendarScreenViewModel extends ChangeNotifier {
 
   CalendarScreenState _state = CalendarScreenState();
   CalendarScreenState get state => _state;
-  Future<void> getUpcomingSessionsBetweenDates(
-      DateTime startDate, DateTime endDate) async {
+
+  Future<void> getUpcomingSessionsBetweenDates(DateTime startDate, DateTime endDate) async {
     _update(loading: true);
     try {
-      PaginatedSessionDto sessions =
-          await _userApiService.getUpcomingSessionsBetweenDates(
+      PaginatedSessionDto sessions = await _userApiService.getUpcomingSessionsBetweenDates(
         startDate,
         endDate,
       );

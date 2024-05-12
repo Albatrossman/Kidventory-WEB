@@ -18,7 +18,16 @@ class EnumSerializer{
     JoinStatusDto: JoinStatusDto.values, //
   };
 
-  static int? toJson(dynamic value) => value?.index;
+  static int? toJson(dynamic value) {
+    if (value is RepeatUnit) {
+      if (value == RepeatUnit.month) {
+        return 3;
+      } else {
+        return value.index;
+      }
+    }
+    return value?.index;
+  }
 
   static T fromJson<T extends Enum>(int index) {
     var values = _enumValues[T] as List<T>;
@@ -29,10 +38,13 @@ class EnumSerializer{
   }
 
   static RepeatUnit repeatUnitFromJson(int index) {
-    if (index < 0 || index >= RepeatUnit.values.length) {
+    if (index == 3) {
+      return RepeatUnit.month;
+    } else if (index < 0 || index > RepeatUnit.values.length - 1) {
       throw ArgumentError('Index out of bounds for RepeatUnit decoding: $index');
+    } else {
+      return RepeatUnit.values[index];
     }
-    return RepeatUnit.values[index];
   }
 
   static WeekDay? weekDayFromJson(int? index) {

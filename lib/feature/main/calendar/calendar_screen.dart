@@ -12,7 +12,6 @@ import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/calendar/calendar_screen_viewmodel.dart';
 import 'package:kidventory_flutter/feature/main/event/event_screen.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:calendar_view/calendar_view.dart';
 
 enum CalendarViewMode {
@@ -21,20 +20,20 @@ enum CalendarViewMode {
   month,
 }
 
-class MitCalendarScreen extends StatefulWidget {
-  const MitCalendarScreen({
+class CalendarScreen extends StatefulWidget {
+  const CalendarScreen({
     super.key,
   });
 
   @override
-  State<MitCalendarScreen> createState() {
-    return _MitCalendarScreenState();
+  State<CalendarScreen> createState() {
+    return _CalendarScreenState();
   }
 }
 
-class _MitCalendarScreenState extends State<MitCalendarScreen>
-    with NavigationMixin, MessageMixin {
+class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, MessageMixin {
   late final CalendarScreenViewModel _viewModel;
+  bool loading = false;
   final EventController _calendarController = EventController();
 
   CalendarViewMode _calendarViewMode = CalendarViewMode.day;
@@ -49,7 +48,6 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
   void initState() {
     super.initState();
     _viewModel = CalendarScreenViewModel(getIt<UserApiService>());
-    // Initial fetch for the current month; adjust based on your needs.
     DateTime start = DateTime.now().firstDayOfMonth;
     fetchAndUpdateSessions(start, start.plusMonths(1));
   }
@@ -63,21 +61,21 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
   void fetchAndUpdateSessions(DateTime start, DateTime end) {
     if (_fetchedStartDate != null &&
         _fetchedEndDate != null &&
-        start.compareTo(_fetchedStartDate!) >= 0 &&
-        end.compareTo(_fetchedEndDate!) <= 0) {
+        start.isAfter(_fetchedStartDate!.subtract(const Duration(seconds: 1))) &&
+        end.isBefore(_fetchedEndDate!.add(const Duration(seconds: 1)))) {
       return;
     }
 
-    _fetchedStartDate = start;
-    _fetchedEndDate = end;
-
-    _viewModel
-        .getUpcomingSessionsBetweenDates(start, end)
-        .whenComplete(() => {})
-        .then(
+    setState(() {
+      loading = true;
+      _fetchedStartDate = start;
+      _fetchedEndDate = end;
+    });
+    _viewModel.getUpcomingSessionsBetweenDates(start, end).whenComplete(() => {}).then(
           (value) => {
             setState(
               () {
+                _calendarController.removeWhere((element) => true);
                 _viewModel.state.upcomingSessions.map(
                   (session) {
                     final EventColor eventColor = EventColor.values.firstWhere(
@@ -87,13 +85,11 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
 
                     final event = CalendarEventData(
                       title: session.title,
-                      titleStyle:
-                          Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: eventColor.getReadableTextColor(),
-                              ),
+                      titleStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: eventColor.getReadableTextColor(),
+                          ),
                       date: session.startDateTime.toLocal(),
-                      startTime:
-                          isAllDay ? null : session.startDateTime.toLocal(),
+                      startTime: isAllDay ? null : session.startDateTime.toLocal(),
                       endTime: isAllDay ? null : session.endDateTime.toLocal(),
                       event: session,
                       color: eventColor.value,
@@ -102,10 +98,14 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
                     _calendarController.add(event);
                   },
                 ).toList();
+                loading = false;
               },
             )
           },
           onError: (error) => {
+            setState(() {
+              loading = true;
+            }),
             snackbar((error as DioException).message ?? "Something went wrong"),
           },
         );
@@ -121,79 +121,88 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
             height: 16,
           ),
           Expanded(
-            child: CalendarControllerProvider(
-              controller: _calendarController,
-              child: switch (_calendarViewMode) {
-                CalendarViewMode.day => DayView(
-                    key: dayViewKey,
-                    onEventTap: (events, date) {
-                      if (events.isNotEmpty) {
-                        final session = events.first.event as SessionDto;
-                        push(EventScreen(id: session.eventId));
-                      }
-                    },
-                    headerStyle: HeaderStyle(
-                      decoration: headerBoxDecoration(context),
-                    ),
-                    dateStringBuilder: (date, {secondaryDate}) {
-                      return date.formatDate();
-                    },
-                    startDuration: Duration(hours: TimeOfDay.now().hour),
-                    heightPerMinute: 1,
-                    onPageChange: (date, page) {
-                      //TODO: - Pouya add fetch
-                    },
-                  ),
-                CalendarViewMode.week => WeekView(
-                    key: weekViewKey,
-                    onEventTap: (events, date) {
-                      if (events.isNotEmpty) {
-                        final session = events.first.event as SessionDto;
-                        push(EventScreen(id: session.eventId));
-                      }
-                    },
-                    onDateTap: (date) {
-                      
-                    },
-                    weekNumberBuilder: (firstDayOfWeek) {
-                      //this is to remove the confusing week number above the time
-                      return null;
-                    },
-                    headerStyle: HeaderStyle(
-                      decoration: headerBoxDecoration(context),
-                    ),
-                    headerStringBuilder: (date, {secondaryDate}) {
-                      return "${date.formatDate(useShortFormat: true)} to ${secondaryDate?.formatDate(useShortFormat: true)}";
-                    },
-                    onPageChange: (date, page) {
-                      //TODO: - Pouya add fetch
-                    },
-                  ),
-                CalendarViewMode.month => MonthView(
-                    key: monthViewKey,
-                    onEventTap: (event, date) {
-                      final session = event.event as SessionDto;
-                      push(EventScreen(id: session.eventId));
-                    },
-                    onCellTap: (events, date) {
-                      setState(() {
-                        _calendarViewMode = CalendarViewMode.day;
-                      });
-                      Future.delayed(const Duration(milliseconds: 50), () {
-                        dayViewKey.currentState?.jumpToDate(date);
-                      });
-                    },
-                    headerStyle: HeaderStyle(
-                      decoration: headerBoxDecoration(context),
-                    ),
-                    headerStringBuilder: (date, {secondaryDate}) {
-                      return DateFormat.yMMMMd().format(date.toLocal());
-                    },
-                    onPageChange: (date, page) {
-                      //TODO: - Pouya add fetch
-                    },
-                  ),
-              },
+            child: Stack(
+              children: [
+                CalendarControllerProvider(
+                  controller: _calendarController,
+                  child: switch (_calendarViewMode) {
+                    CalendarViewMode.day => DayView(
+                        key: dayViewKey,
+                        onEventTap: (events, date) {
+                          if (events.isNotEmpty) {
+                            final session = events.first.event as SessionDto;
+                            push(EventScreen(id: session.eventId));
+                          }
+                        },
+                        headerStyle: HeaderStyle(
+                          decoration: headerBoxDecoration(context),
+                        ),
+                        dateStringBuilder: (date, {secondaryDate}) {
+                          return date.formatDate();
+                        },
+                        startDuration: Duration(hours: TimeOfDay.now().hour),
+                        heightPerMinute: 1,
+                        onPageChange: (date, page) {
+                          //TODO: Arman bia kir bokhor; moft khor
+                          debugPrint("date: ${date.formatDate()} - page: $page");
+                          fetchAndUpdateSessions(
+                              date.firstDayOfMonth, date.lastDayOfMonth.atEndOfDay);
+                        },
+                      ),
+                    CalendarViewMode.week => WeekView(
+                        key: weekViewKey,
+                        onEventTap: (events, date) {
+                          if (events.isNotEmpty) {
+                            final session = events.first.event as SessionDto;
+                            push(EventScreen(id: session.eventId));
+                          }
+                        },
+                        onDateTap: (date) {},
+                        weekNumberBuilder: (firstDayOfWeek) {
+                          return null;
+                        },
+                        headerStyle: HeaderStyle(
+                          decoration: headerBoxDecoration(context),
+                        ),
+                        headerStringBuilder: (date, {secondaryDate}) {
+                          return "${date.formatDate(useShortFormat: true)} - ${secondaryDate?.formatDate(useShortFormat: true)}";
+                        },
+                        onPageChange: (date, page) {
+                          debugPrint("date: ${date.formatDate()} - page: $page");
+                          fetchAndUpdateSessions(
+                              date.firstDayOfMonth, date.lastDayOfMonth.atEndOfDay);
+                        },
+                      ),
+                    CalendarViewMode.month => MonthView(
+                        key: monthViewKey,
+                        onEventTap: (event, date) {
+                          final session = event.event as SessionDto;
+                          push(EventScreen(id: session.eventId));
+                        },
+                        onCellTap: (events, date) {
+                          setState(() {
+                            _calendarViewMode = CalendarViewMode.day;
+                          });
+                          Future.delayed(const Duration(milliseconds: 50), () {
+                            dayViewKey.currentState?.jumpToDate(date);
+                          });
+                        },
+                        headerStyle: HeaderStyle(
+                          decoration: headerBoxDecoration(context),
+                        ),
+                        headerStringBuilder: (date, {secondaryDate}) {
+                          return DateFormat.yMMMMd().format(date.toLocal());
+                        },
+                        onPageChange: (date, page) {
+                          debugPrint("date: ${date.formatDate()} - page: $page");
+                          fetchAndUpdateSessions(date, date.lastDayOfMonth.atEndOfDay);
+                        },
+                        useAvailableVerticalSpace: true,
+                      ),
+                  },
+                ),
+                _buildLoadingOverlay()
+              ],
             ),
           ),
         ],
@@ -271,10 +280,22 @@ class _MitCalendarScreenState extends State<MitCalendarScreen>
       ),
     );
   }
-}
 
-class AppointmentDataSource extends CalendarDataSource {
-  AppointmentDataSource(List<Appointment> source) {
-    appointments = source;
+  Widget _buildLoadingOverlay() {
+    return loading
+        ? Positioned.fill(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300.withAlpha(200),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              alignment: Alignment.center,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
   }
 }

@@ -42,4 +42,11 @@ extension DateTimeFormatting on DateTime {
   DateTime get firstDayOfMonth => DateTime(year, month, 1);
 
   DateTime get atStartOfDay => DateTime(year, month, day);
+
+  DateTime get atEndOfDay => DateTime(year, month, day, 23, 59, 59, 999);
+
+  DateTime get lastDayOfMonth {
+    final nextMonth = DateTime(year, month + 1, 1);
+    return DateTime(nextMonth.year, nextMonth.month, 0, 23, 59, 59, 999);
+  }
 }

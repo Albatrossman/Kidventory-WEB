@@ -11,7 +11,7 @@ class CalendarScreenState {
     List<SessionDto>? upcomingSessions,
     ProfileDto? profile,
     this.message,
-  })  : upcomingSessions = upcomingSessions ?? [];
+  }) : upcomingSessions = upcomingSessions ?? [];
 
   CalendarScreenState copy({
     bool? loading,
