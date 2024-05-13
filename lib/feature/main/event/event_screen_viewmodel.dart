@@ -30,7 +30,6 @@ class EventScreenViewModel extends ChangeNotifier {
   EventScreenViewModel(this._eventApiService, this.downloader, this._parser);
 
   EventScreenState _state = EventScreenState();
-
   EventScreenState get state => _state;
 
   Future<void> refresh(String id) async {
@@ -175,12 +174,9 @@ class EventScreenViewModel extends ChangeNotifier {
     );
   }
 
-  Future<void> editAttendance(
-      ParticipantDto participant, AttendanceDto attendance) async {
-    List<ParticipantDto> updatedList =
-        List<ParticipantDto>.from(state.updatedAttendances);
-    int index =
-        updatedList.indexWhere((p) => p.memberId == participant.memberId);
+  Future<void> editAttendance(ParticipantDto participant, AttendanceDto attendance) async {
+    List<ParticipantDto> updatedList = List<ParticipantDto>.from(state.updatedAttendances);
+    int index = updatedList.indexWhere((p) => p.memberId == participant.memberId);
 
     if (index != -1) {
       AttendanceDto currentAttendance = updatedList[index].attendance;
@@ -286,8 +282,7 @@ class EventScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> downloadCSVTemplate() async {
-    return await downloader.download(
-        "http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
+    return await downloader.download("http://dl.dropboxusercontent.com/scl/fi/atm063932wotgg9k4nn8h/Pete-s-new-template-Sheet1.csv?dl=0&rlkey=owapc95erxd8j1h11zsknh91e");
   }
 
   void _update({

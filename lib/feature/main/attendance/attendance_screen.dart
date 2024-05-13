@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/mapper/attendance_mapper.dart';
 import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
 import 'package:kidventory_flutter/core/data/model/participant_dto.dart';
-import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/attendance.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/attendance_row.dart';
@@ -106,21 +105,21 @@ class _AttendanceScreenState extends State<AttendanceScreen> with MessageMixin, 
                                   child: _buildStat(
                                     context,
                                     CupertinoIcons.person_crop_circle,
-                                    '${model.state.participantsByRole?[RoleDto.participant]?.length ?? 0} Members',
+                                    '${model.state.updatedAttendances.length} Members',
                                   ),
                                 ),
                                 Expanded(
                                   child: _buildStat(
                                     context,
                                     CupertinoIcons.person_crop_circle_badge_xmark,
-                                    '${model.state.participantsByRole?[RoleDto.participant]?.where((element) => element.attendance == AttendanceDto.absent).length ?? 0} Absent',
+                                    '${model.state.updatedAttendances.where((element) => element.attendance == AttendanceDto.absent).length} Absent',
                                   ),
                                 ),
                                 Expanded(
                                   child: _buildStat(
                                     context,
                                     CupertinoIcons.person_crop_circle_badge_checkmark,
-                                    '${model.state.participantsByRole?[RoleDto.participant]?.where((element) => element.attendance == AttendanceDto.present).length ?? 0} Present',
+                                    '${model.state.updatedAttendances.where((element) => element.attendance == AttendanceDto.present).length} Present',
                                   ),
                                 ),
                               ],
