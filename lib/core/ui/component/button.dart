@@ -8,6 +8,7 @@ class AppButton extends StatelessWidget {
   final VoidCallback onPressed;
   final double width;
   final double height;
+  final Color? color;
 
   const AppButton({
     super.key,
@@ -16,6 +17,7 @@ class AppButton extends StatelessWidget {
     required this.onPressed,
     this.width = kIsWeb ? 350 : 600,
     this.height = kIsWeb ? 56 : 40,
+    this.color
   });
 
   @override
@@ -27,7 +29,7 @@ class AppButton extends StatelessWidget {
       width: width,
       height: height,
       loaderSize: 24,
-      color: Theme.of(context).colorScheme.primary,
+      color: color ?? Theme.of(context).colorScheme.primary,
       child: child,
     );
   }

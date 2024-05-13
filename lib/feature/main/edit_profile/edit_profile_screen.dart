@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class EditProfileScreen extends StatefulWidget {
-    final UserInfo? userInfo;
+  final UserInfo? userInfo;
   const EditProfileScreen({super.key, this.userInfo});
 
   @override
@@ -26,12 +26,14 @@ class EditProfileScreen extends StatefulWidget {
   }
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin, NavigationMixin {
-    late final EditProfileScreenViewModel _viewModel;
+class _EditProfileScreenState extends State<EditProfileScreen>
+    with MessageMixin, NavigationMixin {
+  late final EditProfileScreenViewModel _viewModel;
 
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
-  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   bool validFirstname = true;
   bool validLastname = true;
@@ -52,60 +54,61 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
     return ChangeNotifierProvider<EditProfileScreenViewModel>.value(
       value: _viewModel,
       child: Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => pop(),
-          icon: const Icon(CupertinoIcons.arrow_left),
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => pop(),
+            icon: const Icon(CupertinoIcons.chevron_left),
+          ),
+          title: DefaultTextStyle(
+            style: Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+            child: const Text('Edit Profile'),
+          ),
+          centerTitle: true,
         ),
-        title: const Text('Edit Profile'),
-        centerTitle: true,
-      ),
-      body: Center(
-        heightFactor: kIsWeb ? null : 1.0,
-        child: SingleChildScrollView(
-          clipBehavior: Clip.none,
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16.0),
-                  AppImagePicker(
-                    onImageSelected: (File image) => {
-                      _selectedImage = image
-                    },
-                    width: 100,
-                    height: 100,
-                    currentImage: widget.userInfo?.image ?? "",
-                  ),
-                  SizedBox(
-                    width: kIsWeb ? 420 : null,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 32.0),
-                          child: firstNameField(context),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: lastNameField(context),
-                        ),
-                      ],
+        body: Center(
+          heightFactor: kIsWeb ? null : 1.0,
+          child: SingleChildScrollView(
+            clipBehavior: Clip.none,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16.0),
+                    AppImagePicker(
+                      onImageSelected: (File image) => {_selectedImage = image},
+                      width: 100,
+                      height: 100,
+                      currentImage: widget.userInfo?.image ?? "",
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 32.0),
-                    child: saveButton(context),
-                  ),
-                ],
+                    SizedBox(
+                      width: kIsWeb ? 420 : null,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 32.0),
+                            child: firstNameField(context),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: lastNameField(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 32.0),
+                      child: saveButton(context),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),);
+    );
   }
 
   Widget firstNameField(BuildContext context) {
@@ -172,7 +175,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> with MessageMixin
           .then(
             (value) => pop(),
             onError: (error) => {
-              snackbar((error as DioException).message ?? "Something went wrong"),
+              snackbar(
+                  (error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {

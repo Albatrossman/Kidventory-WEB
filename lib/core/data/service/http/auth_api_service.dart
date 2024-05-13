@@ -1,3 +1,4 @@
+import 'package:kidventory_flutter/core/data/model/delete_account_dto.dart';
 import 'package:kidventory_flutter/core/data/model/sign_up_dto.dart';
 import 'package:kidventory_flutter/core/data/model/token_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_password_dto.dart';
@@ -14,4 +15,6 @@ abstract class AuthApiService {
   Future<Null> resetPassword(String email, String code, String password);
 
   Future<Null> changePassword(UpdatePasswordDto body);
+
+  Future<Null> deleteAccount(DeleteAccountDto body);
 }

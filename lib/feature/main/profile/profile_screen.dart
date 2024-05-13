@@ -13,6 +13,7 @@ import 'package:kidventory_flutter/core/ui/util/model/child_info.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';
 import 'package:kidventory_flutter/feature/main/change_password/change_password_screen.dart';
+import 'package:kidventory_flutter/feature/main/delete_account/delete_account_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen.dart';
 import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen.dart';
 import 'package:kidventory_flutter/feature/main/profile/profile_screen_viewmodel.dart';
@@ -154,6 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   child: Column(
                     children: [
                       changePasswordButton(context),
+                      deleteAccountButton(context),
                       signOutButton(context),
                     ],
                   ),
@@ -279,6 +281,19 @@ class _ProfileScreenState extends State<ProfileScreen>
       iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
       label: 'Change password',
       onTap: () => push(ChangePasswordScreen(
+        email: _viewModel.state.profile!.email,
+      )),
+      trailing: const Icon(CupertinoIcons.forward),
+    );
+  }
+
+  Widget deleteAccountButton(BuildContext context) {
+    return Option(
+      icon: CupertinoIcons.trash,
+      iconBackgroundColor: Theme.of(context).colorScheme.errorContainer,
+      iconColor: Theme.of(context).colorScheme.onErrorContainer,
+      label: 'Delete account',
+      onTap: () => push(DeleteAccountScreen(
         email: _viewModel.state.profile!.email,
       )),
       trailing: const Icon(CupertinoIcons.forward),

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:kidventory_flutter/core/data/model/delete_account_dto.dart';
 import 'package:kidventory_flutter/core/data/model/sign_up_dto.dart';
 import 'package:kidventory_flutter/core/data/model/token_dto.dart';
 import 'package:kidventory_flutter/core/data/model/update_password_dto.dart';
@@ -72,6 +73,20 @@ class AuthApiServiceImpl implements AuthApiService {
   Future<Null> changePassword(UpdatePasswordDto body) async {
     Response response = await client.dio.patch(
       'Auth/ChangePassword',
+      data: body.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      //422 incorrect password
+      throw Exception('Something went wrong');
+    }
+  }
+
+  @override
+  Future<Null> deleteAccount(DeleteAccountDto body) async {
+    Response response = await client.dio.patch(
+      'Auth/DeleteAccount',
       data: body.toJson(),
     );
 

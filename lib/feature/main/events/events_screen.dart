@@ -71,7 +71,10 @@ class _EventsScreenState extends State<EventsScreen>
             onPressed: () => pop(),
             icon: const Icon(CupertinoIcons.back),
           ),
-          title: const Text('Manage Events'),
+          title: DefaultTextStyle(
+            style: Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+            child: const Text('Manage Events'),
+          ),
           centerTitle: true,
         ),
         body: SafeArea(

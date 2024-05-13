@@ -54,9 +54,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => pop(),
-          icon: const Icon(CupertinoIcons.arrow_left),
+          icon: const Icon(CupertinoIcons.chevron_left),
         ),
-        title: const Text('Change Password'),
+        title: DefaultTextStyle(
+            style: Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+            child: const Text('Change Password'),
+          ),
         centerTitle: true,
       ),
       body: SafeArea(

@@ -66,10 +66,14 @@ class _EditChildScreenState extends State<EditChildScreen>
             appBar: AppBar(
               leading: IconButton(
                 onPressed: () => pop(),
-                icon: const Icon(CupertinoIcons.arrow_left),
+                icon: const Icon(CupertinoIcons.chevron_left),
               ),
-              title:
-                  Text(widget.childInfo == null ? "Add Child" : 'Edit Child'),
+              title: DefaultTextStyle(
+                style:
+                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                child:
+                    Text(widget.childInfo == null ? "Add Child" : 'Edit Child'),
+              ),
               centerTitle: true,
             ),
             body: Center(

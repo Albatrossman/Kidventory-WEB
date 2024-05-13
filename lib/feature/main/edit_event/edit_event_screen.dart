@@ -73,7 +73,10 @@ class _EditEventScreenState extends State<EditEventScreen>
             onPressed: () => pop(),
             icon: const Icon(CupertinoIcons.back),
           ),
-          title: const Text('Create Event'),
+          title:  DefaultTextStyle(
+            style: Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+            child: const Text('Create Event'),
+          ),
           centerTitle: true,
         ),
         body: SafeArea(

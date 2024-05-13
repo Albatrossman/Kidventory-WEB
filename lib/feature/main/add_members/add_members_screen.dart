@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 import 'package:kidventory_flutter/core/ui/component/csv_card.dart';
+import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 
 class AddMembersScreen extends StatelessWidget {
   final Map<File, List<Member>> filesAndParticipants;
@@ -24,7 +25,9 @@ class AddMembersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Members')),
+      appBar: const SheetHeader(
+        title: Text('Add Members'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
