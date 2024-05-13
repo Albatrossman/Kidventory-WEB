@@ -75,10 +75,27 @@ class _SignUpScreenContent extends State<SignUpScreen>
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(bottom: 24.0),
-                      child: Image.asset(
-                        "assets/images/logo.png",
-                        width: 80,
-                        height: 80,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(16)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16)),
+                          child: Image.asset(
+                            "assets/images/logo.png",
+                            width: 100,
+                            height: 100,
+                          ),
+                        ),
                       ),
                     ),
                     Padding(
@@ -233,7 +250,7 @@ class _SignUpScreenContent extends State<SignUpScreen>
         ),
         CupertinoButton(
           child: Text(
-            "Sign In",
+            "Sign in",
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold),

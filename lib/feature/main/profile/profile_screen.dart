@@ -143,8 +143,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Text(
-                    "Account".toUpperCase(),
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    "Account",
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: Theme.of(context).colorScheme.outline,
                         ),
                   ),
@@ -246,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           const Spacer(),
           Icon(
-            CupertinoIcons.slider_horizontal_3,
+            CupertinoIcons.pen,
             color: Theme.of(context).colorScheme.outline,
           ),
         ],
@@ -266,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               childInfo: null,
             ),
           ),
-          child: const Text("Add New Child"),
+          child: const Text("Add new child"),
         ),
       ),
     );
@@ -277,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       icon: CupertinoIcons.lock_fill,
       iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
       iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
-      label: 'Change Password',
+      label: 'Change password',
       onTap: () => push(ChangePasswordScreen(
         email: _viewModel.state.profile!.email,
       )),
@@ -290,10 +290,10 @@ class _ProfileScreenState extends State<ProfileScreen>
       icon: CupertinoIcons.arrow_left_circle_fill,
       iconBackgroundColor: Theme.of(context).colorScheme.errorContainer,
       iconColor: Theme.of(context).colorScheme.onErrorContainer,
-      label: 'Sign Out',
+      label: 'Sign out',
       onTap: () => {
         dialog(
-          const Text("Sign Out"),
+          const Text("Sign out"),
           const Text(
               "Are you sure you want to sign out? You will need to sign in again to access your account."),
           [

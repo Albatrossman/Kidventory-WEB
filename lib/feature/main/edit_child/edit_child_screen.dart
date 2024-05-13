@@ -350,7 +350,7 @@ class _EditChildScreenState extends State<EditChildScreen>
             _lastnameController.text,
             _selectedDate,
             _relation,
-            _selectedImage == null ? null : info.image,
+            _selectedImage == null ? info.image : null,
             _selectedImage == null
                 ? null
                 : base64Encode(_selectedImage!.readAsBytesSync()),

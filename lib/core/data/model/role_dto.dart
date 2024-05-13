@@ -5,6 +5,14 @@ enum RoleDto {
   participant,
   admin,
   adult;
+
+  static List<RoleDto> selectableRoles = [
+    admin,
+    teacher,
+    driver,
+    adult,
+    participant,
+  ];
 }
 
 extension RoleAccess on RoleDto {
@@ -76,7 +84,7 @@ extension RoleAccess on RoleDto {
     }
   }
 
-bool get canChangeRole {
+  bool get canChangeRole {
     switch (this) {
       case RoleDto.owner:
         return true;

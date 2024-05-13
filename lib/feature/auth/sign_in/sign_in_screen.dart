@@ -68,10 +68,27 @@ class _SignInScreenState extends State<SignInScreen>
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(bottom: 48.0),
-                      child: Image.asset(
-                        "assets/images/logo.png",
-                        width: 100,
-                        height: 100,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(16)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16)),
+                          child: Image.asset(
+                            "assets/images/logo.png",
+                            width: 100,
+                            height: 100,
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -145,7 +162,7 @@ class _SignInScreenState extends State<SignInScreen>
       loaderSize: 24,
       color: Theme.of(context).colorScheme.primary,
       child: Text(
-        "Sign In",
+        "Sign in",
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
               color: Theme.of(context).colorScheme.onPrimary,
             ),
@@ -156,7 +173,7 @@ class _SignInScreenState extends State<SignInScreen>
   Widget forgotPasswordButton(BuildContext context) {
     return CupertinoButton(
       child: Text(
-        "Forgot Password?",
+        "Forgot password?",
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w600),
@@ -185,7 +202,7 @@ class _SignInScreenState extends State<SignInScreen>
         ),
         CupertinoButton(
           child: Text(
-            "Sign Up",
+            "Sign up",
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold),
@@ -220,7 +237,8 @@ class _SignInScreenState extends State<SignInScreen>
           .then(
             (value) => pushAndClear(const MainScreen(), fullscreenDialog: true),
             onError: (error) => {
-              snackbar((error as DioException).message ?? "Something went wrong"),
+              snackbar(
+                  (error as DioException).message ?? "Something went wrong"),
             },
           );
     } else {

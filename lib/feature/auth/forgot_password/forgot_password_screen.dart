@@ -283,7 +283,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       loaderSize: 24,
       color: Theme.of(context).colorScheme.primary,
       child: Text(
-        "Send Code",
+        "Send code",
         style: Theme.of(context)
             .textTheme
             .labelLarge
@@ -305,7 +305,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         ),
         CupertinoButton(
           child: Text(
-            "Sign In",
+            "Sign in",
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold),

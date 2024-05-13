@@ -528,8 +528,8 @@ class _EventScreenState extends State<EventScreen>
           ),
           child: Container(
             height:
-                (!participant.isSameAsUser() && widget.role == RoleDto.owner ||
-                        widget.role == RoleDto.admin)
+                (!participant.isSameAsUser() && userRole() == RoleDto.owner ||
+                        userRole() == RoleDto.admin)
                     ? 350
                     : 200,
             padding: const EdgeInsets.only(top: 6),
@@ -608,8 +608,8 @@ class _EventScreenState extends State<EventScreen>
             ],
           ),
           const SizedBox(height: 16),
-          if (!participant.isSameAsUser() && widget.role == RoleDto.owner ||
-              widget.role == RoleDto.admin)
+          if (!participant.isSameAsUser() && userRole() == RoleDto.owner ||
+              userRole() == RoleDto.admin)
             SizedBox(
               width: kIsWeb ? 350 : 600,
               child: OutlinedButton(
@@ -645,8 +645,8 @@ class _EventScreenState extends State<EventScreen>
               ),
             ),
           const SizedBox(height: 8),
-          if (!participant.isSameAsUser() && widget.role == RoleDto.owner ||
-              widget.role == RoleDto.admin)
+          if (!participant.isSameAsUser() && userRole() == RoleDto.owner ||
+              userRole() == RoleDto.admin)
             SizedBox(
               width: kIsWeb ? 350 : 600,
               child: OutlinedButton(
@@ -727,6 +727,10 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _onDeleteUser(String memberId) async {
+    if (_viewModel.state.selectedSession!.endDateTime.isBefore(DateTime.now())) {
+      snackbar("You cannot delete a user from previous sessions.");
+      return;
+    }
     pop();
     setState(() {
       isDeleting = true;

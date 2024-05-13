@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen>
               Row(
                 children: [
                   Text(
-                    "greetings",
+                    "Greetings",
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(width: 4.0),

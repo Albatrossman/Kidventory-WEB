@@ -78,14 +78,12 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  RoleDto? selectedRole = null;
-
   void rolePicker(
     BuildContext context,
     RoleDto initialSelectedRole,
     final void Function(RoleDto) onSelectedRole,
   ) async {
-    selectedRole = initialSelectedRole;
+    RoleDto selectedRole = initialSelectedRole;
 
     await showModalBottomSheet(
       context: context,
@@ -106,15 +104,16 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.all(8),
-                    itemCount: RoleDto.values.length,
+                    itemCount: RoleDto.selectableRoles.length,
                     itemBuilder: (BuildContext context, int index) {
-                      RoleDto role = RoleDto.values[index];
+                      RoleDto role = RoleDto.selectableRoles[index];
                       bool isSelected = selectedRole == role;
                       return MultiSelectCard(
                         name: role.toString().split('.').last,
                         isSelected: isSelected,
                         onClick: () {
-                          onSelectedRole(selectedRole!);
+                          selectedRole = role;
+                          onSelectedRole(selectedRole);
                           Navigator.pop(context);
                         },
                       );
