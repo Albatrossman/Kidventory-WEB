@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
+import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
 
@@ -54,8 +55,7 @@ class SessionCard extends StatelessWidget {
                             child: CachedNetworkImage(
                               fit: BoxFit.cover,
                               imageUrl: session.imageUrl ?? "",
-                              placeholder: (context, url) => Icon(
-                                  CupertinoIcons.photo,
+                              placeholder: (context, url) => Icon(CupertinoIcons.photo,
                                   color: Theme.of(context).colorScheme.primary),
                               errorWidget: (context, url, error) => Icon(
                                 CupertinoIcons.photo,
@@ -78,21 +78,25 @@ class SessionCard extends StatelessWidget {
                                 session.startDateTime.formatDate(),
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
-                              Row(
-                                children: [
-                                  Text(
-                                    DateFormat.jm().format(session.startDateTime.toLocal()),
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                  const Text(" - "),
-                                  Text(
-                                    DateFormat.jm().format(session.endDateTime.toLocal()),
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ],
-                              ),
+                              if (session.timeMode.toLowerCase() == "allday")
+                                Text(
+                                  'All Day',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                )
+                              else
+                                Row(
+                                  children: [
+                                    Text(
+                                      DateFormat.jm().format(session.startDateTime.toLocal()),
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                    const Text(" - "),
+                                    Text(
+                                      DateFormat.jm().format(session.endDateTime.toLocal()),
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                           Text(
@@ -151,8 +155,7 @@ class Session {
       color: json['color'],
       startDateTime: DateTime.parse(json['startDateTime']),
       endDateTime: DateTime.parse(json['endDateTime']),
-      members:
-          List<Member>.from(json['members'].map((x) => Member.fromJson(x))),
+      members: List<Member>.from(json['members'].map((x) => Member.fromJson(x))),
     );
   }
 }
