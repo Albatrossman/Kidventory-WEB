@@ -27,7 +27,7 @@ Future<void> setup() async {
 
   getIt.registerLazySingleton<DioClient>(
     () => DioClient(
-      "https://dev-kidsapi.softballforce.com/v1/",
+      "https://kidventory.aftersearch.com/v1/",
       token?.accessToken ?? "",
     ),
   );
@@ -53,7 +53,7 @@ Future<void> updateSingletons(String accessToken) async {
 
   getIt.registerLazySingleton<DioClient>(
     () => DioClient(
-      "https://dev-kidsapi.softballforce.com/v1/",
+      "https://kidventory.aftersearch.com/v1/",
       accessToken,
     ),
   );
