@@ -119,7 +119,8 @@ class _EventsScreenState extends State<EventsScreen>
     return Consumer<EventsScreenViewModel>(
       builder: (context, model, child) {
         final List<EventDto> events = model.state.events
-            .where((event) => event.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+            .where((event) =>
+                event.name.toLowerCase().contains(_searchQuery.toLowerCase()))
             .toList();
         if (model.state.loading) {
           return loadingView(context);
@@ -141,9 +142,15 @@ class _EventsScreenState extends State<EventsScreen>
                   final EventDto event = events[index];
                   return EventCard(
                     name: event.name,
-                    time:
-                        "${DateFormat.jm().format(event.repeat.startDateTime.toLocal())} - ${DateFormat.jm().format(event.repeat.endDateTime.toLocal())}",
-                    onClick: () => {push(EventScreen(id: event.id, role: RoleDto.owner,))},
+                    time: (event.timeMode.name.toLowerCase() == "allday")
+                        ? "All Day"
+                        : "${DateFormat.jm().format(event.repeat.startDateTime.toLocal())} - ${DateFormat.jm().format(event.repeat.endDateTime.toLocal())}",
+                    onClick: () => {
+                      push(EventScreen(
+                        id: event.id,
+                        role: RoleDto.owner,
+                      ))
+                    },
                     imageUrl: event.imageUrl,
                   );
                 },

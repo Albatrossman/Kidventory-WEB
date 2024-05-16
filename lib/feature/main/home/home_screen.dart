@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 import 'package:kidventory_flutter/core/ui/component/session_card.dart';
 import 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';
 import 'package:kidventory_flutter/di/app_module.dart';
@@ -67,30 +68,33 @@ class _HomeScreenState extends State<HomeScreen>
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Consumer<HomeScreenViewModel>(
-                    builder: (_, model, __) {
-                      return greetingsWidget(context);
-                    },
-                  ),
-                  const SizedBox(height: 32.0),
-                  Column(
-                    children: [
-                      upcomingEvents(context),
-                      const SizedBox(height: 32.0),
-                      Row(
-                        children: [
-                          manageEventsButton(context),
-                          const SizedBox(width: 16),
-                          createEventButton(context),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+            child: SizedBox(
+              width: 700,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Consumer<HomeScreenViewModel>(
+                      builder: (_, model, __) {
+                        return greetingsWidget(context);
+                      },
+                    ),
+                    const SizedBox(height: 32.0),
+                    Column(
+                      children: [
+                        upcomingEvents(context),
+                        const SizedBox(height: 32.0),
+                        Row(
+                          children: [
+                            manageEventsButton(context),
+                            const SizedBox(width: 16),
+                            createEventButton(context),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -203,7 +207,9 @@ class _HomeScreenState extends State<HomeScreen>
                     SessionDto session = model.state.upcomingSessions[index];
                     return SessionCard(
                       session: session,
-                      onClick: () => push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant)),
+                      onClick: () => push(EventScreen(
+                          id: session.eventId,
+                          role: session.role ?? RoleDto.participant)),
                     );
                   },
                 ),
@@ -217,8 +223,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget manageEventsButton(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onTap: () {
+      child: Clickable(
+        onPressed: () {
           push(const EventsScreen());
         },
         child: Container(
@@ -246,8 +252,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget createEventButton(BuildContext context) {
     return Expanded(
-      child: InkWell(
-        onTap: () {
+      child: Clickable(
+        onPressed: () {
           push(const EditEventScreen());
         },
         child: Container(

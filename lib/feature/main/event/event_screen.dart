@@ -48,10 +48,10 @@ class _EventScreenState extends State<EventScreen>
   bool isDeleting = false;
 
   RoleDto? userRole() => _viewModel.state.participants.isEmpty
-  ? null
-  : _viewModel.state.participants
-      .firstWhere((element) => element.isSameAsUser())
-      .role;
+      ? null
+      : _viewModel.state.participants
+          .firstWhere((element) => element.isSameAsUser())
+          .role;
 
   bool canDelete() => userRole()?.canDeleteEvent ?? false;
 
@@ -93,53 +93,89 @@ class _EventScreenState extends State<EventScreen>
       child: Stack(
         children: [
           Scaffold(
-            appBar: AppBar(
-              leading: backButton(context),
-              actions: [
-                optionsButton(context),
-                const SizedBox(
-                  width: 8,
-                )
-              ],
-            ),
-            body: Consumer<EventScreenViewModel>(
-              builder: (_, model, __) {
-                return _viewModel.state.loading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 40),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 16),
-                              eventHeader(context),
-                              const SizedBox(height: 16),
-                              sessionOption(context),
-                              const SizedBox(height: 16),
-                              if (canTakeAttendance())
-                                attendanceButton(
-                                  context,
-                                  _viewModel.state.event?.id ?? "",
-                                  _viewModel.state.event?.nearestSession.id ?? "",
-                                ),
-                              if (canInviteMembers())
-                                pendingMembersSection(
-                                  context,
-                                  model.state.pendingMembers.isEmpty
-                                      ? []
-                                      : model.state.pendingMembers.first.members,
-                                  model.state.pendingMembers.isEmpty
-                                      ? ""
-                                      : model.state.pendingMembers.first.id,
-                                ),
-                              membersList(context, model.state.participantsByRole ?? {})
-                            ],
-                          ),
+            body: Center(
+              child: SizedBox(
+                width: kIsWeb ? 600 : null,
+                child: Padding(
+                  padding: kIsWeb
+                      ? const EdgeInsets.symmetric(vertical: 32)
+                      : EdgeInsets.zero,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: kIsWeb ? [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: const Offset(0, 1),
                         ),
-                      );
-              },
+                      ] : null,
+                    ),
+                    child: // Your content goes here
+                        ClipRRect(
+                      borderRadius: kIsWeb ? BorderRadius.circular(8) : BorderRadius.zero,
+                      child: Scaffold(
+                        appBar: AppBar(
+                          leading: backButton(context),
+                          actions: [
+                            optionsButton(context),
+                            const SizedBox(
+                              width: 8,
+                            )
+                          ],
+                        ),
+                        body: Consumer<EventScreenViewModel>(
+                          builder: (_, model, __) {
+                            return _viewModel.state.loading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          16, 0, 16, 40),
+                                      child: Column(
+                                        children: [
+                                          const SizedBox(height: 16),
+                                          eventHeader(context),
+                                          const SizedBox(height: 16),
+                                          sessionOption(context),
+                                          const SizedBox(height: 16),
+                                          if (canTakeAttendance())
+                                            attendanceButton(
+                                              context,
+                                              _viewModel.state.event?.id ?? "",
+                                              _viewModel.state.event
+                                                      ?.nearestSession.id ??
+                                                  "",
+                                            ),
+                                          if (canInviteMembers())
+                                            pendingMembersSection(
+                                              context,
+                                              model.state.pendingMembers.isEmpty
+                                                  ? []
+                                                  : model.state.pendingMembers
+                                                      .first.members,
+                                              model.state.pendingMembers.isEmpty
+                                                  ? ""
+                                                  : model.state.pendingMembers
+                                                      .first.id,
+                                            ),
+                                          membersList(
+                                              context,
+                                              model.state.participantsByRole ??
+                                                  {})
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
           if (isDeleting)
@@ -222,8 +258,8 @@ class _EventScreenState extends State<EventScreen>
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: _viewModel.state.event?.imageUrl ?? "",
-                  placeholder: (context, url) =>
-                      Icon(CupertinoIcons.photo, color: Theme.of(context).colorScheme.primary),
+                  placeholder: (context, url) => Icon(CupertinoIcons.photo,
+                      color: Theme.of(context).colorScheme.primary),
                   errorWidget: (context, url, error) => Icon(
                     CupertinoIcons.photo,
                     color: Theme.of(context).colorScheme.primary,
@@ -285,10 +321,8 @@ class _EventScreenState extends State<EventScreen>
                     Text(
                       model.state.selectedSession?.startDateTime.formatDate() ??
                           DateTime.now().formatDate(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Theme.of(context).colorScheme.onBackground),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
                     ),
                     const Spacer(),
                     Text(
@@ -315,7 +349,9 @@ class _EventScreenState extends State<EventScreen>
                         sessions: model.state.sessions,
                         selected: model.state.selectedSession,
                         onSessionPicked: (session) {
-                          _viewModel.changeSession(session).whenComplete(() => pop());
+                          _viewModel
+                              .changeSession(session)
+                              .whenComplete(() => pop());
                         },
                       );
                     },
@@ -337,7 +373,8 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget attendanceButton(BuildContext context, String eventId, String sessionId) {
+  Widget attendanceButton(
+      BuildContext context, String eventId, String sessionId) {
     return SizedBox(
       height: kIsWeb ? 40 : 40,
       width: double.infinity,
@@ -361,7 +398,8 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  Widget membersList(BuildContext context, Map<RoleDto, List<ParticipantDto>> participantsByRole) {
+  Widget membersList(BuildContext context,
+      Map<RoleDto, List<ParticipantDto>> participantsByRole) {
     List<Widget> sections = [];
     participantsByRole.forEach((role, participants) {
       sections.add(
@@ -410,8 +448,8 @@ class _EventScreenState extends State<EventScreen>
     }
   }
 
-  Widget pendingMembersSection(
-      BuildContext context, List<PendingMemberDto> participants, String requestId) {
+  Widget pendingMembersSection(BuildContext context,
+      List<PendingMemberDto> participants, String requestId) {
     if (participants.isEmpty) {
       return const SizedBox(width: 0);
     } else {
@@ -727,7 +765,8 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _onDeleteUser(String memberId) async {
-    if (_viewModel.state.selectedSession!.endDateTime.isBefore(DateTime.now())) {
+    if (_viewModel.state.selectedSession!.endDateTime
+        .isBefore(DateTime.now())) {
       snackbar("You cannot delete a user from previous sessions.");
       return;
     }

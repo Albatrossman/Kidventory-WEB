@@ -6,6 +6,7 @@ import 'package:kidventory_flutter/core/data/model/session_dto.dart';
 import 'package:kidventory_flutter/core/domain/model/time_mode.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 
 class SessionCard extends StatelessWidget {
   final SessionDto session;
@@ -25,10 +26,8 @@ class SessionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onClick,
-      onLongPress: onLongPress ?? onClick,
-      onDoubleTap: onDoubleTap ?? onClick,
+    return Clickable(
+      onPressed: onClick,
       child: Card(
         shape: shape ??
             RoundedRectangleBorder(

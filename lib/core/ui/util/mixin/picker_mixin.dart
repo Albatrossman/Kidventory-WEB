@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/multi_select_card.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 mixin PickerMixin<T extends StatefulWidget> on State<T> {
   DateTime selectedDate = DateTime.now();
@@ -25,11 +25,18 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
   }) {
     _unSavedSelectedDate = initialDateTime ?? DateTime.now();
     if (kIsWeb) {
-      showDatePicker(
+      Future<DateTime?> selectedDate = showDatePicker(
         context: context,
         firstDate: firstDate?.atStartOfDay ?? DateTime(1900),
         lastDate: lastDate ?? DateTime(2100),
         currentDate: initialDateTime,
+      );
+      selectedDate.then(
+        (value) {
+          if (value != null) {
+            onSelectedDate!(value);
+          }
+        },
       );
     } else {
       showModalBottomSheet(
@@ -188,9 +195,16 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
     _unSavedSelectedTime = initialTime;
 
     if (kIsWeb) {
-      showTimePicker(
-        context: context,
-        initialTime: initialTime,
+      Future<TimeOfDay?> selectedTime = showTimePicker(
+          context: context,
+          initialTime: initialTime,
+          initialEntryMode: TimePickerEntryMode.inputOnly);
+      selectedTime.then(
+        (value) {
+          if (value != null) {
+            onSelectedTime(value);
+          }
+        },
       );
     } else {
       showCupertinoModalPopup(

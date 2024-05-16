@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidventory_flutter/core/ui/component/card.dart';
+import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 
 class EventCard extends StatelessWidget {
   final String? imageUrl;
@@ -27,10 +28,8 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: GestureDetector(
-        onTap: onClick,
-        onLongPress: onLongPress ?? onClick,
-        onDoubleTap: onDoubleTap ?? onClick,
+      child: Clickable(
+        onPressed: onClick,
         child: Card(
           shape: shape ??
               RoundedRectangleBorder(

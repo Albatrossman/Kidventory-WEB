@@ -76,91 +76,94 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Consumer<ProfileScreenViewModel>(
-                    builder: (_, model, __) {
-                      return accountButton(context);
-                    },
+            child: SizedBox(
+              width: 600,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Consumer<ProfileScreenViewModel>(
+                      builder: (_, model, __) {
+                        return accountButton(context);
+                      },
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-                  child: Text(
-                    "Children",
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                    child: Text(
+                      "Children",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Consumer<ProfileScreenViewModel>(
-                        builder: (_, model, __) {
-                          if (model.state.loading) {
-                            return const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: SizedBox(
-                                height: 64,
-                                child: Center(
-                                  child: CircularProgressIndicator(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Consumer<ProfileScreenViewModel>(
+                          builder: (_, model, __) {
+                            if (model.state.loading) {
+                              return const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: SizedBox(
+                                  height: 64,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
-                              ),
-                            );
-                          } else if (model.state.profile?.children?.isEmpty ??
-                              true) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Container(
-                                width: double.infinity,
-                                height: 64,
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(8),
+                              );
+                            } else if (model.state.profile?.children?.isEmpty ??
+                                true) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 64,
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text("You have no children"),
                                 ),
-                                alignment: Alignment.center,
-                                child: const Text("You have no children"),
-                              ),
-                            );
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: childList(context),
-                            );
-                          }
-                        },
-                      ),
-                      addChildButton(context),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: Text(
-                    "Account",
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
+                              );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: childList(context),
+                              );
+                            }
+                          },
                         ),
+                        addChildButton(context),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Column(
-                    children: [
-                      changePasswordButton(context),
-                      deleteAccountButton(context),
-                      signOutButton(context),
-                    ],
+                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: Text(
+                      "Account",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Column(
+                      children: [
+                        changePasswordButton(context),
+                        deleteAccountButton(context),
+                        signOutButton(context),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

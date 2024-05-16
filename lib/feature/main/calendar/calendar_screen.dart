@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
@@ -32,7 +33,8 @@ class CalendarScreen extends StatefulWidget {
   }
 }
 
-class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, MessageMixin {
+class _CalendarScreenState extends State<CalendarScreen>
+    with NavigationMixin, MessageMixin {
   late final CalendarScreenViewModel _viewModel;
   bool loading = false;
   final EventController _calendarController = EventController();
@@ -62,7 +64,8 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
   void fetchAndUpdateSessions(DateTime start, DateTime end) {
     if (_fetchedStartDate != null &&
         _fetchedEndDate != null &&
-        start.isAfter(_fetchedStartDate!.subtract(const Duration(seconds: 1))) &&
+        start
+            .isAfter(_fetchedStartDate!.subtract(const Duration(seconds: 1))) &&
         end.isBefore(_fetchedEndDate!.add(const Duration(seconds: 1)))) {
       return;
     }
@@ -72,7 +75,10 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
       _fetchedStartDate = start;
       _fetchedEndDate = end;
     });
-    _viewModel.getUpcomingSessionsBetweenDates(start, end).whenComplete(() => {}).then(
+    _viewModel
+        .getUpcomingSessionsBetweenDates(start, end)
+        .whenComplete(() => {})
+        .then(
           (value) => {
             setState(
               () {
@@ -86,11 +92,13 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
 
                     final event = CalendarEventData(
                       title: session.title,
-                      titleStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: eventColor.getReadableTextColor(),
-                          ),
+                      titleStyle:
+                          Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: eventColor.getReadableTextColor(),
+                              ),
                       date: session.startDateTime.toLocal(),
-                      startTime: isAllDay ? null : session.startDateTime.toLocal(),
+                      startTime:
+                          isAllDay ? null : session.startDateTime.toLocal(),
                       endTime: isAllDay ? null : session.endDateTime.toLocal(),
                       event: session,
                       color: eventColor.value,
@@ -116,103 +124,122 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
-        children: [
-          viewSwitcher(context),
-          const SizedBox(
-            height: 16,
-          ),
-          Expanded(
-            child: Stack(
-              children: [
-                CalendarControllerProvider(
-                  controller: _calendarController,
-                  child: switch (_calendarViewMode) {
-                    CalendarViewMode.day => DayView(
-                        key: dayViewKey,
-                        onEventTap: (events, date) {
-                          if (events.isNotEmpty) {
-                            final session = events.first.event as SessionDto;
-                            push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant,));
-                          }
-                        },
-                        headerStyle: HeaderStyle(
-                          decoration: headerBoxDecoration(context),
-                        ),
-                        dateStringBuilder: (date, {secondaryDate}) {
-                          return date.formatDate();
-                        },
-                        startDuration: Duration(hours: TimeOfDay.now().hour),
-                        heightPerMinute: 1,
-                        onPageChange: (date, page) {
-                          //TODO: Arman bia kir bokhor; moft khor
-                          debugPrint("date: ${date.formatDate()} - page: $page");
-                          fetchAndUpdateSessions(
-                              date.firstDayOfMonth, date.lastDayOfMonth.atEndOfDay);
-                        },
-                      ),
-                    CalendarViewMode.week => WeekView(
-                        key: weekViewKey,
-                        onEventTap: (events, date) {
-                          if (events.isNotEmpty) {
-                            final session = events.first.event as SessionDto;
-                            push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant));
-                          }
-                        },
-                        onDateTap: (date) {},
-                        weekNumberBuilder: (firstDayOfWeek) {
-                          return null;
-                        },
-                        headerStyle: HeaderStyle(
-                          decoration: headerBoxDecoration(context),
-                        ),
-                        headerStringBuilder: (date, {secondaryDate}) {
-                          return "${date.formatDate(useShortFormat: true)} - ${secondaryDate?.formatDate(useShortFormat: true)}";
-                        },
-                        onPageChange: (date, page) {
-                          debugPrint("date: ${date.formatDate()} - page: $page");
-                          fetchAndUpdateSessions(
-                              date.firstDayOfMonth, date.lastDayOfMonth.atEndOfDay);
-                        },
-                      ),
-                    CalendarViewMode.month => MonthView(
-                        key: monthViewKey,
-                        onEventTap: (event, date) {
-                          final session = event.event as SessionDto;
-                          push(EventScreen(id: session.eventId, role: session.role ?? RoleDto.participant));
-                        },
-                        onCellTap: (events, date) {
-                          setState(() {
-                            _calendarViewMode = CalendarViewMode.day;
-                          });
-                          Future.delayed(const Duration(milliseconds: 50), () {
-                            dayViewKey.currentState?.jumpToDate(date);
-                          });
-                        },
-                        headerStyle: HeaderStyle(
-                          decoration: headerBoxDecoration(context),
-                        ),
-                        headerStringBuilder: (date, {secondaryDate}) {
-                          return DateFormat.yMMMMd().format(date.toLocal());
-                        },
-                        onPageChange: (date, page) {
-                          debugPrint("date: ${date.formatDate()} - page: $page");
-                          fetchAndUpdateSessions(date, date.lastDayOfMonth.atEndOfDay);
-                        },
-                        useAvailableVerticalSpace: true,
-                      ),
-                  },
-                ),
-                _buildLoadingOverlay()
-              ],
+          children: [
+            viewSwitcher(context),
+            const SizedBox(
+              height: 16,
             ),
-          ),
-        ],
-      ),
+            Expanded(
+              child: Stack(
+                children: [
+                  SizedBox(
+                    width: 1000,
+                    child: CalendarControllerProvider(
+                      controller: _calendarController,
+                      child: switch (_calendarViewMode) {
+                        CalendarViewMode.day => DayView(
+                            key: dayViewKey,
+                            onEventTap: (events, date) {
+                              if (events.isNotEmpty) {
+                                final session =
+                                    events.first.event as SessionDto;
+                                push(EventScreen(
+                                  id: session.eventId,
+                                  role: session.role ?? RoleDto.participant,
+                                ));
+                              }
+                            },
+                            headerStyle: HeaderStyle(
+                              decoration: headerBoxDecoration(context),
+                            ),
+                            dateStringBuilder: (date, {secondaryDate}) {
+                              return date.formatDate();
+                            },
+                            startDuration:
+                                Duration(hours: TimeOfDay.now().hour),
+                            heightPerMinute: 1,
+                            onPageChange: (date, page) {
+                              //TODO: Arman bia kir bokhor; moft khor
+                              debugPrint(
+                                  "date: ${date.formatDate()} - page: $page");
+                              fetchAndUpdateSessions(date.firstDayOfMonth,
+                                  date.lastDayOfMonth.atEndOfDay);
+                            },
+                          ),
+                        CalendarViewMode.week => WeekView(
+                            key: weekViewKey,
+                            onEventTap: (events, date) {
+                              if (events.isNotEmpty) {
+                                final session =
+                                    events.first.event as SessionDto;
+                                push(EventScreen(
+                                    id: session.eventId,
+                                    role: session.role ?? RoleDto.participant));
+                              }
+                            },
+                            onDateTap: (date) {},
+                            weekNumberBuilder: (firstDayOfWeek) {
+                              return null;
+                            },
+                            headerStyle: HeaderStyle(
+                              decoration: headerBoxDecoration(context),
+                            ),
+                            headerStringBuilder: (date, {secondaryDate}) {
+                              return "${date.formatDate(useShortFormat: true)} - ${secondaryDate?.formatDate(useShortFormat: true)}";
+                            },
+                            onPageChange: (date, page) {
+                              debugPrint(
+                                  "date: ${date.formatDate()} - page: $page");
+                              fetchAndUpdateSessions(date.firstDayOfMonth,
+                                  date.lastDayOfMonth.atEndOfDay);
+                            },
+                          ),
+                        CalendarViewMode.month => MonthView(
+                            key: monthViewKey,
+                            onEventTap: (event, date) {
+                              final session = event.event as SessionDto;
+                              push(EventScreen(
+                                  id: session.eventId,
+                                  role: session.role ?? RoleDto.participant));
+                            },
+                            onCellTap: (events, date) {
+                              setState(() {
+                                _calendarViewMode = CalendarViewMode.day;
+                              });
+                              Future.delayed(const Duration(milliseconds: 50),
+                                  () {
+                                dayViewKey.currentState?.jumpToDate(date);
+                              });
+                            },
+                            headerStyle: HeaderStyle(
+                              decoration: headerBoxDecoration(context),
+                            ),
+                            headerStringBuilder: (date, {secondaryDate}) {
+                              return DateFormat.yMMMMd().format(date.toLocal());
+                            },
+                            onPageChange: (date, page) {
+                              debugPrint(
+                                  "date: ${date.formatDate()} - page: $page");
+                              fetchAndUpdateSessions(
+                                  date, date.lastDayOfMonth.atEndOfDay);
+                            },
+                            useAvailableVerticalSpace: false,
+                          ),
+                      },
+                    ),
+                  ),
+                  _buildLoadingOverlay()
+                ],
+              ),
+            ),
+          ],
+        ),
     );
   }
 
   Widget viewSwitcher(BuildContext context) {
-    return Row(
+    return SizedBox(width: 1000, child: 
+    Row(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -266,16 +293,17 @@ class _CalendarScreenState extends State<CalendarScreen> with NavigationMixin, M
           },
         )
       ],
-    );
+    )
+    ); 
   }
 
   BoxDecoration headerBoxDecoration(BuildContext context) {
     return BoxDecoration(
       // color: Theme.of(context).colorScheme.primaryContainer,
-      border: Border.all(
+      border: kIsWeb ? null : Border.all(
         color: Theme.of(context).colorScheme.outlineVariant,
       ),
-      borderRadius: const BorderRadius.only(
+      borderRadius: kIsWeb ? BorderRadius.zero : const BorderRadius.only(
         topLeft: Radius.circular(16),
         topRight: Radius.circular(16),
       ),
