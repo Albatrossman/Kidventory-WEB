@@ -6,15 +6,15 @@ import 'package:kidventory_flutter/core/data/model/update_password_dto.dart';
 abstract class AuthApiService {
   Future<TokenDto> signIn(String username, String password);
 
-  Future<Null> signUp(SignUpDto body);
+  Future<void> signUp(SignUpDto body);
 
-  Future<Null> sendOTP(String email);
+  Future<void> sendOTP(String email);
 
-  Future<Null> validateOTP(String email, String code);
+  Future<void> validateOTP(String email, String code);
 
-  Future<Null> resetPassword(String email, String code, String password);
+  Future<void> resetPassword(String email, String code, String password);
 
-  Future<Null> changePassword(UpdatePasswordDto body);
+  Future<void> changePassword(UpdatePasswordDto body);
 
-  Future<Null> deleteAccount(DeleteAccountDto body);
+  Future<void> deleteAccount(DeleteAccountDto body);
 }

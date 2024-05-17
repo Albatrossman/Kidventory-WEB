@@ -21,7 +21,8 @@ Future<void> setup() async {
   var storage = const FlutterSecureStorage();
 
   getIt.registerLazySingleton<TokenPreferencesManager>(
-      () => TokenPreferencesManagerImpl(storage: storage));
+    () => TokenPreferencesManagerImpl(storage: storage),
+  );
 
   Token? token = await getIt<TokenPreferencesManager>().getToken();
 
@@ -32,12 +33,9 @@ Future<void> setup() async {
     ),
   );
 
-  getIt.registerLazySingleton<AuthApiService>(
-      () => AuthApiServiceImpl(getIt<DioClient>()));
-  getIt.registerLazySingleton<UserApiService>(
-      () => UserApiServiceImpl(getIt<DioClient>()));
-  getIt.registerLazySingleton<EventApiService>(
-      () => EventApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<AuthApiService>(() => AuthApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<UserApiService>(() => UserApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<EventApiService>(() => EventApiServiceImpl(getIt<DioClient>()));
   getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
   getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));
 }
@@ -58,12 +56,9 @@ Future<void> updateSingletons(String accessToken) async {
     ),
   );
 
-  getIt.registerLazySingleton<AuthApiService>(
-      () => AuthApiServiceImpl(getIt<DioClient>()));
-  getIt.registerLazySingleton<UserApiService>(
-      () => UserApiServiceImpl(getIt<DioClient>()));
-  getIt.registerLazySingleton<EventApiService>(
-      () => EventApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<AuthApiService>(() => AuthApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<UserApiService>(() => UserApiServiceImpl(getIt<DioClient>()));
+  getIt.registerLazySingleton<EventApiService>(() => EventApiServiceImpl(getIt<DioClient>()));
   getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
   getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));
 }
