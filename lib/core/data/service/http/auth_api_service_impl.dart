@@ -25,7 +25,7 @@ class AuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Null> signUp(SignUpDto body) async {
+  Future<void> signUp(SignUpDto body) async {
     Response response =
         await client.dio.post('auth/signup', data: body.toJson());
 
@@ -37,10 +37,9 @@ class AuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Null> sendOTP(String email) async {
+  Future<void> sendOTP(String email) async {
     final response = await http.post(
-      Uri.parse(
-          "https://kidventory.aftersearch.com/api/auth/GenerateOtpCode?email=$email"),
+      Uri.parse("https://kidventory.aftersearch.com/api/auth/GenerateOtpCode?email=$email"),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -48,7 +47,7 @@ class AuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Null> validateOTP(String email, String code) async {
+  Future<void> validateOTP(String email, String code) async {
     final response = await http.get(
       Uri.parse(
           "https://kidventory.aftersearch.com/api/auth/ValidateOtpCode?email=$email&code=$code"),
@@ -59,10 +58,9 @@ class AuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Null> resetPassword(String email, String code, String password) async {
+  Future<void> resetPassword(String email, String code, String password) async {
     final response = await http.patch(
-      Uri.parse(
-          "https://kidventory.aftersearch.com/api/auth/ResetPassword?email=$email&code=$code&password=$password&"),
+      Uri.parse("https://kidventory.aftersearch.com/api/auth/ResetPassword?email=$email&code=$code&password=$password&"),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -70,7 +68,7 @@ class AuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Null> changePassword(UpdatePasswordDto body) async {
+  Future<void> changePassword(UpdatePasswordDto body) async {
     Response response = await client.dio.patch(
       'Auth/ChangePassword',
       data: body.toJson(),
@@ -84,7 +82,7 @@ class AuthApiServiceImpl implements AuthApiService {
   }
 
   @override
-  Future<Null> deleteAccount(DeleteAccountDto body) async {
+  Future<void> deleteAccount(DeleteAccountDto body) async {
     Response response = await client.dio.patch(
       'Auth/DeleteAccount',
       data: body.toJson(),
