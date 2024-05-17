@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/domain/model/color.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 import 'package:kidventory_flutter/core/domain/model/online_location.dart';
@@ -18,7 +18,7 @@ class EditEventScreenState {
   final RepeatEnd selectedRepeatEnd;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
-  final Map<File, List<Member>> filesAndParticipants;
+  final Map<XFile, List<Member>> filesAndParticipants;
   final OnlineLocation? onlineLocation;
   final EventColor color;
   final String description;
@@ -34,7 +34,7 @@ class EditEventScreenState {
     this.selectedRepeatEnd = RepeatEnd.onDate,
     TimeOfDay? startTime,
     TimeOfDay? endTime,
-    Map<File, List<Member>>? filesAndParticipants,
+    Map<XFile, List<Member>>? filesAndParticipants,
     this.onlineLocation,
     this.color = EventColor.peacock,
     this.description = '',
@@ -55,7 +55,7 @@ class EditEventScreenState {
     Repeat? repeat,
     RepeatUnit? selectedRepeatUnit,
     RepeatEnd? selectedRepeatEnd,
-    Map<File, List<Member>>? filesAndParticipants,
+    Map<XFile, List<Member>>? filesAndParticipants,
     OnlineLocation? onlineLocation,
     EventColor? color,
     String? description,

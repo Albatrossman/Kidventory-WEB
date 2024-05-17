@@ -1,17 +1,16 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 import 'package:kidventory_flutter/core/ui/component/csv_card.dart';
 import 'package:kidventory_flutter/core/ui/component/sheet_header.dart';
 
 class AddMembersScreen extends StatelessWidget {
-  final Map<File, List<Member>> filesAndParticipants;
+  final Map<XFile, List<Member>> filesAndParticipants;
   final Function onDownloadTemplateClick;
   final Function onImportCSVClick;
-  final Function(File file) onRemoveCSVClick;
-  final Function(File file) onCSVFileClick;
+  final Function(XFile file) onRemoveCSVClick;
+  final Function(XFile file) onCSVFileClick;
 
   const AddMembersScreen({
     super.key,
@@ -90,7 +89,7 @@ class AddMembersScreen extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: filesAndParticipants.length,
                   itemBuilder: (context, index) {
-                    File file = filesAndParticipants.keys.elementAt(index);
+                    XFile file = filesAndParticipants.keys.elementAt(index);
                     return Column(
                       children: [
                         CSVCard(

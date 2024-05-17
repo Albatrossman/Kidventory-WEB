@@ -308,7 +308,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
         builder: (_, model, __) {
           return OutlinedButton(
             onPressed: () async {
-              File? file = await csvPicker();
+              XFile? file = await csvPicker();
 
               if (file != null) {
                 _viewModel.importCSV(file);
@@ -340,7 +340,7 @@ class _InviteMembersScreenState extends State<InviteMembersScreen>
           children: List.generate(
             _viewModel.state.filesAndParticipants.length,
             (index) {
-              File file =
+              XFile file =
                   _viewModel.state.filesAndParticipants.keys.elementAt(index);
               return Column(
                 children: [

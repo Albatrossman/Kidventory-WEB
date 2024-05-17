@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
 import 'package:kidventory_flutter/core/ui/component/image_picker.dart';
@@ -15,6 +15,7 @@ import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/edit_profile/edit_profile_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserInfo? userInfo;
@@ -38,7 +39,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   bool validFirstname = true;
   bool validLastname = true;
   bool isDeleting = false;
-  File? _selectedImage;
+  XFile? _selectedImage;
 
   @override
   void initState() {
@@ -77,7 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   children: [
                     const SizedBox(height: 16.0),
                     AppImagePicker(
-                      onImageSelected: (File image) => {_selectedImage = image},
+                      onImageSelected: (XFile image) => {_selectedImage = image},
                       width: 100,
                       height: 100,
                       currentImage: widget.userInfo?.image ?? "",
@@ -162,14 +163,18 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       validLastname = _lastnameController.text.isNotEmpty;
     });
     if (validFirstname && validLastname) {
+      Uint8List? imageBytes;
+      if (_selectedImage!= null) {
+        imageBytes = await _selectedImage!.readAsBytesAsync();
+      }
       _viewModel
           .editUser(
             _firstnameController.text,
             _lastnameController.text,
-            _selectedImage == null ? null : info.image,
-            _selectedImage == null
+            imageBytes == null ? null : info.image,
+            imageBytes == null
                 ? null
-                : base64Encode(_selectedImage!.readAsBytesSync()),
+                : base64Encode(imageBytes),
           )
           .whenComplete(() => _btnController.reset())
           .then(

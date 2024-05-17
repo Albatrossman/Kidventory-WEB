@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/multi_select_card.dart';
@@ -262,18 +262,16 @@ mixin PickerMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  Future<File?> csvPicker() async {
+  Future<XFile?> csvPicker() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: FileType.custom, allowedExtensions: ['csv'], withData: true);
 
       if (result != null) {
         PlatformFile platformFile = result.files.first;
+        XFile xFile = platformFile.xFile;
 
-        if (platformFile.path != null) {
-          File file = File(platformFile.path!);
-          return file;
-        }
+        return xFile;
       } else {
         print('No file selected');
       }

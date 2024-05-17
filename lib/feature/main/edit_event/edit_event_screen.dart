@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/data/model/role_dto.dart';
 import 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';
 import 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';
@@ -31,6 +33,7 @@ import 'package:kidventory_flutter/feature/main/repeat/repeat_screen.dart';
 import 'package:kidventory_flutter/feature/main/roster/roster_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class EditEventScreen extends StatefulWidget {
   const EditEventScreen({super.key});
@@ -49,7 +52,7 @@ class _EditEventScreenState extends State<EditEventScreen>
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
   String selectedOption = 'Never';
-  File? _selectedImage;
+  XFile? _selectedImage;
   DateTime _selectedDate = DateTime.now();
 
   @override
@@ -93,7 +96,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                       Row(
                         children: [
                           AppImagePicker(
-                            onImageSelected: (File image) =>
+                            onImageSelected: (XFile image) =>
                                 {_selectedImage = image},
                             width: 72,
                             height: 72,
@@ -231,7 +234,7 @@ class _EditEventScreenState extends State<EditEventScreen>
                                     await _viewModel.downloadCSVTemplate();
                                   },
                                   onImportCSVClick: () async {
-                                    File? file = await csvPicker();
+                                    XFile? file = await csvPicker();
 
                                     if (file != null) {
                                       _viewModel.importCSV(file);
@@ -415,29 +418,9 @@ class _EditEventScreenState extends State<EditEventScreen>
   Widget _buildSaveButton(BuildContext context) {
     return AppButton(
       controller: _btnController,
-      onPressed: () => _viewModel
-          .createEvent(
-            _nameController.text,
-            _selectedImage != null
-                ? base64Encode(_selectedImage!.readAsBytesSync())
-                : null,
-            _selectedDate,
-          )
-          .whenComplete(() => _btnController.reset())
-          .then(
-        (value) => replace(EventScreen(
-          id: value,
-          role: RoleDto.owner,
-        )),
-        onError: (error) {
-          String message = 'Something went wrong';
-          if (error is DioException) {
-            message = error.message ?? message;
-          }
-
-          snackbar(message);
-        },
-      ),
+      onPressed: () => {
+        _onSave(context)
+      },
       child: Text(
         'Save',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -546,6 +529,36 @@ class _EditEventScreenState extends State<EditEventScreen>
             ),
           );
         }
+      },
+    );
+  }
+
+  void _onSave(BuildContext context) async {
+    Uint8List? imageBytes;
+      if (_selectedImage!= null) {
+        imageBytes = await _selectedImage!.readAsBytesAsync();
+      }
+    _viewModel
+        .createEvent(
+          _nameController.text,
+          imageBytes != null
+              ? base64Encode(imageBytes)
+              : null,
+          _selectedDate,
+        )
+        .whenComplete(() => _btnController.reset())
+        .then(
+      (value) => replace(EventScreen(
+        id: value,
+        role: RoleDto.owner,
+      )),
+      onError: (error) {
+        String message = 'Something went wrong';
+        if (error is DioException) {
+          message = error.message ?? message;
+        }
+
+        snackbar(message);
       },
     );
   }

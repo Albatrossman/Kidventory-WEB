@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
 import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
 import 'package:kidventory_flutter/core/ui/component/button.dart';
@@ -18,6 +19,7 @@ import 'package:kidventory_flutter/di/app_module.dart';
 import 'package:kidventory_flutter/feature/main/edit_child/edit_child_screen_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class EditChildScreen extends StatefulWidget {
   final ChildInfo? childInfo;
@@ -43,7 +45,7 @@ class _EditChildScreenState extends State<EditChildScreen>
   bool validFirstname = true;
   bool validLastname = true;
   bool isDeleting = false;
-  File? _selectedImage;
+  XFile? _selectedImage;
 
   @override
   void initState() {
@@ -89,7 +91,7 @@ class _EditChildScreenState extends State<EditChildScreen>
                       children: [
                         const SizedBox(height: 16.0),
                         AppImagePicker(
-                          onImageSelected: (File image) =>
+                          onImageSelected: (XFile image) =>
                               {_selectedImage = image},
                           width: 100,
                           height: 100,
@@ -347,6 +349,10 @@ class _EditChildScreenState extends State<EditChildScreen>
       validLastname = _lastnameController.text.isNotEmpty;
     });
     if (validFirstname && validLastname) {
+      Uint8List? imageBytes;
+      if (_selectedImage!= null) {
+        imageBytes = await _selectedImage!.readAsBytesAsync();
+      }
       _viewModel
           .editChild(
             info.id,
@@ -354,10 +360,10 @@ class _EditChildScreenState extends State<EditChildScreen>
             _lastnameController.text,
             _selectedDate,
             _relation,
-            _selectedImage == null ? info.image : null,
-            _selectedImage == null
+            imageBytes == null ? info.image : null,
+            imageBytes == null
                 ? null
-                : base64Encode(_selectedImage!.readAsBytesSync()),
+                : base64Encode(imageBytes),
           )
           .whenComplete(() => _btnController.reset())
           .then(
@@ -379,6 +385,10 @@ class _EditChildScreenState extends State<EditChildScreen>
       validLastname = _lastnameController.text.isNotEmpty;
     });
     if (validFirstname && validLastname) {
+      Uint8List? imageBytes;
+      if (_selectedImage!= null) {
+        imageBytes = await _selectedImage!.readAsBytesAsync();
+      }
       _viewModel
           .createChild(
             _firstnameController.text,
@@ -386,9 +396,9 @@ class _EditChildScreenState extends State<EditChildScreen>
             _selectedDate,
             _relation,
             null,
-            _selectedImage == null
+            imageBytes == null
                 ? null
-                : base64Encode(_selectedImage!.readAsBytesSync()),
+                : base64Encode(imageBytes),
           )
           .whenComplete(() => _btnController.reset())
           .then(

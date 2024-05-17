@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/data/mapper/member_mapper.dart';
 import 'package:kidventory_flutter/core/data/mapper/online_location_mapper.dart';
 import 'package:kidventory_flutter/core/data/mapper/repeat_mapper.dart';
@@ -126,16 +127,18 @@ class EditEventScreenViewModel extends ChangeNotifier {
     _update(selectedRepeatEnd: end);
   }
 
-  void importCSV(File file) {
-    List<Member> participants = _parser.parse(file.readAsStringSync());
-    Map<File, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);
+  void importCSV(XFile file) async {
+    late String fileString;
+    await file.readAsString().then((value) => {fileString = value});
+    List<Member> participants = _parser.parse(fileString);
+    Map<XFile, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);
     filesAndParticipants[file] = participants;
 
     _update(filesAndParticipants: filesAndParticipants);
   }
 
-  void removeCSV(File file) {
-    Map<File, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);
+  void removeCSV(XFile file) {
+    Map<XFile, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);
     filesAndParticipants.remove(file);
 
     _update(filesAndParticipants: filesAndParticipants);
@@ -185,7 +188,7 @@ class EditEventScreenViewModel extends ChangeNotifier {
     RepeatEnd? selectedRepeatEnd,
     TimeOfDay? startTime,
     TimeOfDay? endTime,
-    Map<File, List<Member>>? filesAndParticipants,
+    Map<XFile, List<Member>>? filesAndParticipants,
     OnlineLocation? onlineLocation,
     EventColor? color,
     String? description,

@@ -1,13 +1,13 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:kidventory_flutter/core/ui/component/clickable.dart';
 
 class AppImagePicker extends StatefulWidget {
-  final void Function(File) onImageSelected;
+  final void Function(XFile) onImageSelected;
   final double width;
   final double height;
   final String currentImage;
@@ -27,7 +27,8 @@ class AppImagePicker extends StatefulWidget {
 
 class _AppImagePickerState extends State<AppImagePicker> {
   late ImagePicker _picker;
-  File? _image;
+  XFile? _image;
+  Uint8List? _imageBytes;
 
   @override
   void initState() {
@@ -44,13 +45,20 @@ class _AppImagePickerState extends State<AppImagePicker> {
         maxWidth: 400,
         aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
         aspectRatioPresets: [CropAspectRatioPreset.square],
+        uiSettings: [
+          // ignore: use_build_context_synchronously
+          WebUiSettings(context: context, enableZoom: true)
+        ],
       );
 
       if (cropped != null) {
-        setState(() {
-          _image = File(cropped.path);
-        });
-        widget.onImageSelected(File(cropped.path));
+        _image = XFile(cropped.path);
+        await _image!.readAsBytes().then((value) => {
+              setState(() {
+                _imageBytes = value;
+              })
+            });
+        widget.onImageSelected(XFile(cropped.path));
       }
     }
   }
@@ -71,7 +79,7 @@ class _AppImagePickerState extends State<AppImagePicker> {
             : ClipOval(
                 child: FittedBox(
                   fit: BoxFit.cover,
-                  child: Image.file(_image!),
+                  child: Image.memory(_imageBytes!),
                 ),
               ),
       ),
@@ -96,5 +104,16 @@ class _AppImagePickerState extends State<AppImagePicker> {
               ),
             ),
           );
+  }
+}
+
+extension XFileAsync on XFile {
+  Future<Uint8List> readAsBytesAsync() async {
+    late Uint8List bytes;
+    await readAsBytes().then((value) => {
+      bytes = value
+    });
+
+    return bytes;
   }
 }

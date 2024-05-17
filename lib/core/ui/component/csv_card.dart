@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 
 class CSVCard extends StatelessWidget {
-  final File file;
+  final XFile file;
   final List<Member> members;
   final void Function() onClick;
   final void Function() onRemoveClick;

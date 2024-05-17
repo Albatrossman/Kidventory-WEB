@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/domain/model/member.dart';
 
 import 'package:kidventory_flutter/core/data/model/event_dto.dart';
@@ -12,7 +13,7 @@ class EventScreenState {
   final EventDto? event;
   final List<ParticipantDto> participants;
   final Map<RoleDto, List<ParticipantDto>>? participantsByRole;
-  final Map<File, List<Member>> filesAndParticipants;
+  final Map<XFile, List<Member>> filesAndParticipants;
   final List<ParticipantDto> updatedAttendances;
   final List<EventSessionDto> sessions;
   final EventSessionDto? selectedSession;
@@ -24,7 +25,7 @@ class EventScreenState {
       this.event,
       List<ParticipantDto>? participants,
       Map<RoleDto, List<ParticipantDto>>? participantsByRole,
-      Map<File, List<Member>>? filesAndParticipants,
+      Map<XFile, List<Member>>? filesAndParticipants,
       List<ParticipantDto>? updatedAttendances,
       List<EventSessionDto>? sessions,
       this.selectedSession,
@@ -43,7 +44,7 @@ class EventScreenState {
       EventDto? event,
       List<ParticipantDto>? participants,
       Map<RoleDto, List<ParticipantDto>>? participantsByRole,
-      Map<File, List<Member>>? filesAndParticipants,
+      Map<XFile, List<Member>>? filesAndParticipants,
       List<ParticipantDto>? updatedAttendances,
       List<EventSessionDto>? sessions,
       EventSessionDto? selectedSession,

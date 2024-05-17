@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidventory_flutter/core/data/mapper/member_mapper.dart';
 import 'package:kidventory_flutter/core/data/model/add_member_dto.dart';
 import 'package:kidventory_flutter/core/data/model/attendance_dto.dart';
@@ -260,17 +261,19 @@ class EventScreenViewModel extends ChangeNotifier {
     }
   }
 
-  void importCSV(File file) {
-    List<Member> participants = _parser.parse(file.readAsStringSync());
-    Map<File, List<Member>> filesAndParticipants =
-        Map.from(state.filesAndParticipants);
+  void importCSV(XFile file) async {
+    late String fileString;
+    await file.readAsString().then((value) => {fileString = value});
+    List<Member> participants = _parser.parse(fileString);
+    Map<XFile, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);
     filesAndParticipants[file] = participants;
 
     _update(filesAndParticipants: filesAndParticipants);
   }
 
-  void removeCSV(File file) {
-    Map<File, List<Member>> filesAndParticipants =
+  
+  void removeCSV(XFile file) {
+    Map<XFile, List<Member>> filesAndParticipants =
         Map.from(state.filesAndParticipants);
     filesAndParticipants.remove(file);
 
@@ -278,7 +281,7 @@ class EventScreenViewModel extends ChangeNotifier {
   }
 
   void removeAllCSV() {
-    _update(filesAndParticipants: <File, List<Member>>{});
+    _update(filesAndParticipants: <XFile, List<Member>>{});
   }
 
   Future<void> downloadCSVTemplate() async {
@@ -290,7 +293,7 @@ class EventScreenViewModel extends ChangeNotifier {
     EventDto? event,
     List<ParticipantDto>? participants,
     Map<RoleDto, List<ParticipantDto>>? participantsByRole,
-    Map<File, List<Member>>? filesAndParticipants,
+    Map<XFile, List<Member>>? filesAndParticipants,
     List<ParticipantDto>? updatedAttendances,
     List<EventSessionDto>? sessions,
     EventSessionDto? selectedSession,
