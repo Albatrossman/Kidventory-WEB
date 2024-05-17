@@ -1,0 +1,175 @@
+Index: lib/core/data/service/http/auth_api_service_impl.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:dio/dio.dart';\r\nimport 'package:kidventory_flutter/core/data/model/delete_account_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/model/sign_up_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/model/token_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/model/update_password_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';\r\nimport 'package:http/http.dart' as http;\r\nimport 'package:kidventory_flutter/core/data/util/dio_client.dart';\r\n\r\nclass AuthApiServiceImpl implements AuthApiService {\r\n  final DioClient client;\r\n\r\n  AuthApiServiceImpl(this.client);\r\n\r\n  @override\r\n  Future<TokenDto> signIn(String username, String password) async {\r\n    Response response = await client.dio\r\n        .post('auth/login', data: {'email': username, 'password': password});\r\n\r\n    if (response.statusCode == 200) {\r\n      return TokenDto.fromJson(response.data);\r\n    } else {\r\n      throw Exception('Failed to sign in');\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<Null> signUp(SignUpDto body) async {\r\n    Response response =\r\n        await client.dio.post('auth/signup', data: body.toJson());\r\n\r\n    if (response.statusCode == 200) {\r\n      return null;\r\n    } else {\r\n      throw Exception('Failed to sign up');\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<Null> sendOTP(String email) async {\r\n    final response = await http.post(\r\n      Uri.parse(\r\n          \"https://kidventory.aftersearch.com/api/auth/GenerateOtpCode?email=$email\"),\r\n      headers: {'Content-Type': 'application/json'},\r\n    );\r\n\r\n    if (response.statusCode == 200) {}\r\n  }\r\n\r\n  @override\r\n  Future<Null> validateOTP(String email, String code) async {\r\n    final response = await http.get(\r\n      Uri.parse(\r\n          \"https://kidventory.aftersearch.com/api/auth/ValidateOtpCode?email=$email&code=$code\"),\r\n      headers: {'Content-Type': 'application/json'},\r\n    );\r\n\r\n    if (response.statusCode == 200) {}\r\n  }\r\n\r\n  @override\r\n  Future<Null> resetPassword(String email, String code, String password) async {\r\n    final response = await http.patch(\r\n      Uri.parse(\r\n          \"https://kidventory.aftersearch.com/api/auth/ResetPassword?email=$email&code=$code&password=$password&\"),\r\n      headers: {'Content-Type': 'application/json'},\r\n    );\r\n\r\n    if (response.statusCode == 200) {}\r\n  }\r\n\r\n  @override\r\n  Future<Null> changePassword(UpdatePasswordDto body) async {\r\n    Response response = await client.dio.patch(\r\n      'Auth/ChangePassword',\r\n      data: body.toJson(),\r\n    );\r\n\r\n    if (response.statusCode == 200) {\r\n    } else {\r\n      //422 incorrect password\r\n      throw Exception('Something went wrong');\r\n    }\r\n  }\r\n\r\n  @override\r\n  Future<Null> deleteAccount(DeleteAccountDto body) async {\r\n    Response response = await client.dio.patch(\r\n      'Auth/DeleteAccount',\r\n      data: body.toJson(),\r\n    );\r\n\r\n    if (response.statusCode == 200) {\r\n    } else {\r\n      //422 incorrect password\r\n      throw Exception('Something went wrong');\r\n    }\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/service/http/auth_api_service_impl.dart b/lib/core/data/service/http/auth_api_service_impl.dart
+--- a/lib/core/data/service/http/auth_api_service_impl.dart	(revision 1916ec49733c1e5de1ea1ff68f1203dbe5c2740f)
++++ b/lib/core/data/service/http/auth_api_service_impl.dart	(date 1715756970592)
+@@ -25,7 +25,7 @@
+   }
+ 
+   @override
+-  Future<Null> signUp(SignUpDto body) async {
++  Future<void> signUp(SignUpDto body) async {
+     Response response =
+         await client.dio.post('auth/signup', data: body.toJson());
+ 
+@@ -37,10 +37,9 @@
+   }
+ 
+   @override
+-  Future<Null> sendOTP(String email) async {
++  Future<void> sendOTP(String email) async {
+     final response = await http.post(
+-      Uri.parse(
+-          "https://kidventory.aftersearch.com/api/auth/GenerateOtpCode?email=$email"),
++      Uri.parse("https://kidventory.aftersearch.com/api/auth/GenerateOtpCode?email=$email"),
+       headers: {'Content-Type': 'application/json'},
+     );
+ 
+@@ -48,7 +47,7 @@
+   }
+ 
+   @override
+-  Future<Null> validateOTP(String email, String code) async {
++  Future<void> validateOTP(String email, String code) async {
+     final response = await http.get(
+       Uri.parse(
+           "https://kidventory.aftersearch.com/api/auth/ValidateOtpCode?email=$email&code=$code"),
+@@ -59,10 +58,9 @@
+   }
+ 
+   @override
+-  Future<Null> resetPassword(String email, String code, String password) async {
++  Future<void> resetPassword(String email, String code, String password) async {
+     final response = await http.patch(
+-      Uri.parse(
+-          "https://kidventory.aftersearch.com/api/auth/ResetPassword?email=$email&code=$code&password=$password&"),
++      Uri.parse("https://kidventory.aftersearch.com/api/auth/ResetPassword?email=$email&code=$code&password=$password&"),
+       headers: {'Content-Type': 'application/json'},
+     );
+ 
+@@ -70,7 +68,7 @@
+   }
+ 
+   @override
+-  Future<Null> changePassword(UpdatePasswordDto body) async {
++  Future<void> changePassword(UpdatePasswordDto body) async {
+     Response response = await client.dio.patch(
+       'Auth/ChangePassword',
+       data: body.toJson(),
+@@ -84,7 +82,7 @@
+   }
+ 
+   @override
+-  Future<Null> deleteAccount(DeleteAccountDto body) async {
++  Future<void> deleteAccount(DeleteAccountDto body) async {
+     Response response = await client.dio.patch(
+       'Auth/DeleteAccount',
+       data: body.toJson(),
+Index: lib/main.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'dart:async';\r\n\r\nimport 'package:app_links/app_links.dart';\r\nimport 'package:flutter/material.dart';\r\nimport 'package:kidventory_flutter/core/data/model/profile_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';\r\nimport 'package:kidventory_flutter/core/ui/util/mixin/navigation_mixin.dart';\r\nimport 'package:kidventory_flutter/di/app_module.dart';\r\nimport 'package:kidventory_flutter/feature/auth/sign_in/sign_in_screen.dart';\r\nimport 'package:kidventory_flutter/feature/main/main_screen.dart';\r\nimport 'package:kidventory_flutter/main_viewmodel.dart';\r\nimport 'package:provider/provider.dart';\r\n\r\nvoid main() async {\r\n  WidgetsFlutterBinding.ensureInitialized();\r\n  setup();\r\n  runApp(MultiProvider(\r\n    providers: [\r\n      ChangeNotifierProvider<MainViewModel>(\r\n        create: (context) => MainViewModel(getIt<TokenPreferencesManager>()),\r\n      ),\r\n    ],\r\n    child: const MyApp(),\r\n  ));\r\n}\r\n\r\nfinal RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();\r\nString? inviteLinkReferenceId;\r\nProfileDto? globalUserProfile;\r\n\r\nclass MyApp extends StatelessWidget {\r\n  const MyApp({super.key});\r\n\r\n  @override\r\n  Widget build(BuildContext context) {\r\n    return MaterialApp(\r\n      title: 'Kidventory',\r\n      theme: ThemeData(\r\n        colorScheme: ColorScheme.fromSeed(\r\n          seedColor: const Color.fromARGB(255, 28, 176, 245),\r\n          background: Colors.white,\r\n          surface: const Color(0xFFFAF9FD),\r\n        ),\r\n        useMaterial3: true,\r\n      ),\r\n      debugShowCheckedModeBanner: false,\r\n      navigatorObservers: [routeObserver],\r\n      home: FutureBuilder(\r\n          future: setup(),\r\n          builder: (context, snapshot) {\r\n            if (snapshot.connectionState == ConnectionState.done) {\r\n              return const AppScreen(title: 'Kidventory');\r\n            }\r\n            return const Center(child: CircularProgressIndicator());\r\n          }),\r\n    );\r\n  }\r\n}\r\n\r\nclass AppScreen extends StatefulWidget {\r\n  const AppScreen({super.key, required this.title});\r\n\r\n  final String title;\r\n\r\n  @override\r\n  State<AppScreen> createState() => _AppScreenState();\r\n}\r\n\r\nclass _AppScreenState extends State<AppScreen> with NavigationMixin {\r\n  bool isLoading = false;\r\n  late AppLinks _appLinks;\r\n  StreamSubscription<Uri>? _linkSubscription;\r\n\r\n  Future<void> initDeepLinks() async {\r\n    _appLinks = AppLinks();\r\n\r\n    // Check initial link if app was in cold state (terminated)\r\n    final appLink = await _appLinks.getInitialAppLink();\r\n    if (appLink != null) {\r\n      openAppLink(appLink);\r\n    }\r\n\r\n    // Handle link when app is in warm state (front or background)\r\n    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {\r\n      openAppLink(uri);\r\n    });\r\n  }\r\n\r\n  void openAppLink(Uri uri) {\r\n    String? id = uri.queryParameters['id'];\r\n    inviteLinkReferenceId = id;\r\n    // pushSheet(const JoinEventScreen());\r\n  }\r\n\r\n  @override\r\n  void initState() {\r\n    super.initState();\r\n    initDeepLinks();\r\n  }\r\n\r\n  @override\r\n  void dispose() {\r\n    _linkSubscription?.cancel();\r\n    super.dispose();\r\n  }\r\n\r\n  @override\r\n  Widget build(BuildContext context) {\r\n    return Consumer<MainViewModel>(\r\n      builder: (context, model, child) {\r\n        if (model.isLoading) {\r\n          return const Center(child: CircularProgressIndicator()); // Show loading indicator\r\n        } else if (model.isAuthenticated) {\r\n          return const MainScreen();\r\n        } else {\r\n          return const SignInScreen();\r\n        }\r\n      },\r\n    );\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/main.dart b/lib/main.dart
+--- a/lib/main.dart	(revision 1916ec49733c1e5de1ea1ff68f1203dbe5c2740f)
++++ b/lib/main.dart	(date 1715754218157)
+@@ -13,7 +13,7 @@
+ 
+ void main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+-  setup();
++  await setup();
+   runApp(MultiProvider(
+     providers: [
+       ChangeNotifierProvider<MainViewModel>(
+Index: lib/di/app_module.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:flutter_secure_storage/flutter_secure_storage.dart';\r\nimport 'package:get_it/get_it.dart';\r\nimport 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';\r\nimport 'package:kidventory_flutter/core/data/service/csv/participant_csv_parser.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/auth_api_service.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/auth_api_service_impl.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/event_api_service_impl.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/user_api_service_impl.dart';\r\nimport 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager.dart';\r\nimport 'package:kidventory_flutter/core/data/service/preferences/token_preferences_manager_impl.dart';\r\nimport 'package:kidventory_flutter/core/data/util/dio_client.dart';\r\nimport 'package:kidventory_flutter/core/data/util/downloader/default_downloader.dart';\r\nimport 'package:kidventory_flutter/core/data/util/downloader/downloader.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/token.dart';\r\n\r\nfinal getIt = GetIt.instance;\r\n\r\nFuture<void> setup() async {\r\n  var storage = const FlutterSecureStorage();\r\n\r\n  getIt.registerLazySingleton<TokenPreferencesManager>(\r\n      () => TokenPreferencesManagerImpl(storage: storage));\r\n\r\n  Token? token = await getIt<TokenPreferencesManager>().getToken();\r\n\r\n  getIt.registerLazySingleton<DioClient>(\r\n    () => DioClient(\r\n      \"https://kidventory.aftersearch.com/v1/\",\r\n      token?.accessToken ?? \"\",\r\n    ),\r\n  );\r\n\r\n  getIt.registerLazySingleton<AuthApiService>(\r\n      () => AuthApiServiceImpl(getIt<DioClient>()));\r\n  getIt.registerLazySingleton<UserApiService>(\r\n      () => UserApiServiceImpl(getIt<DioClient>()));\r\n  getIt.registerLazySingleton<EventApiService>(\r\n      () => EventApiServiceImpl(getIt<DioClient>()));\r\n  getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());\r\n  getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));\r\n}\r\n\r\n// Method to update singletons\r\nFuture<void> updateSingletons(String accessToken) async {\r\n  await getIt.reset(dispose: true);\r\n\r\n  var storage = const FlutterSecureStorage();\r\n\r\n  getIt.registerLazySingleton<TokenPreferencesManager>(\r\n      () => TokenPreferencesManagerImpl(storage: storage));\r\n\r\n  getIt.registerLazySingleton<DioClient>(\r\n    () => DioClient(\r\n      \"https://kidventory.aftersearch.com/v1/\",\r\n      accessToken,\r\n    ),\r\n  );\r\n\r\n  getIt.registerLazySingleton<AuthApiService>(\r\n      () => AuthApiServiceImpl(getIt<DioClient>()));\r\n  getIt.registerLazySingleton<UserApiService>(\r\n      () => UserApiServiceImpl(getIt<DioClient>()));\r\n  getIt.registerLazySingleton<EventApiService>(\r\n      () => EventApiServiceImpl(getIt<DioClient>()));\r\n  getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());\r\n  getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/di/app_module.dart b/lib/di/app_module.dart
+--- a/lib/di/app_module.dart	(revision 1916ec49733c1e5de1ea1ff68f1203dbe5c2740f)
++++ b/lib/di/app_module.dart	(date 1715756014733)
+@@ -21,7 +21,8 @@
+   var storage = const FlutterSecureStorage();
+ 
+   getIt.registerLazySingleton<TokenPreferencesManager>(
+-      () => TokenPreferencesManagerImpl(storage: storage));
++    () => TokenPreferencesManagerImpl(storage: storage),
++  );
+ 
+   Token? token = await getIt<TokenPreferencesManager>().getToken();
+ 
+@@ -32,12 +33,9 @@
+     ),
+   );
+ 
+-  getIt.registerLazySingleton<AuthApiService>(
+-      () => AuthApiServiceImpl(getIt<DioClient>()));
+-  getIt.registerLazySingleton<UserApiService>(
+-      () => UserApiServiceImpl(getIt<DioClient>()));
+-  getIt.registerLazySingleton<EventApiService>(
+-      () => EventApiServiceImpl(getIt<DioClient>()));
++  getIt.registerLazySingleton<AuthApiService>(() => AuthApiServiceImpl(getIt<DioClient>()));
++  getIt.registerLazySingleton<UserApiService>(() => UserApiServiceImpl(getIt<DioClient>()));
++  getIt.registerLazySingleton<EventApiService>(() => EventApiServiceImpl(getIt<DioClient>()));
+   getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
+   getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));
+ }
+@@ -58,12 +56,9 @@
+     ),
+   );
+ 
+-  getIt.registerLazySingleton<AuthApiService>(
+-      () => AuthApiServiceImpl(getIt<DioClient>()));
+-  getIt.registerLazySingleton<UserApiService>(
+-      () => UserApiServiceImpl(getIt<DioClient>()));
+-  getIt.registerLazySingleton<EventApiService>(
+-      () => EventApiServiceImpl(getIt<DioClient>()));
++  getIt.registerLazySingleton<AuthApiService>(() => AuthApiServiceImpl(getIt<DioClient>()));
++  getIt.registerLazySingleton<UserApiService>(() => UserApiServiceImpl(getIt<DioClient>()));
++  getIt.registerLazySingleton<EventApiService>(() => EventApiServiceImpl(getIt<DioClient>()));
+   getIt.registerLazySingleton<CSVParser>(() => ParticipantCSVParser());
+   getIt.registerLazySingleton<Downloader>(() => DefaultDownloader(getIt<DioClient>()));
+ }
+Index: lib/core/data/service/http/auth_api_service.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:kidventory_flutter/core/data/model/delete_account_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/model/sign_up_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/model/token_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/model/update_password_dto.dart';\r\n\r\nabstract class AuthApiService {\r\n  Future<TokenDto> signIn(String username, String password);\r\n\r\n  Future<Null> signUp(SignUpDto body);\r\n\r\n  Future<Null> sendOTP(String email);\r\n\r\n  Future<Null> validateOTP(String email, String code);\r\n\r\n  Future<Null> resetPassword(String email, String code, String password);\r\n\r\n  Future<Null> changePassword(UpdatePasswordDto body);\r\n\r\n  Future<Null> deleteAccount(DeleteAccountDto body);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/service/http/auth_api_service.dart b/lib/core/data/service/http/auth_api_service.dart
+--- a/lib/core/data/service/http/auth_api_service.dart	(revision 1916ec49733c1e5de1ea1ff68f1203dbe5c2740f)
++++ b/lib/core/data/service/http/auth_api_service.dart	(date 1715753366425)
+@@ -6,15 +6,15 @@
+ abstract class AuthApiService {
+   Future<TokenDto> signIn(String username, String password);
+ 
+-  Future<Null> signUp(SignUpDto body);
++  Future<void> signUp(SignUpDto body);
+ 
+-  Future<Null> sendOTP(String email);
++  Future<void> sendOTP(String email);
+ 
+-  Future<Null> validateOTP(String email, String code);
++  Future<void> validateOTP(String email, String code);
+ 
+-  Future<Null> resetPassword(String email, String code, String password);
++  Future<void> resetPassword(String email, String code, String password);
+ 
+-  Future<Null> changePassword(UpdatePasswordDto body);
++  Future<void> changePassword(UpdatePasswordDto body);
+ 
+-  Future<Null> deleteAccount(DeleteAccountDto body);
++  Future<void> deleteAccount(DeleteAccountDto body);
+ }

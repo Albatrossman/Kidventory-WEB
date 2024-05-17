@@ -1,4 +1,0 @@
-enum TimeMode {
-  allDay,
-  halting;
-}

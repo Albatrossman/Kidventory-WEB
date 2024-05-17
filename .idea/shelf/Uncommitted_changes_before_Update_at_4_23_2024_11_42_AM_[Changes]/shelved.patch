@@ -1,0 +1,19 @@
+Index: lib/core/data/model/token_dto.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:json_annotation/json_annotation.dart';\r\n\r\npart 'token_dto.g.dart';\r\n\r\n@JsonSerializable()\r\nclass TokenDto {\r\n  final String accessToken;\r\n  final String refreshToken;\r\n  final String userName;\r\n\r\n  TokenDto({\r\n    required this.accessToken,\r\n    required this.refreshToken,\r\n    required this.userName,\r\n  });\r\n\r\n  factory TokenDto.fromJson(Map<String, dynamic> json) => _$TokenDtoFromJson(json);\r\n  Map<String, dynamic> toJson() => _$TokenDtoToJson(this);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/model/token_dto.dart b/lib/core/data/model/token_dto.dart
+--- a/lib/core/data/model/token_dto.dart	(revision 2b2e4a44de95e67fc08d40b31c9fb8eda6614109)
++++ b/lib/core/data/model/token_dto.dart	(date 1713857633393)
+@@ -2,7 +2,7 @@
+ 
+ part 'token_dto.g.dart';
+ 
+-@JsonSerializable()
++@JsonSerializable(ignoreUnannotated: true)
+ class TokenDto {
+   final String accessToken;
+   final String refreshToken;

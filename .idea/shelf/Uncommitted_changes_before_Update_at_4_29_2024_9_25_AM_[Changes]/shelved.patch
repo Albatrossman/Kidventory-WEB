@@ -1,0 +1,245 @@
+Index: lib/core/data/mapper/repeat_mapper.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:kidventory_flutter/core/data/model/repeat_dto.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/repeat.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/repeat_end.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';\r\nimport 'package:kidventory_flutter/core/ui/util/model/weekday.dart';\r\n\r\nextension DataExtension on RepeatDto {\r\n  Repeat toDomain() {\r\n    return Repeat(\r\n      period: period,\r\n      unit: RepeatUnit.values.firstWhere((e) => e.toString() == 'RepeatUnit.$periodUnit'),\r\n      daysOfWeek: weekDays.map((day) => WeekDay.values.firstWhere((e) => e.toString() == 'WeekDay.$day')).toList(),\r\n      monthDay: monthDay.isEmpty ? null : monthDay,\r\n      monthDate: dayNumberOfMonth == 0 ? null : dayNumberOfMonth,\r\n      startDateTime: startDateTime,\r\n      endsOnMode: RepeatEnd.values.firstWhere((e) => e.toString() == 'RepeatEnd.$endsOnMode'),\r\n      endDate: endDate,\r\n      maxOccurrence: maxOccurrence,\r\n    );\r\n  }\r\n}\r\n\r\nextension DomainExtension on Repeat {\r\n  RepeatDto toDto() {\r\n    return RepeatDto(\r\n      id: '',\r\n      period: period,\r\n      periodUnit: unit.toString().split('.').last,\r\n      weekDays: daysOfWeek?.map((day) => day.toString().split('.').last).toList() ?? [],\r\n      monthDay: monthDay ?? '',\r\n      dayNumberOfMonth: monthDate ?? 0,\r\n      startDateTime: startDateTime,\r\n      endsOnMode: endsOnMode.toString().split('.').last,\r\n      endDate: endDate,\r\n      maxOccurrence: maxOccurrence,\r\n    );\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/mapper/repeat_mapper.dart b/lib/core/data/mapper/repeat_mapper.dart
+--- a/lib/core/data/mapper/repeat_mapper.dart	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/lib/core/data/mapper/repeat_mapper.dart	(date 1714247822495)
+@@ -2,6 +2,7 @@
+ import 'package:kidventory_flutter/core/domain/model/repeat.dart';
+ import 'package:kidventory_flutter/core/domain/model/repeat_end.dart';
+ import 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';
++import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
+ import 'package:kidventory_flutter/core/ui/util/model/weekday.dart';
+ 
+ extension DataExtension on RepeatDto {
+@@ -12,26 +13,25 @@
+       daysOfWeek: weekDays.map((day) => WeekDay.values.firstWhere((e) => e.toString() == 'WeekDay.$day')).toList(),
+       monthDay: monthDay.isEmpty ? null : monthDay,
+       monthDate: dayNumberOfMonth == 0 ? null : dayNumberOfMonth,
+-      startDateTime: startDateTime,
++      startDateTime: DateTime.parse(startDateTime),
+       endsOnMode: RepeatEnd.values.firstWhere((e) => e.toString() == 'RepeatEnd.$endsOnMode'),
+-      endDate: endDate,
++      endDate: DateTime.parse(endDate),
+       maxOccurrence: maxOccurrence,
+     );
+   }
+ }
+ 
+ extension DomainExtension on Repeat {
+-  RepeatDto toDto() {
++  RepeatDto toData() {
+     return RepeatDto(
+-      id: '',
+       period: period,
+       periodUnit: unit.toString().split('.').last,
+       weekDays: daysOfWeek?.map((day) => day.toString().split('.').last).toList() ?? [],
+       monthDay: monthDay ?? '',
+       dayNumberOfMonth: monthDate ?? 0,
+-      startDateTime: startDateTime,
++      startDateTime: startDateTime.toUtcIso8601String(),
+       endsOnMode: endsOnMode.toString().split('.').last,
+-      endDate: endDate,
++      endDate: endDate.toUtcIso8601String(),
+       maxOccurrence: maxOccurrence,
+     );
+   }
+Index: android/app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\r\n\r\n    <uses-feature android:name=\"android.hardware.camera\" />\r\n\r\n    <uses-permission android:name=\"android.permission.CAMERA\" />\r\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\r\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\r\n\r\n    <application\r\n        android:label=\"kidventory_flutter\"\r\n        android:name=\"${applicationName}\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:usesCleartextTraffic=\"true\">\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\"\r\n            android:launchMode=\"singleTop\"\r\n            android:theme=\"@style/LaunchTheme\"\r\n            android:configChanges=\"orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode\"\r\n            android:hardwareAccelerated=\"true\"\r\n            android:windowSoftInputMode=\"adjustResize\">\r\n            <meta-data\r\n              android:name=\"io.flutter.embedding.android.NormalTheme\"\r\n              android:resource=\"@style/NormalTheme\"\r\n              />\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\"/>\r\n                <category android:name=\"android.intent.category.LAUNCHER\"/>\r\n            </intent-filter>\r\n        </activity>\r\n        <activity\r\n            android:name=\"com.yalantis.ucrop.UCropActivity\"\r\n            android:screenOrientation=\"portrait\"\r\n            android:theme=\"@style/Theme.AppCompat.Light.NoActionBar\"/>\r\n        <meta-data\r\n            android:name=\"flutterEmbedding\"\r\n            android:value=\"2\" />\r\n    </application>\r\n    <queries>\r\n        <intent>\r\n            <action android:name=\"android.intent.action.PROCESS_TEXT\"/>\r\n            <data android:mimeType=\"text/plain\"/>\r\n        </intent>\r\n    </queries>\r\n</manifest>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/android/app/src/main/AndroidManifest.xml b/android/app/src/main/AndroidManifest.xml
+--- a/android/app/src/main/AndroidManifest.xml	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/android/app/src/main/AndroidManifest.xml	(date 1714369990580)
+@@ -2,6 +2,7 @@
+ 
+     <uses-feature android:name="android.hardware.camera" />
+ 
++    <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.CAMERA" />
+     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+Index: lib/feature/main/edit_event/edit_event_screen_viewmodel.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'dart:io';\r\n\r\nimport 'package:flutter/material.dart';\r\nimport 'package:kidventory_flutter/core/data/mapper/online_location_mapper.dart';\r\nimport 'package:kidventory_flutter/core/data/mapper/repeat_mapper.dart';\r\nimport 'package:kidventory_flutter/core/data/model/create_event_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/service/csv/csv_parser.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/event_api_service.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/color.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/member.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/online_location.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/platform.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/repeat.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/repeat_end.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/repeat_unit.dart';\r\nimport 'package:kidventory_flutter/core/domain/model/time_mode.dart';\r\nimport 'package:kidventory_flutter/core/ui/util/model/weekday.dart';\r\nimport 'package:kidventory_flutter/feature/main/edit_event/edit_event_screen_state.dart';\r\n\r\nclass EditEventScreenViewModel extends ChangeNotifier {\r\n  final CSVParser _parser;\r\n  final EventApiService _eventApiService;\r\n\r\n  EditEventScreenViewModel(this._parser, this._eventApiService);\r\n\r\n  EditEventScreenState _state = EditEventScreenState();\r\n\r\n  EditEventScreenState get state => _state;\r\n\r\n  void createEvent(String name) {\r\n    CreateEventDto event = CreateEventDto(\r\n      imageFile: '',\r\n      name: name,\r\n      description: state.description,\r\n      repeat: state.repeat.toDto(),\r\n      timeMode: state.allDay ? TimeMode.allDay : TimeMode.halting,\r\n      startTime: state.startTime,\r\n      endTime: state.endTime,\r\n      onlineLocation: state.onlineLocation?.toData(),\r\n      color: state.color\r\n    );\r\n\r\n    _eventApiService.createEvent(event);\r\n  }\r\n\r\n  void editRepeat(int period, RepeatUnit unit, List<WeekDay> daysOfWeek, RepeatEnd end) {\r\n    Repeat repeat = Repeat(\r\n      period: period,\r\n      unit: unit,\r\n      daysOfWeek: daysOfWeek,\r\n      monthDay: '',\r\n      monthDate: 1,\r\n      startDateTime: DateTime.now(),\r\n      endsOnMode: RepeatEnd.onDate,\r\n      endDate: DateTime.now(),\r\n      maxOccurrence: 1,\r\n    );\r\n\r\n    _update(repeat: repeat);\r\n  }\r\n\r\n  void toggleAllDay() {\r\n    _update(allDay: !state.allDay);\r\n  }\r\n\r\n  void selectedStartTime(TimeOfDay time) {\r\n    _update(startTime: time);\r\n  }\r\n\r\n  void selectedEndTime(TimeOfDay time) {\r\n    _update(endTime: time);\r\n  }\r\n\r\n  void selectRepeatUnit(RepeatUnit unit) {\r\n    _update(selectedRepeatUnit: unit);\r\n  }\r\n\r\n  void selectRepeatEnd(RepeatEnd end) {\r\n    _update(selectedRepeatEnd: end);\r\n  }\r\n\r\n  void importCSV(File file) {\r\n    List<Member> participants = _parser.parse(file.readAsStringSync());\r\n    Map<File, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);\r\n    filesAndParticipants[file] = participants;\r\n\r\n    _update(filesAndParticipants: filesAndParticipants);\r\n  }\r\n\r\n  void removeCSV(File file) {\r\n    Map<File, List<Member>> filesAndParticipants = Map.from(state.filesAndParticipants);\r\n    filesAndParticipants.remove(file);\r\n\r\n    _update(filesAndParticipants: filesAndParticipants);\r\n  }\r\n\r\n  void editOnlineLocation(Platform platform,\r\n      String link,\r\n      String id,\r\n      String password,\r\n      String comment,\r\n      String phone,\r\n      String pin,) {\r\n    _update(\r\n      onlineLocation: OnlineLocation(\r\n        platform: Platform.meet,\r\n        link: link,\r\n        meetingId: id,\r\n        password: password,\r\n        comment: comment,\r\n        phone: phone,\r\n        pin: pin,\r\n      ),\r\n    );\r\n  }\r\n\r\n  void selectColor(EventColor color) {\r\n    _update(color: color);\r\n  }\r\n\r\n  void editDescription(String description) {\r\n    _update(description: description);\r\n  }\r\n\r\n  void _update({\r\n    bool? loading,\r\n    bool? allDay,\r\n    String? message,\r\n    Repeat? repeat,\r\n    RepeatUnit? selectedRepeatUnit,\r\n    RepeatEnd? selectedRepeatEnd,\r\n    TimeOfDay? startTime,\r\n    TimeOfDay? endTime,\r\n    Map<File, List<Member>>? filesAndParticipants,\r\n    OnlineLocation? onlineLocation,\r\n    EventColor? color,\r\n    String? description,\r\n  }) {\r\n    _state = _state.copy(\r\n      loading: loading,\r\n      allDay: allDay,\r\n      message: message,\r\n      repeat: repeat,\r\n      selectedRepeatUnit: selectedRepeatUnit,\r\n      selectedRepeatEnd: selectedRepeatEnd,\r\n      startTime: startTime,\r\n      endTime: endTime,\r\n      filesAndParticipants: filesAndParticipants,\r\n      onlineLocation: onlineLocation,\r\n      color: color,\r\n      description: description,\r\n    );\r\n\r\n    notifyListeners();\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/feature/main/edit_event/edit_event_screen_viewmodel.dart b/lib/feature/main/edit_event/edit_event_screen_viewmodel.dart
+--- a/lib/feature/main/edit_event/edit_event_screen_viewmodel.dart	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/lib/feature/main/edit_event/edit_event_screen_viewmodel.dart	(date 1714246428633)
+@@ -32,7 +32,7 @@
+       imageFile: '',
+       name: name,
+       description: state.description,
+-      repeat: state.repeat.toDto(),
++      repeat: state.repeat.toData(),
+       timeMode: state.allDay ? TimeMode.allDay : TimeMode.halting,
+       startTime: state.startTime,
+       endTime: state.endTime,
+Index: lib/core/domain/util/datetime_ext.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:intl/intl.dart';\r\n\r\nextension DateTimeFormatting on DateTime {\r\n  String formatDate() {\r\n    DateTime now = DateTime.now();\r\n    DateTime today = DateTime(now.year, now.month, now.day);\r\n\r\n    if (this == today) {\r\n      return \"Today\";\r\n    } else {\r\n      return DateFormat.yMMMMd().format(this);\r\n    }\r\n  }\r\n\r\n  DateTime plusMonths(int months) {\r\n    if (months == 0) return this;\r\n\r\n    int newYear = year + (month + months - 1) ~/ 12;\r\n    int newMonth = (month + months - 1) % 12 + 1;\r\n    int newDay = day;\r\n\r\n    int lastDayOfNewMonth = DateTime(newYear, newMonth + 1, 0).day;\r\n    if (newDay > lastDayOfNewMonth) {\r\n      newDay = lastDayOfNewMonth;\r\n    }\r\n\r\n    return DateTime(newYear, newMonth, newDay);\r\n  }\r\n\r\n  DateTime get firstDayOfMonth => DateTime(year, month, 1);\r\n\r\n  DateTime get atStartOfDay => DateTime(year, month, day);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/domain/util/datetime_ext.dart b/lib/core/domain/util/datetime_ext.dart
+--- a/lib/core/domain/util/datetime_ext.dart	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/lib/core/domain/util/datetime_ext.dart	(date 1714246201175)
+@@ -1,6 +1,10 @@
+ import 'package:intl/intl.dart';
+ 
+ extension DateTimeFormatting on DateTime {
++  String toUtcIso8601String() {
++    return '${toUtc().toIso8601String().split('.')[0]}Z';
++  }
++
+   String formatDate() {
+     DateTime now = DateTime.now();
+     DateTime today = DateTime(now.year, now.month, now.day);
+Index: lib/core/data/model/repeat_dto.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:json_annotation/json_annotation.dart';\r\n\r\npart 'repeat_dto.g.dart';\r\n\r\n@JsonSerializable()\r\nclass RepeatDto {\r\n  final String id;\r\n  final int period;\r\n  final String periodUnit;\r\n  final List<String> weekDays;\r\n  final String monthDay;\r\n  final int dayNumberOfMonth;\r\n  final DateTime startDateTime;\r\n  final String endsOnMode;\r\n  final DateTime endDate;\r\n  final int maxOccurrence;\r\n\r\n  RepeatDto({\r\n    required this.id,\r\n    required this.period,\r\n    required this.periodUnit,\r\n    required this.weekDays,\r\n    required this.monthDay,\r\n    required this.dayNumberOfMonth,\r\n    required this.startDateTime,\r\n    required this.endsOnMode,\r\n    required this.endDate,\r\n    required this.maxOccurrence,\r\n  });\r\n\r\n  factory RepeatDto.fromJson(Map<String, dynamic> json) => _$RepeatDtoFromJson(json);\r\n  Map<String, dynamic> toJson() => _$RepeatDtoToJson(this);\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/model/repeat_dto.dart b/lib/core/data/model/repeat_dto.dart
+--- a/lib/core/data/model/repeat_dto.dart	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/lib/core/data/model/repeat_dto.dart	(date 1714247822487)
+@@ -4,19 +4,17 @@
+ 
+ @JsonSerializable()
+ class RepeatDto {
+-  final String id;
+   final int period;
+   final String periodUnit;
+   final List<String> weekDays;
+   final String monthDay;
+   final int dayNumberOfMonth;
+-  final DateTime startDateTime;
++  final String startDateTime;
+   final String endsOnMode;
+-  final DateTime endDate;
++  final String endDate;
+   final int maxOccurrence;
+ 
+   RepeatDto({
+-    required this.id,
+     required this.period,
+     required this.periodUnit,
+     required this.weekDays,
+Index: lib/core/data/service/http/user_api_service_impl.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:dio/dio.dart';\r\nimport 'package:kidventory_flutter/core/data/model/event_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/model/session_dto.dart';\r\nimport 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';\r\nimport 'package:kidventory_flutter/core/data/util/dio_client.dart';\r\n\r\nclass UserApiServiceImpl extends UserApiService {\r\n\r\n  final DioClient client;\r\n\r\n  UserApiServiceImpl(this.client);\r\n\r\n  @override\r\n  Future<List<SessionDto>> getUpcomingSessions(DateTime datetime, int limit) async {\r\n    Response response = await client.dio.get('users/me/getUpcomingSessions?pageSize=$limit&datetime=${'${datetime.toUtc().toIso8601String().split('.')[0]}Z'}');\r\n    return response.data.map<SessionDto>((json) => SessionDto.fromJson(json)).toList();\r\n  }\r\n\r\n  @override\r\n  Future<List<EventDto>> getEvents(int limit, int offset) async {\r\n    Response response = await client.dio.get('parent/events?limit=$limit&offset=$offset&IsOwner=true');\r\n    return response.data.map<EventDto>((json) => EventDto.fromJson(json)).toList();\r\n  }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/service/http/user_api_service_impl.dart b/lib/core/data/service/http/user_api_service_impl.dart
+--- a/lib/core/data/service/http/user_api_service_impl.dart	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/lib/core/data/service/http/user_api_service_impl.dart	(date 1714246201167)
+@@ -3,6 +3,7 @@
+ import 'package:kidventory_flutter/core/data/model/session_dto.dart';
+ import 'package:kidventory_flutter/core/data/service/http/user_api_service.dart';
+ import 'package:kidventory_flutter/core/data/util/dio_client.dart';
++import 'package:kidventory_flutter/core/domain/util/datetime_ext.dart';
+ 
+ class UserApiServiceImpl extends UserApiService {
+ 
+@@ -12,7 +13,7 @@
+ 
+   @override
+   Future<List<SessionDto>> getUpcomingSessions(DateTime datetime, int limit) async {
+-    Response response = await client.dio.get('users/me/getUpcomingSessions?pageSize=$limit&datetime=${'${datetime.toUtc().toIso8601String().split('.')[0]}Z'}');
++    Response response = await client.dio.get('users/me/getUpcomingSessions?pageSize=$limit&datetime=${datetime.toUtcIso8601String()}');
+     return response.data.map<SessionDto>((json) => SessionDto.fromJson(json)).toList();
+   }
+ 
+Index: lib/core/data/model/repeat_dto.g.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// GENERATED CODE - DO NOT MODIFY BY HAND\r\n\r\npart of 'repeat_dto.dart';\r\n\r\n// **************************************************************************\r\n// JsonSerializableGenerator\r\n// **************************************************************************\r\n\r\nRepeatDto _$RepeatDtoFromJson(Map<String, dynamic> json) => RepeatDto(\r\n      id: json['id'] as String,\r\n      period: json['period'] as int,\r\n      periodUnit: json['periodUnit'] as String,\r\n      weekDays:\r\n          (json['weekDays'] as List<dynamic>).map((e) => e as String).toList(),\r\n      monthDay: json['monthDay'] as String,\r\n      dayNumberOfMonth: json['dayNumberOfMonth'] as int,\r\n      startDateTime: DateTime.parse(json['startDateTime'] as String),\r\n      endsOnMode: json['endsOnMode'] as String,\r\n      endDate: DateTime.parse(json['endDate'] as String),\r\n      maxOccurrence: json['maxOccurrence'] as int,\r\n    );\r\n\r\nMap<String, dynamic> _$RepeatDtoToJson(RepeatDto instance) => <String, dynamic>{\r\n      'id': instance.id,\r\n      'period': instance.period,\r\n      'periodUnit': instance.periodUnit,\r\n      'weekDays': instance.weekDays,\r\n      'monthDay': instance.monthDay,\r\n      'dayNumberOfMonth': instance.dayNumberOfMonth,\r\n      'startDateTime': instance.startDateTime.toIso8601String(),\r\n      'endsOnMode': instance.endsOnMode,\r\n      'endDate': instance.endDate.toIso8601String(),\r\n      'maxOccurrence': instance.maxOccurrence,\r\n    };\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/model/repeat_dto.g.dart b/lib/core/data/model/repeat_dto.g.dart
+--- a/lib/core/data/model/repeat_dto.g.dart	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/lib/core/data/model/repeat_dto.g.dart	(date 1714247822501)
+@@ -7,28 +7,26 @@
+ // **************************************************************************
+ 
+ RepeatDto _$RepeatDtoFromJson(Map<String, dynamic> json) => RepeatDto(
+-      id: json['id'] as String,
+       period: json['period'] as int,
+       periodUnit: json['periodUnit'] as String,
+       weekDays:
+           (json['weekDays'] as List<dynamic>).map((e) => e as String).toList(),
+       monthDay: json['monthDay'] as String,
+       dayNumberOfMonth: json['dayNumberOfMonth'] as int,
+-      startDateTime: DateTime.parse(json['startDateTime'] as String),
++      startDateTime: json['startDateTime'] as String,
+       endsOnMode: json['endsOnMode'] as String,
+-      endDate: DateTime.parse(json['endDate'] as String),
++      endDate: json['endDate'] as String,
+       maxOccurrence: json['maxOccurrence'] as int,
+     );
+ 
+ Map<String, dynamic> _$RepeatDtoToJson(RepeatDto instance) => <String, dynamic>{
+-      'id': instance.id,
+       'period': instance.period,
+       'periodUnit': instance.periodUnit,
+       'weekDays': instance.weekDays,
+       'monthDay': instance.monthDay,
+       'dayNumberOfMonth': instance.dayNumberOfMonth,
+-      'startDateTime': instance.startDateTime.toIso8601String(),
++      'startDateTime': instance.startDateTime,
+       'endsOnMode': instance.endsOnMode,
+-      'endDate': instance.endDate.toIso8601String(),
++      'endDate': instance.endDate,
+       'maxOccurrence': instance.maxOccurrence,
+     };
+Index: lib/core/data/model/sign_up_dto.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'package:json_annotation/json_annotation.dart';\r\n\r\npart 'sign_up_dto.g.dart';\r\n\r\n@JsonSerializable()\r\nclass SignUpDto {\r\n  final String email;\r\n  final String firstname;\r\n  final String lastname;\r\n  final String password;\r\n  final String timezone;\r\n\r\n  SignUpDto({\r\n    required this.email,\r\n    required this.firstname,\r\n    required this.lastname,\r\n    required this.password,\r\n    required this.timezone,\r\n  });\r\n\r\n  factory SignUpDto.fromJson(Map<String, dynamic> json) =>\r\n      _$SignUpDtoFromJson(json);\r\n  Map<String, dynamic> toJson() => _$SignUpDtoToJson(this);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/data/model/sign_up_dto.dart b/lib/core/data/model/sign_up_dto.dart
+--- a/lib/core/data/model/sign_up_dto.dart	(revision 440f52f7ae23ea0919c68a52d0bb4419560b1a83)
++++ b/lib/core/data/model/sign_up_dto.dart	(date 1714244331252)
+@@ -18,7 +18,6 @@
+     required this.timezone,
+   });
+ 
+-  factory SignUpDto.fromJson(Map<String, dynamic> json) =>
+-      _$SignUpDtoFromJson(json);
++  factory SignUpDto.fromJson(Map<String, dynamic> json) => _$SignUpDtoFromJson(json);
+   Map<String, dynamic> toJson() => _$SignUpDtoToJson(this);
+ }
+Index: lib/core/domain/util/string_extension.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/lib/core/domain/util/string_extension.dart b/lib/core/domain/util/string_extension.dart
+new file mode 100644
+--- /dev/null	(date 1714246972291)
++++ b/lib/core/domain/util/string_extension.dart	(date 1714246972291)
+@@ -0,0 +1,5 @@
++extension DateTimeParsing on String {
++  DateTime parseUtcIso8601() {
++    return DateTime.parse(this);
++  }
++}
+\ No newline at end of file
